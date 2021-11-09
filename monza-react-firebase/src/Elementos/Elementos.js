@@ -4,12 +4,12 @@ Elementos - elementos
 Fecha de creación: 16/10/2021 - Responsable: César Pedraza Hernández, Alan Vélazquez, Carlos López Palma
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
--
+-8/11/2021 Diseño responsivo para móviles, elementos graficos, estilos, etc. Para la vista de la página de inicio(VstIns). 
 Archivos relacionados:, 
 */
 import styled, { css } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+// Colores
 const Colores = {
   ColBlanco: "#FFFF",
   ColHueso: "#F3F0EB",
@@ -18,11 +18,12 @@ const Colores = {
   ColNaranja: "#FF9F1C",
   ColRojo: "#D6001C",
   ColVerde: "#1CCE28",
+  ColNaranjaOpacidad: "rgba(255,159,28,0.7)",
 };
-
+// Tipografías
 const Tipografias = {
   Titulo1: {
-    fontFamily: "Nunito-Sans",
+    fontFamily: "Nunito Sans",
     fontweight: 800,
     fontSize: "48px",
   },
@@ -52,7 +53,7 @@ const Tipografias = {
     fontSize: "12px",
   },
 };
-
+// Componentes
 const ElmGrupoTextoIns = styled.div`
   position: relative;
   z-index: 90;
@@ -329,6 +330,16 @@ const ElmBotonPrincipal = styled.button`
       line-height: 43px;
       background: ${Colores.ColRojo};
     `}
+  ${(props) =>
+    props.tipo === "5" &&
+    css`
+      font-size: ${Tipografias.Normal.fontSize};
+      font-family: ${Tipografias.Normal.fontFamily};
+      font-weight: ${Tipografias.Normal.fontweight};
+      height: 35px;
+      line-height: 35px;
+      background: ${Colores.ColNegroJet};
+    `}
 `;
 const ElmBotonMenu = styled.button`
   height: 45px;
@@ -473,6 +484,101 @@ const ELmContenedorTablaCont = styled.div`
     box-shadow: 3px 0px 30px rgba(163, 163, 163, 1);
   }
 `;
+// Vistas
+// VStIns
+const ELmVStIns = styled.main`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 1240px;
+  width: 100%;
+  height: 735px;
+  margin: auto;
+  margin-top: 100px;
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+`;
+const ElmContVStIns = styled.div`
+  display: grid;
+  grid-template-rows: 0px 248px repeat(4, 1fr);
+  border-radius: 20px 0 0 20px;
+  background: ${Colores.ColBlanco};
+  > .entrada {
+    margin-left: 117px;
+    margin-right: 117px;
+    margin-top: 60px;
+  }
+  > .boton {
+    margin-left: 220px;
+    margin-right: 220px;
+    margin-top: 50px;
+  }
+  > .boton2 {
+    margin-left: 175px;
+    margin-right: 175px;
+    margin-top: 50px;
+  }
+  @media (max-width: 1000px) {
+    > .entrada {
+      margin-left: 20px;
+      margin-right: 20px;
+      margin-top: 70px;
+    }
+    > .boton {
+      margin-left: 20px;
+      margin-right: 20px;
+      margin-top: 50px;
+    }
+    > .boton2 {
+      margin-left: 20px;
+      margin-right: 20px;
+      margin-top: 50px;
+    }
+  }
+`;
+const ElmCont2VStIns = styled.div`
+  border-radius: 0 20px 20px 0;
+  background: url("https://images.unsplash.com/photo-1585733254318-9bcc6d81584a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1935&q=80");
+  height: 100%;
+  background-size: cover; /* <------ */
+  background-repeat: no-repeat;
+  background-position: center center;
+  > div {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0 20px 20px 0;
+    background: ${Colores.ColNaranjaOpacidad};
+  }
+
+  @media (max-width: 1000px) {
+    display: none;
+  }
+`;
+const ElmIconAddUser = styled(FontAwesomeIcon)`
+  margin-top: 40px;
+  margin-left: 40px;
+  font-size: 50px;
+  color: ${Colores.ColNegroJet};
+  &:hover {
+    color: ${Colores.ColNaranja};
+  }
+`;
+const ElmTituloVStIns = styled.div`
+  margin-top: 200px;
+  color: ${Colores.ColNegroJet};
+  align-items: center;
+  text-align: center;
+  font-family: ${Tipografias.Titulo1.fontFamily};
+  font-size: ${Tipografias.Titulo1.fontSize};
+  font-weight: ${Tipografias.Titulo1.fontweight};
+  @media (max-width: 1000px) {
+    font-family: ${Tipografias.Titulo1.fontFamily};
+    font-size: ${Tipografias.Titulo1.fontSize};
+    font-weight: ${Tipografias.Titulo1.fontweight};
+  }
+`;
 export {
   ElmGrupoTextoIns,
   ElmTextoIns,
@@ -498,4 +604,9 @@ export {
   ElmDescripcionAlerta,
   ELmContenedorTabla,
   ELmContenedorTablaCont,
+  ELmVStIns,
+  ElmContVStIns,
+  ElmCont2VStIns,
+  ElmIconAddUser,
+  ElmTituloVStIns,
 };

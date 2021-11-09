@@ -3,8 +3,8 @@ SlimeDev
 CmpBotonPrincipal - Componente
 Fecha de creación: 16/10/2021 - Responsable: César Pedraza Hernández, Alan Vélazquez, Carlos López Palma
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
-Modificaciones:
--
+Modificaciones: 
+-8/11/2021 Mensaje de Alertas en el botón principal
 Archivos relacionados: Elementos.js, 
 */
 import React from "react";
@@ -14,27 +14,33 @@ import {
   MostrarAlerta2,
   MostrarAlerta3,
 } from "../components/CmpAlertas";
-const CmpBotonPrincipal = ({ cadTipofuncion, funcion, cadTipo, cadTexto }) => {
+const CmpBotonPrincipal = ({
+  cadTipofuncion,
+  funcion,
+  cadTipo,
+  cadTexto,
+  cadMensaje,
+}) => {
   const Alerta1 = () => {
-    MostrarAlerta1("Correcto", "Mensaje de exito", "1");
+    MostrarAlerta1("Correcto", cadMensaje, "1");
   };
   const Alerta2 = () => {
-    MostrarAlerta1("Incorrecto", "Mensaje incorrecto", "2");
+    MostrarAlerta1("Incorrecto", cadMensaje, "2");
   };
   const Alerta3 = () => {
-    MostrarAlerta1("Peligro", "Mensaje de Peligro", "3");
+    MostrarAlerta1("Peligro", cadMensaje, "3");
   };
   const Alerta4 = () => {
-    MostrarAlerta1("Informacion", "Mensaje de Informacion", "4");
+    MostrarAlerta1("Informacion", cadMensaje, "4");
   };
   const Alerta5 = () => {
-    MostrarAlerta1("¿Pregunta?", "Mensaje de Pregunta", "5");
+    MostrarAlerta1("¿Pregunta?", cadMensaje, "5");
   };
   const Alerta6 = () => {
-    MostrarAlerta2(Alerta1, "¿Pregunta?", "Mensaje de Pregunta", "5");
+    MostrarAlerta2(Alerta1, "¿Pregunta?", cadMensaje, "5");
   };
   const Alerta7 = () => {
-    MostrarAlerta2(Alerta1, "Peligro", "Mensaje de Peligro", "3");
+    MostrarAlerta2(Alerta1, "Peligro", cadMensaje, "3");
   };
   const Alerta8 = () => {
     MostrarAlerta3("Datos guardados correctamente");

@@ -42,7 +42,6 @@ const CmpTexto = ({
       }
     }
   };
-  console.log(bolTipo);
   return (
     <div>
       <ElmGrupoTextoIns>
