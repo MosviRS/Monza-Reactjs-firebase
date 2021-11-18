@@ -5,10 +5,20 @@ Fecha de creación: 16/10/2021 - Responsable: César Pedraza Hernández, Alan V�
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -8/11/2021 Diseño responsivo para móviles, elementos graficos, estilos, etc. Para la vista de la página de inicio(VstIns). 
+-18/11/2021 
+  diseño de vistas restantes
+    'VstNt'
+    'VstPdts'
+    'VstAbns'
+    'VstEtgs'
+    'VstPvds'
+    'VstBit'
+  correccion de diseño en tablas, y Formularios
 Archivos relacionados:, 
 */
 import styled, { css } from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import DatePicker from "react-datepicker";
 // Colores
 const Colores = {
   ColBlanco: "#FFFF",
@@ -56,7 +66,7 @@ const Tipografias = {
 // Componentes
 const ElmGrupoTextoIns = styled.div`
   position: relative;
-  z-index: 90;
+  z-index: 0;
 `;
 
 const ElmTextoIns = styled.input`
@@ -127,7 +137,7 @@ const ElmEtiquetaObliGbl = styled.span`
   font-size: ${Tipografias.Titulo4.fontSize};
   color: ${Colores.ColRojo};
   ${(props) =>
-    props.obligatorio === "false" &&
+    props.obligatorio === false &&
     css`
       opacity: 0;
     `}
@@ -213,6 +223,7 @@ const ElmLeyendaGbl = styled.p`
 `;
 
 const ElmTextoBusquedaGbl = styled.input`
+  z-index: 0;
   width: 100%;
   background: ${Colores.ColBlanco};
   border-radius: 10px;
@@ -235,7 +246,7 @@ const ElmIconoBusquedaGbl = styled(FontAwesomeIcon)`
   position: absolute;
   left: 17px;
   bottom: 10px;
-  z-index: 100;
+  z-index: 0;
   font-size: 25px;
 `;
 const ElmTextoAreaGbl = styled.textarea`
@@ -356,6 +367,7 @@ const ElmBotonMenu = styled.button`
   cursor: pointer;
   transition: 0.1s ease all;
   &:hover {
+    background: ${Colores.ColNegroJet};
     box-shadow: 3px 0px 30px rgba(163, 163, 163, 1);
   }
   ${(props) =>
@@ -367,6 +379,12 @@ const ElmBotonMenu = styled.button`
     props.tipo === "2" &&
     css`
       background: ${Colores.ColNegroJet};
+    `}
+  ${(props) =>
+    props.tipo === "3" &&
+    css`
+      text-align: center;
+      background: ${Colores.ColNaranja};
     `}
 `;
 const ElmIconoBotonMenu = styled(FontAwesomeIcon)`
@@ -385,6 +403,9 @@ const ElmContenedorRevCaja = styled.div`
   padding: 25px 25px 25px 25px;
   transition: 0.3s ease all;
   border: 2px solid ${Colores.ColNegroJet};
+  @media (max-width: 1000px) {
+    padding: 15px 15px 15px 15px;
+  }
 `;
 const ElmEtqRevCajaGbl = styled.form`
   display: block;
@@ -466,6 +487,21 @@ const ELmContenedorTabla = styled.div`
   font-family: ${Tipografias.Titulo3.fontFamily};
   font-size: ${Tipografias.Titulo3.fontSize};
   font-weight: ${Tipografias.Titulo3.fontweight};
+
+  @media (max-width: 1000px) {
+    /* white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden; */
+    font-family: ${Tipografias.Normal.fontFamily};
+    font-size: ${Tipografias.Normal.fontSize};
+    font-weight: ${Tipografias.Normal.fontweight};
+    > div {
+      max-width: 80px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
 `;
 const ELmContenedorTablaCont = styled.div`
   display: grid;
@@ -483,7 +519,36 @@ const ELmContenedorTablaCont = styled.div`
     border-radius: 10px;
     box-shadow: 3px 0px 30px rgba(163, 163, 163, 1);
   }
+  @media (max-width: 1000px) {
+    > div {
+      /* max-width: 100px; */
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
 `;
+const ElmFecha = styled(DatePicker)`
+  z-index: 2;
+  width: 100%;
+  background: ${Colores.ColBlanco};
+  border-radius: 10px;
+  height: 45px;
+  padding: 0 10px 0 10px;
+  line-height: 45px;
+  transition: 0.3s ease all;
+  border: 2px solid ${Colores.ColNegroJet};
+  font-size: ${Tipografias.Normal.fontSize};
+  font-family: ${Tipografias.Normal.fontFamily};
+  font-weight: ${Tipografias.Normal.fontweight};
+  color: ${Colores.ColNegroJet};
+  &:hover {
+    border: 2px solid ${Colores.ColNegroJet};
+    outline: none;
+    box-shadow: 3px 0px 30px rgba(163, 163, 163, 0.4);
+  }
+`;
+
 // Vistas
 // VStIns
 const ELmVStIns = styled.main`
@@ -573,12 +638,249 @@ const ElmTituloVStIns = styled.div`
   font-family: ${Tipografias.Titulo1.fontFamily};
   font-size: ${Tipografias.Titulo1.fontSize};
   font-weight: ${Tipografias.Titulo1.fontweight};
-  @media (max-width: 1000px) {
+`;
+
+//Vista VstReg
+const ElmContVStReg = styled.div`
+  border-radius: 20px 0 0 20px;
+  background: ${Colores.ColBlanco};
+  padding-left: 116px;
+  padding-right: 116px;
+  .titulo {
+    align-items: center;
+    text-align: center;
     font-family: ${Tipografias.Titulo1.fontFamily};
-    font-size: ${Tipografias.Titulo1.fontSize};
     font-weight: ${Tipografias.Titulo1.fontweight};
+    font-size: ${Tipografias.Titulo1.fontSize};
+  }
+  > div {
+    padding-top: 30px;
+  }
+  @media (max-width: 1000px) {
+    border-radius: 20px 20px 0 0;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 `;
+const ElmCont2VStReg = styled.div`
+  border-radius: 0 20px 20px 0;
+  background-color: ${Colores.ColHueso};
+  padding-top: 95px;
+  padding-left: 116px;
+  padding-right: 116px;
+
+  > div {
+    padding-top: 30px;
+  }
+  .botones {
+    display: grid;
+    padding-top: 30px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .boton1 {
+    margin-right: 10px;
+  }
+  .boton2 {
+    margin-left: 10px;
+  }
+
+  @media (max-width: 1000px) {
+    border-radius: 0 0 20px 20px;
+    padding-top: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: ${Colores.ColBlanco};
+  }
+`;
+//Vista VstNt
+const ElmVstNt = styled.div`
+  display: grid;
+  grid-template-columns: 20% 80%;
+  .titulo {
+    color: ${Colores.ColBlanco};
+    align-items: center;
+    text-align: center;
+    font-family: ${Tipografias.Titulo1.fontFamily};
+    font-weight: ${Tipografias.Titulo1.fontweight};
+    font-size: ${Tipografias.Titulo1.fontSize};
+  }
+  .contenedor1 {
+    /* background: ${Colores.ColVerde}; */
+    padding-left: 20px;
+    padding-right: 20px;
+    > div {
+      padding-top: 32px;
+    }
+  }
+  .contenedor2 {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    margin-top: 30px;
+    margin-right: -10px;
+    border-radius: 20px 0 0 0;
+    background: ${Colores.ColHueso};
+    .subCont1 {
+      margin-top: ${(props) => props.subCont1 || "0px"};
+      margin-left: 60px;
+      margin-right: 60px;
+    }
+    .subCont2 {
+      margin-top: 0px;
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
+  .contenedor3 {
+    margin-top: 30px;
+    margin-right: -10px;
+    border-radius: 20px 0 0 0;
+    background: ${Colores.ColHueso};
+  }
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+
+    .titulo {
+    }
+    .contenedor1 {
+    }
+    .contenedor2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      margin-right: 0px;
+      border-radius: 20px;
+      background: ${Colores.ColHueso};
+      .subCont1 {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+      .subCont2 {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+    }
+    .contenedor3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      margin-right: 0px;
+      border-radius: 20px;
+      background: ${Colores.ColHueso};
+    }
+  }
+`;
+
+const ElmEncabezadoNt = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 20px;
+  background: ${Colores.ColBlanco};
+  border-radius: 20px;
+  .cont1 {
+    padding-right: 20%;
+  }
+  .cont2 {
+    padding-left: 20%;
+  }
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+    .cont1 {
+      padding-right: 0;
+    }
+    .cont2 {
+      padding-top: 10px;
+      padding-left: 0;
+    }
+  }
+`;
+const ElmContNt = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 20px;
+  margin-top: 20px;
+  background: ${Colores.ColBlanco};
+  border-radius: 20px;
+  .titulo {
+    color: ${Colores.ColNegroJet};
+    align-items: left;
+    text-align: left;
+    font-family: ${Tipografias.Titulo2.fontFamily};
+    font-weight: ${Tipografias.Titulo2.fontweight};
+    font-size: ${Tipografias.Titulo2.fontSize};
+  }
+  .busqueda {
+    display: grid;
+    grid-template-columns: 1fr 10%;
+  }
+  .tabla {
+    display: grid;
+    margin-top: 20px;
+    grid-column: span 2;
+  }
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+    .titulo {
+    }
+    .busqueda {
+      margin-top: 20px;
+      grid-column: span 1;
+      grid-template-columns: 1fr 10%;
+    }
+
+    .tabla {
+      grid-column: span 1;
+    }
+  }
+`;
+const ElmIconAddProduct = styled(FontAwesomeIcon)`
+  font-size: 50px;
+  color: ${Colores.ColNaranja};
+  &:hover {
+    color: ${Colores.ColNegroJet};
+  }
+`;
+const ElmFormNt = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 20px;
+  margin-top: 20px;
+  margin-right: 20px;
+  background: ${Colores.ColBlanco};
+  border-radius: 20px;
+  .titulo {
+    display: grid;
+    grid-column: span 2;
+    padding-bottom: 30px;
+    color: ${Colores.ColNegroJet};
+    align-items: center;
+    text-align: center;
+    font-family: ${Tipografias.Titulo2.fontFamily};
+    font-weight: ${Tipografias.Titulo2.fontweight};
+    font-size: ${Tipografias.Titulo2.fontSize};
+  }
+  > div {
+    padding-top: 10px;
+    display: grid;
+    grid-column: span 2;
+  }
+  .conjunto1 {
+    display: grid;
+    grid-column: span 1;
+    padding-right: 10px;
+  }
+  .conjunto2 {
+    display: grid;
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+  @media (max-width: 1000px) {
+    /* padding: 20px; */
+    margin-top: 20px;
+    margin-right: 0px;
+  }
+`;
+
 export {
   ElmGrupoTextoIns,
   ElmTextoIns,
@@ -609,4 +911,12 @@ export {
   ElmCont2VStIns,
   ElmIconAddUser,
   ElmTituloVStIns,
+  ElmContVStReg,
+  ElmCont2VStReg,
+  ElmVstNt,
+  ElmEncabezadoNt,
+  ElmFecha,
+  ElmContNt,
+  ElmIconAddProduct,
+  ElmFormNt,
 };

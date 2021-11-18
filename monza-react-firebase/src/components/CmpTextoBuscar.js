@@ -25,18 +25,16 @@ const CmpTextoBuscar = ({
   };
   console.log(estEstado);
   return (
-    <div>
-      <ElmGrupoTextoIns>
-        <ElmIconoBusquedaGbl icon={faSearch} />
-        <ElmTextoBusquedaGbl
-          type={"text"}
-          placeholder={cadPlaceholder}
-          id={cadNombre}
-          value={estEstado.campo}
-          onChange={onChange}
-        />
-      </ElmGrupoTextoIns>
-    </div>
+    <ElmGrupoTextoIns>
+      <ElmIconoBusquedaGbl icon={faSearch} />
+      <ElmTextoBusquedaGbl
+        type={"text"}
+        placeholder={cadPlaceholder}
+        id={cadNombre}
+        value={estEstado.campo}
+        onChange={onChange}
+      />
+    </ElmGrupoTextoIns>
   );
 };
 export default CmpTextoBuscar;

@@ -24,7 +24,7 @@ const Tipo = {
   4: "info",
   5: "question",
 };
-const MostrarAlerta1 = (cadTexto, cadTitulo, cadTipo) => {
+const MostrarAlerta1 = (cadTexto, cadTitulo, cadTipo, funcion) => {
   MySwal.fire({
     title: <ElmTituloAlerta>{cadTitulo}</ElmTituloAlerta>,
     html: <ElmDescripcionAlerta>{cadTexto}</ElmDescripcionAlerta>,
@@ -37,7 +37,9 @@ const MostrarAlerta1 = (cadTexto, cadTitulo, cadTipo) => {
             `,
     confirmButtonColor: Colores.ColNaranja,
     confirmButtonText: "Aceptar",
-  }).then((result) => {});
+  }).then(() => {
+    funcion();
+  });
 };
 const MostrarAlerta2 = (alerta, cadTexto, cadTitulo, cadTipo) => {
   MySwal.fire({
@@ -61,12 +63,12 @@ const MostrarAlerta2 = (alerta, cadTexto, cadTitulo, cadTipo) => {
     }
   });
 };
-const MostrarAlerta3 = (cadTitulo) => {
+const MostrarAlerta3 = (cadTitulo, funcion) => {
   const Toast = MySwal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000,
+    timer: 1000,
     timerProgressBar: true,
     height: 20,
     width: 600,
@@ -79,6 +81,8 @@ const MostrarAlerta3 = (cadTitulo) => {
   Toast.fire({
     icon: "success",
     title: <ElmTituloAlerta>{cadTitulo}</ElmTituloAlerta>,
+  }).then(() => {
+    funcion();
   });
 };
 export { MostrarAlerta1, MostrarAlerta2, MostrarAlerta3 };

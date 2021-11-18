@@ -13,6 +13,9 @@ import {
   faUsers,
   faIndustry,
   faCashRegister,
+  faShippingFast,
+  faFilePdf,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { faProductHunt } from "@fortawesome/free-brands-svg-icons";
 
@@ -25,14 +28,19 @@ const SeleccionIcono = {
   1: faStickyNote,
   2: faProductHunt,
   3: faUsers,
-  4: faIndustry,
-  5: faCashRegister,
+  4: faShippingFast,
+  5: faIndustry,
+  6: faCashRegister,
+  7: faFilePdf,
+  8: faUserPlus,
 };
-const CmpBotonMenu = ({ cadicono, cadTipo, cadTexto }) => {
+const CmpBotonMenu = ({ cadicono, cadTipo, cadTexto, funcion }) => {
   return (
     <ElmGrupoTextoIns>
       <ElmIconoBotonMenu icon={SeleccionIcono[cadicono]} />
-      <ElmBotonMenu tipo={cadTipo}>{cadTexto}</ElmBotonMenu>
+      <ElmBotonMenu onClick={funcion} tipo={cadTipo}>
+        {cadTexto}
+      </ElmBotonMenu>
     </ElmGrupoTextoIns>
   );
 };

@@ -22,28 +22,33 @@ const CmpBotonPrincipal = ({
   cadMensaje,
 }) => {
   const Alerta1 = () => {
-    MostrarAlerta1("Correcto", cadMensaje, "1");
+    MostrarAlerta1("Correcto", cadMensaje, "1", funcion);
   };
   const Alerta2 = () => {
-    MostrarAlerta1("Incorrecto", cadMensaje, "2");
+    MostrarAlerta1("Incorrecto", cadMensaje, "2", funcion);
   };
   const Alerta3 = () => {
-    MostrarAlerta1("Peligro", cadMensaje, "3");
+    MostrarAlerta1("Peligro", cadMensaje, "3", funcion);
   };
   const Alerta4 = () => {
-    MostrarAlerta1("Informacion", cadMensaje, "4");
+    MostrarAlerta1("Informacion", cadMensaje, "4", funcion);
   };
   const Alerta5 = () => {
-    MostrarAlerta1("¿Pregunta?", cadMensaje, "5");
+    MostrarAlerta1("¿Pregunta?", cadMensaje, "5", funcion);
   };
   const Alerta6 = () => {
-    MostrarAlerta2(Alerta1, "¿Pregunta?", cadMensaje, "5");
+    MostrarAlerta2(correcto, "¿Pregunta?", cadMensaje, "5");
   };
   const Alerta7 = () => {
-    MostrarAlerta2(Alerta1, "Peligro", cadMensaje, "3");
+    MostrarAlerta2(correcto, "Peligro", cadMensaje, "3");
   };
   const Alerta8 = () => {
-    MostrarAlerta3("Datos guardados correctamente");
+    MostrarAlerta3(cadMensaje, funcion);
+  };
+
+  const correcto = () => {
+    MostrarAlerta3("Accion Aplicada", funcion);
+    // MostrarAlerta1("Correcto", "Accion aplicada con exito", "1", funcion);
   };
   const funciones = {
     0: funcion,

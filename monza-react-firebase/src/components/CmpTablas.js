@@ -12,68 +12,61 @@ import {
   ELmContenedorTabla,
   ELmContenedorTablaCont,
 } from "./../Elementos/Elementos";
-const CmpTablas = () => {
-  const title = [
-    { id: "Title1" },
-    { id: "Title2" },
-    { id: "Title3" },
-    { id: "Title4" },
-    { id: "Title5" },
-  ];
-  const data = [
-    {
-      id: "1",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "2",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "3",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "4",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "5",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-  ];
+const CmpTablas = ({ titulos, datos, tipodatos, columnas }) => {
+  const data1 = (value) => {
+    return (
+      <ELmContenedorTablaCont key={value.id} fraccion={columnas | "5"}>
+        <div>{value.id}</div>
+        <div>{value.nombre}</div>
+        <div>{value.apellido}</div>
+        <div>{value.edad}</div>
+        <div>{value.email}</div>
+      </ELmContenedorTablaCont>
+    );
+  };
+  const data2 = (value) => {
+    return (
+      <ELmContenedorTablaCont key={value.id} fraccion={columnas}>
+        <div>{value.id}</div>
+        <div>{value.a}</div>
+        <div>{value.b}</div>
+        <div>{value.c}</div>
+        <div>{value.d}</div>
+        <div>{value.e}</div>
+      </ELmContenedorTablaCont>
+    );
+  };
+  const data3 = (value) => {
+    return (
+      <ELmContenedorTablaCont key={value.id} fraccion={columnas}>
+        <div>{value.id}</div>
+        <div>{value.a}</div>
+        <div>{value.b}</div>
+        <div>{value.c}</div>
+        <div>{value.d}</div>
+        <div>{value.e}</div>
+        <div>{value.f}</div>
+      </ELmContenedorTablaCont>
+    );
+  };
+
+  const funcionprincipal = (value) => {
+    const selectDatos = {
+      1: data1(value),
+      2: data2(value),
+      3: data3(value),
+    };
+    return selectDatos[tipodatos];
+  };
   return (
     <div>
-      <ELmContenedorTabla fraccion={"5"}>
-        {title.map((value) => {
-          return <div>{value.id}</div>;
+      <ELmContenedorTabla fraccion={columnas}>
+        {titulos.map((value) => {
+          return <div key={value.id}>{value.id}</div>;
         })}
       </ELmContenedorTabla>
-      {data.map((value) => {
-        return (
-          <ELmContenedorTablaCont fraccion="5">
-            <div>{value.id}</div>
-            <div>{value.nombre}</div>
-            <div>{value.apellido}</div>
-            <div>{value.edad}</div>
-            <div>{value.email}</div>
-          </ELmContenedorTablaCont>
-        );
+      {datos.map((value) => {
+        return <div>{funcionprincipal(value)}</div>;
       })}
     </div>
   );

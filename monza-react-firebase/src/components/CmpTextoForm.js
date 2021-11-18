@@ -27,6 +27,7 @@ const CmpTextoForm = ({
   cadLeyenda,
   bolObligatorio,
   cadNombre,
+  funcion,
   exprExpresionR,
 }) => {
   const [estEstadoIcono, estCambiarEstadoIcono] = useState({ estado: true });
@@ -47,6 +48,9 @@ const CmpTextoForm = ({
         console.log("false exp");
         estCambiarEstado({ ...estEstado, valido: "false" });
       }
+    }
+    if (funcion) {
+      funcion();
     }
   };
   console.log(estEstado);

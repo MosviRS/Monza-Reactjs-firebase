@@ -40,7 +40,7 @@ const CmpRevisionCaja = ({ estEstado, estCambiarEstado }) => {
             checked={estEstado.campo === "Crédito"}
             onChange={onClick}
           />
-          <label>Contado</label>
+          <label>Crédito</label>
         </ElmOpcion>
       </div>
     </ElmContenedorRevCaja>
