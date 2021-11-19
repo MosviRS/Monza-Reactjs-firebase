@@ -14,7 +14,7 @@ import {
   ElmGrupoTextoIns,
   ElmIconoComboCaja,
   ElmEtiquetaGbl,
-} from "./../Elementos/Elementos";
+} from "../Elementos/Elementos";
 const CompSeleccion = ({
   arrLista,
   cadEtiqueta,

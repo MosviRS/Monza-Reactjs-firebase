@@ -14,7 +14,7 @@ import {
   Colores,
   ElmTituloAlerta,
   ElmDescripcionAlerta,
-} from "./../Elementos/Elementos";
+} from "../Elementos/Elementos";
 
 const MySwal = withReactContent(Swal);
 const Tipo = {

@@ -13,7 +13,7 @@ import {
   MostrarAlerta1,
   MostrarAlerta2,
   MostrarAlerta3,
-} from "../components/CmpAlertas";
+} from "./CmpAlertas";
 const CmpBotonPrincipal = ({
   cadTipofuncion,
   funcion,
