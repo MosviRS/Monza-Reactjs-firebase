@@ -82,9 +82,9 @@ const CmpTablas = ({ titulos, datos, tipodatos, columnas }) => {
   const tabla1 = (value) => {
     return (
       <ELmContenedorTablaCont key={value.idprod} fraccion={columnas}>
-        <div>{value.idprod}</div>
+        <div>{value.modelo}</div>
         <div>{value.nombre_producto}</div>
-        <div>{value.existencia}</div>
+        <div>{value.precio}</div>
         <div>{value.c}</div>
         <div>{value.d}</div>
         <div>{value.e}</div>

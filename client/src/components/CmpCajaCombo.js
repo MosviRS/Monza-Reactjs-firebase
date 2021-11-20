@@ -21,22 +21,42 @@ const CompSeleccion = ({
   cadNombre,
   estEstado,
   estCambiarEstado,
+  tipodatos,
 }) => {
   // console.log(estado);
   const onChange = (e) => {
     estCambiarEstado({ ...estEstado, campo: e.target.value });
   };
+  const reder1 = (value) => {
+    return (
+      <option key={value.id} value={value.nombre}>
+        {value.nombre}
+      </option>
+    );
+  };
+  const reder2 = (value) => {
+    return (
+      <option key={value.id} value={value.nombre_producto}>
+        {value.nombre_producto}
+      </option>
+    );
+  };
+
+  const funcionRender = (value) => {
+    const selectReder = {
+      1: reder1(value),
+      2: reder2(value),
+    };
+    return selectReder[tipodatos];
+  };
+  console.log(arrLista);
   return (
     <div>
       <ElmEtiquetaGbl htmlFor={cadNombre}>{cadEtiqueta}</ElmEtiquetaGbl>
       <ElmGrupoTextoIns>
         <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
           {arrLista.map((value) => {
-            return (
-              <option key={value.id} value={value.nombre}>
-                {value.nombre}
-              </option>
-            );
+            funcionRender(value);
           })}
         </ElmSeleccionGbl>
         <ElmIconoComboCaja icon={faChevronDown} />

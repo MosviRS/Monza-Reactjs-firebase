@@ -1,7 +1,11 @@
 /*
 SlimeDev
 VstBit - Vista
-Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan Vélazquez, Carlos López Palma
+Fecha de creación: 10/11/2021 
+  - Responsable: 
+      Alan Alexis Vélazquez Romero,
+      César Pedraza Hernández, 
+      David Velazquez Ramirez
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -

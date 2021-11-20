@@ -1,7 +1,13 @@
 /*
 SlimeDev
 VstReg - Vista
-Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan Vélazquez, Carlos López Palma
+Fecha de creación: 10/11/2021 
+  - Responsable: 
+      César Pedraza Hernández, 
+      Alan Alexis Vélazquez Romero,
+      Carlos López Palma, 
+      Diego Cruz Barajas,
+      Diego Cruz Barajas,
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -
@@ -17,7 +23,7 @@ Archivos relacionados:
     CmpTextoArea.js,
     CmpRevisionCaja.js,
 */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 //importacion de Elementos graficos
 import {
   Cadenas,
@@ -40,6 +46,8 @@ import CmpTablas from "../components/CmpTablas";
 import CmpTextoArea from "../components/CmpTextoArea";
 import CmpRevisionCaja from "../components/CmpRevisionCaja";
 import CmpCajaCombo from "../components/CmpCajaCombo";
+import { tomarTabla } from "../bd/servicios";
+import firebase from "./../bd/conexion";
 const VstNt = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
@@ -52,6 +60,7 @@ const VstNt = () => {
     campo: "",
     valido: null,
   });
+  const [tablaProducto, cambiartablaProducto] = useState([]);
   const [cliente, cambiarCliente] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [apellidoP, cambiarApellidoP] = useState({ campo: "", valido: null });
@@ -159,6 +168,19 @@ const VstNt = () => {
     7: irBitacora,
     8: irRegistro,
   };
+  // useEffect(() => {
+  //   tomarTabla(tablaProducto, "producto");
+  // }, []);
+  useEffect(() => {
+    firebase.db.collection("producto").onSnapshot((querySnapshot) => {
+      const docs = [];
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id });
+      });
+      cambiartablaProducto(docs);
+      console.log(docs);
+    });
+  }, []);
   //rederizacion
   return (
     <ElmVstNt subCont1="20px">
@@ -244,6 +266,7 @@ const VstNt = () => {
             />
             <div className="busqueda">
               <CmpCajaCombo
+                tipodatos="1"
                 arrLista={preguntas}
                 cadEtiqueta="Resultado productos:"
                 cadNombre={"productoU"}

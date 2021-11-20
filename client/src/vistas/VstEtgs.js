@@ -1,7 +1,12 @@
 /*
 SlimeDev
 VstEtgs - Vista
-Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan Vélazquez, Carlos López Palma
+Fecha de creación: 10/11/2021 
+  - Responsable: 
+      César Pedraza Hernández,
+      Alan Alexis Vélazquez Romero, 
+      Carlos López Palma,
+      Diego Cruz Barajas,
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -
