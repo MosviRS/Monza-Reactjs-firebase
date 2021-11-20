@@ -5,6 +5,7 @@ Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan V�
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -
+-19/11/2021 - Correciones 
 Archivos relacionados: 
     Elementos.js, 
     CmpBotonPrincipal.js, 
@@ -15,7 +16,7 @@ Archivos relacionados:
 */
 import React, { useState } from "react";
 //importacion de Elementos graficos
-import { Colores, ElmContNt, ElmVstNt } from "../Elementos/Elementos";
+import { Cadenas, Colores, ElmContNt, ElmVstNt } from "../Elementos/Elementos";
 import { useHistory } from "react-router-dom";
 //Importacion Componentes
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
@@ -31,47 +32,17 @@ const VstBit = () => {
   //Variables Complementarias//Variables Complementarias
 
   const titulosTab = [
-    { id: "Usuario" },
     { id: "Nombre empleado" },
     { id: "Movimiento" },
+    { id: "Fecha de movimiento" },
     { id: "Monto resultante del movimiento" },
-    { id: "Title5" },
   ];
   const data = [
     {
       id: "1",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "2",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "3",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "4",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
-    },
-    {
-      id: "5",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "Email",
+      a: "name",
+      b: "Apellido",
+      c: "Edad",
     },
   ];
   const history = useHistory();
@@ -114,49 +85,49 @@ const VstBit = () => {
   return (
     <ElmVstNt>
       <div className="contenedor1">
-        <div className="titulo">Bitacora</div>
+        <div className="titulo">{Cadenas.vstBit}</div>
         <CmpBotonMenu
           funcion={Rutas[2]}
           cadicono="1"
           cadTipo="1"
-          cadTexto="Notas"
+          cadTexto={Cadenas.vstNt}
         />
         <CmpBotonMenu
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
-          cadTexto="Productos"
+          cadTexto={Cadenas.vstPdts}
         />
         <CmpBotonMenu
           funcion={Rutas[4]}
           cadicono="3"
           cadTipo="1"
-          cadTexto="Abonos"
+          cadTexto={Cadenas.vstAbns}
         />
         <CmpBotonMenu
           funcion={Rutas[5]}
           cadicono="4"
           cadTipo="1"
-          cadTexto="Entregas"
+          cadTexto={Cadenas.vstEtgs}
         />
         <CmpBotonMenu
           funcion={Rutas[6]}
           cadicono="5"
           cadTipo="1"
-          cadTexto="Proveedores"
+          cadTexto={Cadenas.vstPvds}
         />
-        <CmpBotonMenu cadicono="6" cadTipo="2" cadTexto="Bitacora" />
+        <CmpBotonMenu cadicono="6" cadTipo="2" cadTexto={Cadenas.vstBit} />
         <CmpBotonMenu
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"
-          cadTexto="Registro de personal"
+          cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
           cadTipofuncion="6"
           funcion={Rutas[1]}
           cadTipo="4"
-          cadTexto="Cerrar Sesión"
+          cadTexto={Cadenas.cerrarSesion}
           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
@@ -172,10 +143,10 @@ const VstBit = () => {
           />
           <div className="tabla">
             <CmpTablas
-              columnas={"5"}
+              columnas={"4"}
               titulos={titulosTab}
               datos={data}
-              tipodatos="1"
+              tipodatos="4"
             />
           </div>
         </ElmContNt>

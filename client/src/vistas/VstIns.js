@@ -6,10 +6,13 @@ Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -8/11/2021 Creacion de la vista VstIns
 -15/11/2021 Correcciones en comentarios
+-19/11/2021 - Correciones 
 Archivos relacionados: Elementos.js, CmpTexto.js, CmpBotonPrincipal.js
 */
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+// import express from "express";
+// import db from "./../bd/db";
 import {
   Colores,
   ElmCont2VStIns,
@@ -71,6 +74,36 @@ const VstIns = () => {
     6: irProveedores,
     7: irBitacora,
   };
+  const titulosTab = [
+    { id: "ID (Modelo)" },
+    { id: "Nombre del Proyecto" },
+    { id: "Cantidad" },
+    { id: "Monto Unidad" },
+    { id: "Monto Subtotal" },
+  ];
+  // const express = require("express");
+  // const app = express();
+
+  // const prueba2 = async () => {
+  //   const resultado = await fetch("https://jsonplaceholder.typicode.com/posts");
+  // };
+  const prueba = async () => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(titulosTab),
+    };
+    const respuesta = await fetch(
+      "https://jsonplaceholder.typicode.com/posts",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+
+    console.log(respuesta);
+  };
+
+  prueba();
   //rederizacion
   return (
     <ELmVStIns>

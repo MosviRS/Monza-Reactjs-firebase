@@ -5,6 +5,7 @@ Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan V�
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -
+-19/11/2021 - Correciones 
 Archivos relacionados: 
     Elementos.js, 
     CmpBotonPrincipal.js, 
@@ -19,6 +20,7 @@ Archivos relacionados:
 import React, { useState } from "react";
 //importacion de Elementos graficos
 import {
+  Cadenas,
   Colores,
   ElmContNt,
   ElmEncabezadoNt,
@@ -37,6 +39,7 @@ import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 import CmpTextoArea from "../components/CmpTextoArea";
 import CmpRevisionCaja from "../components/CmpRevisionCaja";
+import CmpCajaCombo from "../components/CmpCajaCombo";
 const VstNt = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
@@ -45,25 +48,43 @@ const VstNt = () => {
   const [fechaComp, setFechaComp] = useState(new Date());
   const [fechaEnt, setFechaEnt] = useState(new Date());
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
+  const [busquedaCliente, cambiarBusquedaCliente] = useState({
+    campo: "",
+    valido: null,
+  });
+  const [cliente, cambiarCliente] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
-  const [apellidos, cambiarApellidos] = useState({ campo: "", valido: null });
+  const [apellidoP, cambiarApellidoP] = useState({ campo: "", valido: null });
+  const [apellidoM, cambiarApellidoM] = useState({ campo: "", valido: null });
   const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
   const [telefono, cambiarTelefono] = useState({ campo: "", valido: null });
   const [pago, cambiarPago] = useState({ campo: "", valido: null });
   const [total, cambiarTotal] = useState({ campo: "$ 0000.00", valido: null });
   const [totalRec, cambiarTotalRec] = useState({ campo: "", valido: null });
+  const [cant, cambiarCant] = useState({ campo: "", valido: null });
+  const [productoU, cambiarProductoU] = useState({ campo: "", valido: null });
   const [Referencias, cambiarReferencias] = useState({
     campo: "",
     valido: null,
   });
   //Variables Complementarias
-
+  const preguntas = [
+    { id: "1", nombre: "A" },
+    { id: "2", nombre: "B" },
+    { id: "3", nombre: "C" },
+    { id: "4", nombre: "D" },
+    { id: "5", nombre: "F" },
+    { id: "6", nombre: "G" },
+    { id: "7", nombre: "H" },
+    { id: "8", nombre: "I" },
+  ];
   const titulosTab = [
-    { id: "ID (Modelo)" },
-    { id: "Nombre del Proyecto" },
-    { id: "Cantidad" },
+    { id: "Modelo" },
+    { id: "Nombre del Producto" },
     { id: "Monto Unidad" },
     { id: "Monto Subtotal" },
+    { id: "Cantidad" },
+    { id: "Eliminar" },
   ];
   const data = [
     {
@@ -71,35 +92,35 @@ const VstNt = () => {
       nombre: "name",
       apellido: "Apellido",
       edad: "Edad",
-      email: "Email",
+      email: "0",
     },
     {
       id: "2",
       nombre: "name",
       apellido: "Apellido",
       edad: "Edad",
-      email: "Email",
+      email: "0",
     },
     {
       id: "3",
       nombre: "name",
       apellido: "Apellido",
       edad: "Edad",
-      email: "Email",
+      email: "0",
     },
     {
       id: "4",
       nombre: "name",
       apellido: "Apellido",
       edad: "Edad",
-      email: "Email",
+      email: "0",
     },
     {
       id: "5",
       nombre: "name",
       apellido: "Apellido",
       edad: "Edad",
-      email: "Email",
+      email: "0",
     },
   ];
   const history = useHistory();
@@ -142,49 +163,49 @@ const VstNt = () => {
   return (
     <ElmVstNt subCont1="20px">
       <div className="contenedor1">
-        <div className="titulo">Notas</div>
-        <CmpBotonMenu cadicono="1" cadTipo="2" cadTexto="Notas" />
+        <div className="titulo">{Cadenas.vstNt}</div>
+        <CmpBotonMenu cadicono="1" cadTipo="2" cadTexto={Cadenas.vstNt} />
         <CmpBotonMenu
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
-          cadTexto="Productos"
+          cadTexto={Cadenas.vstPdts}
         />
         <CmpBotonMenu
           funcion={Rutas[4]}
           cadicono="3"
           cadTipo="1"
-          cadTexto="Abonos"
+          cadTexto={Cadenas.vstAbns}
         />
         <CmpBotonMenu
           funcion={Rutas[5]}
           cadicono="4"
           cadTipo="1"
-          cadTexto="Entregas"
+          cadTexto={Cadenas.vstEtgs}
         />
         <CmpBotonMenu
           funcion={Rutas[6]}
           cadicono="5"
           cadTipo="1"
-          cadTexto="Proveedores"
+          cadTexto={Cadenas.vstPvds}
         />
         <CmpBotonMenu
           funcion={Rutas[7]}
           cadicono="6"
           cadTipo="1"
-          cadTexto="Bitacora"
+          cadTexto={Cadenas.vstBit}
         />
         <CmpBotonMenu
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"
-          cadTexto="Registro de personal"
+          cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
           cadTipofuncion="6"
           funcion={Rutas[1]}
           cadTipo="4"
-          cadTexto="Cerrar Sesión"
+          cadTexto={Cadenas.cerrarSesion}
           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
@@ -212,16 +233,55 @@ const VstNt = () => {
           </ElmEncabezadoNt>
           <ElmContNt>
             <div className="titulo">Lista de productos</div>
+            <div></div>
+            <div></div>
+
+            <CmpTextoBuscar
+              estEstado={busqueda}
+              estCambiarEstado={cambiarBusqueda}
+              cadPlaceholder="Buscar"
+              cadNombre="busqueda"
+            />
             <div className="busqueda">
-              <CmpTextoBuscar
-                estEstado={busqueda}
-                estCambiarEstado={cambiarBusqueda}
-                cadPlaceholder="Buscar"
-                cadNombre="busqueda"
+              <CmpCajaCombo
+                arrLista={preguntas}
+                cadEtiqueta="Resultado productos:"
+                cadNombre={"productoU"}
+                estEstado={productoU}
+                estCambiarEstado={cambiarProductoU}
               />
-              <ElmIconAddProduct
-                icon={faPlusCircle}
-                onClick={() => console.log("click")}
+            </div>
+            <div className="busqueda">
+              <CmpTextoForm
+                cadTipoprincipal="1"
+                estEstado={cant}
+                estCambiarEstado={cambiarCant}
+                bolTipo={true}
+                cadEtiqueta="Cantidad"
+                cadPlaceholder="0"
+                bolObligatorio={false}
+                cadNombre="cantidad"
+              />
+              <div>
+                <div>
+                  <br></br>
+                </div>
+                <ElmIconAddProduct
+                  icon={faPlusCircle}
+                  onClick={() => console.log("click")}
+                />
+              </div>
+            </div>
+            <div className="tres">
+              <div></div>
+              <CmpBotonPrincipal
+                cadTipofuncion="2"
+                funcion={() => {
+                  console.log("hola");
+                }}
+                cadTipo="1"
+                cadTexto="Añadir"
+                cadMensaje="¿Desea agregar producto?"
               />
             </div>
             <div className="tabla">
@@ -229,7 +289,7 @@ const VstNt = () => {
                 titulos={titulosTab}
                 datos={data}
                 tipodatos="1"
-                columnas="5"
+                columnas="6"
               />
             </div>
           </ElmContNt>
@@ -237,6 +297,20 @@ const VstNt = () => {
         <div className="subCont2">
           <ElmFormNt>
             <div className="titulo">Datos del cliente</div>
+            <CmpTextoBuscar
+              estEstado={busquedaCliente}
+              estCambiarEstado={cambiarBusquedaCliente}
+              cadPlaceholder="Buscar cliente"
+              cadNombre="busquedacliente"
+            />
+
+            <CmpCajaCombo
+              arrLista={preguntas}
+              cadEtiqueta="Resultado clientes:"
+              cadNombre={"Cliente"}
+              estEstado={cliente}
+              estCambiarEstado={cambiarCliente}
+            />
             <CmpTextoForm
               cadTipoprincipal="1"
               estEstado={nombre}
@@ -250,14 +324,25 @@ const VstNt = () => {
             />
             <CmpTextoForm
               cadTipoprincipal="1"
-              estEstado={apellidos}
-              estCambiarEstado={cambiarApellidos}
+              estEstado={apellidoP}
+              estCambiarEstado={cambiarApellidoP}
               bolTipo={true}
-              cadEtiqueta="Apellidos:"
-              cadPlaceholder="Ortiz Apolizar"
+              cadEtiqueta="Apellido Paterno:"
+              cadPlaceholder="Ortiz"
               cadLeyenda="Apellidos del cliente"
               bolObligatorio={true}
-              cadNombre="apellidos"
+              cadNombre="apellidoM"
+            />
+            <CmpTextoForm
+              cadTipoprincipal="1"
+              estEstado={apellidoM}
+              estCambiarEstado={cambiarApellidoM}
+              bolTipo={true}
+              cadEtiqueta="Apellido Materno:"
+              cadPlaceholder="Apolizar"
+              cadLeyenda="Apellidos del cliente"
+              bolObligatorio={true}
+              cadNombre="apellidoP"
             />
             <CmpTextoForm
               cadTipoprincipal="1"

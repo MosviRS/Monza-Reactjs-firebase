@@ -5,6 +5,7 @@ Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan V�
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -
+-19/11/2021 - Correciones 
 Archivos relacionados: 
     Elementos.js, 
     CmpBotonPrincipal.js, 
@@ -16,6 +17,7 @@ Archivos relacionados:
 import React, { useState } from "react";
 //importacion de Elementos graficos
 import {
+  Cadenas,
   Colores,
   ElmContNt,
   ElmFormNt,
@@ -28,6 +30,7 @@ import CmpTextoForm from "../components/CmpTextoForm";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
+import CmpRevisionCaja from "../components/CmpRevisionCaja";
 const VstEtgs = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
@@ -36,15 +39,20 @@ const VstEtgs = () => {
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
   const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
+  const [estadoEntrega, cambiarEstadoEntrega] = useState({
+    campo: "12360",
+    valido: null,
+  });
   //Variables Complementarias
 
   const titulosTab = [
-    { id: "ID (Nota)" },
+    { id: "ID (Venta)" },
     { id: "Nombre" },
     { id: "Direccion" },
     { id: "Referencia" },
     { id: "Fecha de entrega" },
     { id: "Telefono" },
+    { id: "Estado" },
   ];
   const data = [
     {
@@ -96,18 +104,18 @@ const VstEtgs = () => {
   return (
     <ElmVstNt>
       <div className="contenedor1">
-        <div className="titulo">Entregas</div>
+        <div className="titulo">{Cadenas.vstEtgs}</div>
         <CmpBotonMenu
           funcion={Rutas[2]}
           cadicono="1"
           cadTipo="1"
-          cadTexto="Notas"
+          cadTexto={Cadenas.vstNt}
         />
         <CmpBotonMenu
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
-          cadTexto="Productos"
+          cadTexto={Cadenas.vstPdts}
         />
         <CmpBotonMenu
           funcion={Rutas[4]}
@@ -120,25 +128,25 @@ const VstEtgs = () => {
           funcion={Rutas[6]}
           cadicono="5"
           cadTipo="1"
-          cadTexto="Proveedores"
+          cadTexto={Cadenas.vstPvds}
         />
         <CmpBotonMenu
           funcion={Rutas[7]}
           cadicono="6"
           cadTipo="1"
-          cadTexto="Bitacora"
+          cadTexto={Cadenas.vstBit}
         />
         <CmpBotonMenu
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"
-          cadTexto="Registro de personal"
+          cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
           cadTipofuncion="6"
           funcion={Rutas[1]}
           cadTipo="4"
-          cadTexto="Cerrar Sesión"
+          cadTexto={Cadenas.cerrarSesion}
           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
@@ -158,14 +166,14 @@ const VstEtgs = () => {
                 columnas="6"
                 titulos={titulosTab}
                 datos={data}
-                tipodatos="2"
+                tipodatos="3"
               />
             </div>
           </ElmContNt>
         </div>
         <div className="subCont2">
           <ElmFormNt>
-            <div className="titulo">Exportar a PDF</div>
+            <div className="titulo">Estado de entrega</div>
             <CmpTextoForm
               cadTipoprincipal="3"
               estEstado={nombre}
@@ -188,11 +196,10 @@ const VstEtgs = () => {
               bolObligatorio={true}
               cadNombre="Nota"
             />
-            <CmpBotonMenu
-              cadicono="7"
-              cadTipo="3"
-              funcion={() => console.log("click")}
-              cadTexto="Exportar a PDF"
+            <CmpRevisionCaja
+              tipo="2"
+              estEstado={estadoEntrega}
+              estCambiarEstado={cambiarEstadoEntrega}
             />
           </ElmFormNt>
         </div>

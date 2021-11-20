@@ -4,7 +4,7 @@ VstAbns - Vista
 Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan Vélazquez, Carlos López Palma
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
--
+-19/11/2021 - Correciones 
 Archivos relacionados: 
     Elementos.js, 
     CmpBotonPrincipal.js, 
@@ -16,6 +16,7 @@ Archivos relacionados:
 import React, { useState } from "react";
 //importacion de Elementos graficos
 import {
+  Cadenas,
   Colores,
   ElmContNt,
   ElmFormNt,
@@ -40,13 +41,13 @@ const VstAbns = () => {
   //Variables Complementarias
 
   const titulosTab = [
-    { id: "Id (Nota)" },
+    { id: "Id (Venta)" },
     { id: "Nombre" },
     { id: "Direccion / Domicilio" },
     { id: "Fecha de compra" },
     { id: "Total a pagar" },
     { id: "Abonado" },
-    { id: "Saldo" },
+    { id: "Adeudo" },
   ];
   const data = [
     {
@@ -99,49 +100,49 @@ const VstAbns = () => {
   return (
     <ElmVstNt>
       <div className="contenedor1">
-        <div className="titulo">Abonos</div>
+        <div className="titulo">{Cadenas.vstAbns}</div>
         <CmpBotonMenu
           funcion={Rutas[2]}
           cadicono="1"
           cadTipo="1"
-          cadTexto="Notas"
+          cadTexto={Cadenas.vstNt}
         />
         <CmpBotonMenu
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
-          cadTexto="Productos"
+          cadTexto={Cadenas.vstPdts}
         />
-        <CmpBotonMenu cadicono="3" cadTipo="2" cadTexto="Abonos" />
+        <CmpBotonMenu cadicono="3" cadTipo="2" cadTexto={Cadenas.vstAbns} />
         <CmpBotonMenu
           funcion={Rutas[5]}
           cadicono="4"
           cadTipo="1"
-          cadTexto="Entregas"
+          cadTexto={Cadenas.vstEtgs}
         />
         <CmpBotonMenu
           funcion={Rutas[6]}
           cadicono="5"
           cadTipo="1"
-          cadTexto="Proveedores"
+          cadTexto={Cadenas.vstPvds}
         />
         <CmpBotonMenu
           funcion={Rutas[7]}
           cadicono="6"
           cadTipo="1"
-          cadTexto="Bitacora"
+          cadTexto={Cadenas.vstBit}
         />
         <CmpBotonMenu
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"
-          cadTexto="Registro de personal"
+          cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
           cadTipofuncion="6"
           funcion={Rutas[1]}
           cadTipo="4"
-          cadTexto="Cerrar Sesión"
+          cadTexto={Cadenas.cerrarSesion}
           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>

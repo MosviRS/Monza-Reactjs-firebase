@@ -5,6 +5,7 @@ Fecha de creación: 10/11/2021 - Responsable: César Pedraza Hernández, Alan V�
 Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
 Modificaciones:
 -
+-19/11/2021 - Correciones 
 Archivos relacionados: Elementos.js, CmpBotonPrincipal.js CmpTextoForm.js CmpCajaCombo.js, 
 */
 import React, { useState } from "react";
@@ -28,7 +29,6 @@ const VstReg = () => {
     "@media (max-width: 1000px) {background-size: auto; }";
 
   //Variables estado
-  const [usuario, cambiarUsuario] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [apPaterno, cambiarApPaterno] = useState({ campo: "", valido: null });
   const [apMaterno, cambiarApMaterno] = useState({ campo: "", valido: null });
@@ -50,13 +50,14 @@ const VstReg = () => {
     telefono: /^\d{7,14}$/, // 7 a 14 numeros.
   };
   const preguntas = [
-    { id: "1", nombre: "¿Pregunta 1?" },
-    { id: "2", nombre: "¿Pregunta 2?" },
-    { id: "3", nombre: "¿Pregunta 3?" },
-    { id: "4", nombre: "¿Pregunta 4?" },
-    { id: "5", nombre: "¿Pregunta 5?" },
-    { id: "6", nombre: "¿Pregunta 6?" },
-    { id: "7", nombre: "¿Pregunta 7?" },
+    { id: "1", nombre: "A" },
+    { id: "2", nombre: "B" },
+    { id: "3", nombre: "C" },
+    { id: "4", nombre: "D" },
+    { id: "5", nombre: "F" },
+    { id: "6", nombre: "G" },
+    { id: "7", nombre: "H" },
+    { id: "8", nombre: "I" },
   ];
   const history = useHistory();
   //Funciones
@@ -108,18 +109,6 @@ const VstReg = () => {
     <ELmVStIns>
       <ElmContVStReg>
         <div className="titulo">Registro</div>
-        <CmpTextoForm
-          cadTipoprincipal="1"
-          estEstado={usuario}
-          estCambiarEstado={cambiarUsuario}
-          bolTipo={true}
-          cadEtiqueta="Usuario"
-          cadPlaceholder="Usuario"
-          cadLeyenda="ejemplo solo letras, 10 a 15 caracteres etc..."
-          bolObligatorio={true}
-          cadNombre={"Usuario"}
-          exprExpresionR={expresiones.usuario}
-        />
         <CmpTextoForm
           cadTipoprincipal="1"
           estEstado={nombre}

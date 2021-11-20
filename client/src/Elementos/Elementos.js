@@ -13,6 +13,7 @@ Modificaciones:
     'VstEtgs'
     'VstPvds'
     'VstBit'
+-19/11/2021 Correcciones de diseño de componentes y vistas
   correccion de diseño en tablas, y Formularios
 Archivos relacionados:, 
 */
@@ -63,6 +64,18 @@ const Tipografias = {
     fontSize: "12px",
   },
 };
+//Cadenas
+const Cadenas = {
+  vstNt: "Ventas",
+  vstPdts: "Productos",
+  vstAbns: "Abonos",
+  vstEtgs: "Entregas",
+  vstPvds: "Proveedores",
+  vstBit: "Bitácora",
+  vstReg: "Personal",
+  cerrarSesion: "Cerrar Sesión",
+};
+
 // Componentes
 const ElmGrupoTextoIns = styled.div`
   position: relative;
@@ -246,7 +259,7 @@ const ElmIconoBusquedaGbl = styled(FontAwesomeIcon)`
   position: absolute;
   left: 17px;
   bottom: 10px;
-  z-index: 0;
+  z-index: 2;
   font-size: 25px;
 `;
 const ElmTextoAreaGbl = styled.textarea`
@@ -561,6 +574,7 @@ const ELmVStIns = styled.main`
   margin-top: 100px;
   @media (max-width: 1000px) {
     grid-template-columns: 1fr;
+    margin-top: 20px;
   }
 `;
 const ElmContVStIns = styled.div`
@@ -584,6 +598,8 @@ const ElmContVStIns = styled.div`
     margin-top: 50px;
   }
   @media (max-width: 1000px) {
+    grid-template-rows: 0px 148px repeat(4, 100px);
+    border-radius: 20px;
     > .entrada {
       margin-left: 20px;
       margin-right: 20px;
@@ -638,6 +654,9 @@ const ElmTituloVStIns = styled.div`
   font-family: ${Tipografias.Titulo1.fontFamily};
   font-size: ${Tipografias.Titulo1.fontSize};
   font-weight: ${Tipografias.Titulo1.fontweight};
+  @media (max-width: 1000px) {
+    margin-top: 20px;
+  }
 `;
 
 //Vista VstReg
@@ -689,6 +708,7 @@ const ElmCont2VStReg = styled.div`
     padding-top: 0px;
     padding-left: 20px;
     padding-right: 20px;
+    padding-bottom: 20px;
     background-color: ${Colores.ColBlanco};
   }
 `;
@@ -810,8 +830,15 @@ const ElmContNt = styled.div`
     font-size: ${Tipografias.Titulo2.fontSize};
   }
   .busqueda {
+    padding-top: 20px;
     display: grid;
     grid-template-columns: 1fr 10%;
+  }
+  .tres {
+    padding-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column: span 2;
   }
   .tabla {
     display: grid;
@@ -821,23 +848,33 @@ const ElmContNt = styled.div`
   @media (max-width: 1000px) {
     grid-template-columns: 1fr;
     .titulo {
+      grid-column: span 2;
     }
     .busqueda {
       margin-top: 20px;
-      grid-column: span 1;
-      grid-template-columns: 1fr 10%;
+      grid-column: span 2;
+      grid-template-columns: 1fr 15%;
     }
 
     .tabla {
-      grid-column: span 1;
+      grid-column: span 2;
     }
   }
 `;
 const ElmIconAddProduct = styled(FontAwesomeIcon)`
+  margin-top: 2px;
+  margin-left: 5px;
   font-size: 50px;
+  align-items: center;
+  text-align: center;
   color: ${Colores.ColNaranja};
   &:hover {
     color: ${Colores.ColNegroJet};
+  }
+  @media (max-width: 1000px) {
+    margin-top: 8px;
+    margin-left: 5px;
+    font-size: 40px;
   }
 `;
 const ElmFormNt = styled.div`
@@ -878,6 +915,13 @@ const ElmFormNt = styled.div`
     /* padding: 20px; */
     margin-top: 20px;
     margin-right: 0px;
+    .conjunto2 {
+      margin-top: 40px;
+      /* margin-left: 5px; */
+      display: grid;
+      grid-column: span 1;
+      grid-row: span 2;
+    }
   }
 `;
 
@@ -902,6 +946,7 @@ export {
   ElmIconoRevCaja,
   ElmOpcion,
   Colores,
+  Cadenas,
   ElmTituloAlerta,
   ElmDescripcionAlerta,
   ELmContenedorTabla,

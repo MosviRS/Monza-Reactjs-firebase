@@ -7,7 +7,6 @@ import CmpCajaCombo from "../components/CmpCajaCombo";
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpRevisionCaja from "../components/CmpRevisionCaja";
-import CmpTablas from "../components/CmpTablas";
 
 const Panel = () => {
   const [usuario, cambiarUsuario] = useState({ campo: "", valido: null });
@@ -99,7 +98,6 @@ const Panel = () => {
         estEstado={password6}
         estCambiarEstado={cambiarPassword6}
       />
-      <CmpTablas />
     </main>
   );
 };
