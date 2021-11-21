@@ -19,7 +19,7 @@ Archivos relacionados:
     CmpTextoBuscar.js,
     CmpTablas.js,
 */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 //importacion de Elementos graficos
 import {
   Cadenas,
@@ -30,6 +30,8 @@ import {
 } from "../Elementos/Elementos";
 import { useHistory } from "react-router-dom";
 //Importacion Componentes
+import firebase from "../bd/conexion";
+import { guardarProveedores } from "../bd/servicios";
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpTextoForm from "../components/CmpTextoForm";
 import CmpBotonMenu from "../components/CmpBotonMenu";
@@ -40,6 +42,8 @@ const VstPvds = () => {
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [tablaProveedor, cambiarTablaProveedor] = useState([]);
+  const [tablaFiltrada,cambiarTablaFiltrada] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
@@ -52,7 +56,7 @@ const VstPvds = () => {
     nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    telefono: /^\d{7,14}$/, // 7 a 14 numeros.
+    telefono: /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
   };
 
   const titulosTab = [
@@ -60,8 +64,7 @@ const VstPvds = () => {
     { id: "Apellidos" },
     { id: "Direccion / Domicilio" },
     { id: "Telefono" },
-    { id: "Correo" },
-    { id: "Tipo de mercancia" },
+    { id: "Correo" },    
   ];
   const data = [
     {
@@ -109,6 +112,27 @@ const VstPvds = () => {
     7: irBitacora,
     8: irRegistro,
   };
+  useEffect(()=>{
+    firebase.db.collection("proveedor").onSnapshot((querySnapshot)=>{
+      const documentos= [];
+      querySnapshot.forEach((doc)=>{
+        documentos.push({ ...doc.data(), id:doc.id});
+      });
+      cambiarTablaProveedor(documentos);
+    });
+  },[]);
+
+  const filtradoProvedores = ()=>{
+    cambiarTablaFiltrada(
+      tablaProveedor.filter(function(item){
+        return item.nombre
+          .toString()
+          .toLowerCase()
+          .includes(busqueda.campo.toLowerCase());
+      })
+    );
+  };
+
   //rederizacion
   return (
     <ElmVstNt>
@@ -172,10 +196,10 @@ const VstPvds = () => {
             />
             <div className="tabla">
               <CmpTablas
-                columnas="6"
+                columnas="4"
                 titulos={titulosTab}
-                datos={data}
-                tipodatos="3"
+                datos={tablaProveedor||tablaFiltrada}
+                tipodatos="5"
               />
             </div>
           </ElmContNt>
@@ -247,7 +271,7 @@ const VstPvds = () => {
             <CmpBotonPrincipal
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => console.log("click")}
+              funcion={() => guardarProveedores(correo.campo, direccion.campo,nombre.campo,telefono.campo)}
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar o actualizar los datos?"
             />

@@ -10,3 +10,10 @@ const tomarTabla = async (estCambiarEstado, cadTabla) => {
   });
 };
 export { tomarTabla };
+const guardarProveedores = async (correo,direccion, nombre_empresa, telefono) => {
+  await firebase.db
+    .collection("proveedor")
+    .doc()
+    .set({ correo: correo, direccion:direccion, nombre_empresa:nombre_empresa,telefono:telefono });  
+};
+export {guardarProveedores};
