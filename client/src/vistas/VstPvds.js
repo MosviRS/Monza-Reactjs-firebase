@@ -32,6 +32,7 @@ import {
   ElmVstNt,
 } from "../Elementos/Elementos";
 import { useHistory } from "react-router-dom";
+import { funcion } from "./../bd/servicios";
 //Importacion Componentes
 import firebase from "../bd/conexion";
 import { guardarProveedores } from "../bd/servicios";
@@ -41,15 +42,13 @@ import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 
-import firebase from "./../bd/conexion";
-
 const VstPvds = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
   const [tablaProveedor, cambiarTablaProveedor] = useState([]);
-  const [tablaFiltrada,cambiarTablaFiltrada] = useState([]);
+  const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
@@ -62,7 +61,8 @@ const VstPvds = () => {
     nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    telefono: /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
+    telefono:
+      /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
   };
 
   const titulosTab = [
@@ -70,7 +70,7 @@ const VstPvds = () => {
     { id: "Apellidos" },
     { id: "Direccion / Domicilio" },
     { id: "Telefono" },
-    { id: "Correo" },    
+    { id: "Correo" },
   ];
   const data = [
     {
@@ -85,42 +85,42 @@ const VstPvds = () => {
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     window.location.replace("/");
   };
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/2");
   };
   const irProductos = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/3");
   };
   const irClientes = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/4");
   };
   const irEntregas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/5");
   };
   const irProveedores = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/6");
   };
   const irBitacora = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/7");
   };
   const irRegistro = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/1");
   };
@@ -135,55 +135,57 @@ const VstPvds = () => {
     8: irRegistro,
   };
 
-  
   useEffect(() => {
-    
     const ac = new AbortController();
-    
-    var mensaje = ""
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if(user != null){
-        ac.abort()
-        mensaje = 'Se restablecio la sesion para: ' + user.email;
-        console.log(mensaje)
+    var mensaje = "";
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        ac.abort();
+        mensaje = "Se restablecio la sesion para: " + user.email;
+        console.log(mensaje);
       } else {
-        mensaje = 'La sesion caduco'
-        console.log(mensaje)
-        ac.abort()
-        setTimeout(()=>{
-          irInicio()
+        mensaje = "La sesion caduco";
+        console.log(mensaje);
+        ac.abort();
+        setTimeout(() => {
+          irInicio();
         }, 0);
       }
-    })
+    });
 
     return () => ac.abort();
   });
 
-  const cerrarSesion = async () =>{
-    await firebase.auth().signOut().then(() => {
-      console.log('Se cerro sesion')
-      setTimeout(()=>{
-        irInicio()
-      }, 0);
-    }).catch((error) => {
-      console.log(error)
-    });
-  }
+  const cerrarSesion = async () => {
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log("Se cerro sesion");
+        setTimeout(() => {
+          irInicio();
+        }, 0);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  useEffect(()=>{
-    firebase.db.collection("proveedor").onSnapshot((querySnapshot)=>{
-      const documentos= [];
-      querySnapshot.forEach((doc)=>{
-        documentos.push({ ...doc.data(), id:doc.id});
+  useEffect(() => {
+    firebase.db.collection("proveedor").onSnapshot((querySnapshot) => {
+      const documentos = [];
+      querySnapshot.forEach((doc) => {
+        documentos.push({ ...doc.data(), id: doc.id });
       });
       cambiarTablaProveedor(documentos);
     });
-  },[]);
+  }, []);
 
-  const filtradoProvedores = ()=>{
+  const filtradoProvedores = () => {
     cambiarTablaFiltrada(
-      tablaProveedor.filter(function(item){
+      tablaProveedor.filter(function (item) {
         return item.nombre
           .toString()
           .toLowerCase()
@@ -191,7 +193,6 @@ const VstPvds = () => {
       })
     );
   };
-
 
   //rederizacion
   return (
@@ -236,11 +237,11 @@ const VstPvds = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
-           cadTipofuncion="6"
-           funcion={() => cerrarSesion()}
-           cadTipo="4"
-           cadTexto={Cadenas.cerrarSesion}
-           cadMensaje="¿Desea cerrar sesión?"
+          cadTipofuncion="6"
+          funcion={() => cerrarSesion()}
+          cadTipo="4"
+          cadTexto={Cadenas.cerrarSesion}
+          cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
       <div className="contenedor2">
@@ -258,7 +259,7 @@ const VstPvds = () => {
               <CmpTablas
                 columnas="4"
                 titulos={titulosTab}
-                datos={tablaProveedor||tablaFiltrada}
+                datos={tablaProveedor || tablaFiltrada}
                 tipodatos="5"
               />
             </div>
@@ -331,7 +332,14 @@ const VstPvds = () => {
             <CmpBotonPrincipal
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => guardarProveedores(correo.campo, direccion.campo,nombre.campo,telefono.campo)}
+              funcion={() =>
+                guardarProveedores(
+                  correo.campo,
+                  direccion.campo,
+                  nombre.campo,
+                  telefono.campo
+                )
+              }
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar o actualizar los datos?"
             />

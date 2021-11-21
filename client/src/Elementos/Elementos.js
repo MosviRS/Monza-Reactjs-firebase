@@ -122,6 +122,7 @@ const ElmMuestraIconoIns = styled(FontAwesomeIcon)`
     props.tipoprincipal === "1" &&
     css`
       opacity: 0;
+      display: none;
     `}
   ${(props) =>
     props.tipoprincipal === "2" &&
@@ -132,6 +133,7 @@ const ElmMuestraIconoIns = styled(FontAwesomeIcon)`
     props.tipoprincipal === "3" &&
     css`
       opacity: 0;
+      display: none;
     `}
 `;
 const ElmEtiquetaGbl = styled.form`

@@ -36,7 +36,7 @@ import {
   ElmVstNt,
 } from "../Elementos/Elementos";
 import { useHistory } from "react-router-dom";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCapsules, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 //Importacion Componentes
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpTextoForm from "../components/CmpTextoForm";
@@ -47,8 +47,7 @@ import CmpTablas from "../components/CmpTablas";
 import CmpTextoArea from "../components/CmpTextoArea";
 import CmpRevisionCaja from "../components/CmpRevisionCaja";
 import CmpCajaCombo from "../components/CmpCajaCombo";
-import { tomarTabla } from "../bd/servicios";
-
+import { MostrarAlerta1, MostrarAlerta3 } from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
 
 const VstNt = () => {
@@ -63,7 +62,9 @@ const VstNt = () => {
     campo: "",
     valido: null,
   });
+  const [listaProd, cambiarlistaProd] = useState([]);
   const [tablaProducto, cambiartablaProducto] = useState([]);
+  const [filtroProd, cambiarFiltroProd] = useState([]);
   const [cliente, cambiarCliente] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [apellidoP, cambiarApellidoP] = useState({ campo: "", valido: null });
@@ -71,15 +72,18 @@ const VstNt = () => {
   const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
   const [telefono, cambiarTelefono] = useState({ campo: "", valido: null });
   const [pago, cambiarPago] = useState({ campo: "", valido: null });
-  const [total, cambiarTotal] = useState({ campo: "$ 0000.00", valido: null });
+  const [total, cambiarTotal] = useState({ campo: 0, valido: null });
   const [totalRec, cambiarTotalRec] = useState({ campo: "", valido: null });
-  const [cant, cambiarCant] = useState({ campo: "", valido: null });
-  const [productoU, cambiarProductoU] = useState({ campo: "", valido: null });
+  const [cant, cambiarCant] = useState({ campo: 0, valido: null });
+  const [productoU, cambiarProductoU] = useState({ campo: "", id: "" });
   const [Referencias, cambiarReferencias] = useState({
     campo: "",
     valido: null,
   });
   //Variables Complementarias
+  const expresiones = {
+    cantidad: /^\d+/, // 7 a 14 numeros. Letras y espacios, pueden llevar acentos.
+  };
   const preguntas = [
     { id: "1", nombre: "A" },
     { id: "2", nombre: "B" },
@@ -94,86 +98,49 @@ const VstNt = () => {
     { id: "Modelo" },
     { id: "Nombre del Producto" },
     { id: "Monto Unidad" },
-    { id: "Monto Subtotal" },
     { id: "Cantidad" },
+    { id: "Monto Subtotal" },
     { id: "Eliminar" },
-  ];
-  const data = [
-    {
-      id: "1",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "0",
-    },
-    {
-      id: "2",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "0",
-    },
-    {
-      id: "3",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "0",
-    },
-    {
-      id: "4",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "0",
-    },
-    {
-      id: "5",
-      nombre: "name",
-      apellido: "Apellido",
-      edad: "Edad",
-      email: "0",
-    },
   ];
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     window.location.replace("/");
   };
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/2");
   };
   const irProductos = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/3");
   };
   const irClientes = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/4");
   };
   const irEntregas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/5");
   };
   const irProveedores = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/6");
   };
   const irBitacora = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/7");
   };
   const irRegistro = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/1");
   };
@@ -189,54 +156,135 @@ const VstNt = () => {
   };
 
   useEffect(() => {
-    
     const ac = new AbortController();
-    
-    var mensaje = ""
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if(user != null){
-        ac.abort()
-        mensaje = 'Se restablecio la sesion para: ' + user.email;
-        console.log(mensaje)
+    var mensaje = "";
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        ac.abort();
+        mensaje = "Se restablecio la sesion para: " + user.email;
+        console.log(mensaje);
       } else {
-        mensaje = 'La sesion caduco'
-        console.log(mensaje)
-        ac.abort()
-        setTimeout(()=>{
-          irInicio()
+        mensaje = "La sesion caduco";
+        console.log(mensaje);
+        ac.abort();
+        setTimeout(() => {
+          irInicio();
         }, 0);
       }
-    })
-
-    return () => ac.abort();
-  });
-
-  const cerrarSesion = async () =>{
-    await firebase.auth().signOut().then(() => {
-      console.log('Se cerro sesion')
-      setTimeout(()=>{
-        irInicio()
-      }, 0);
-    }).catch((error) => {
-      console.log(error)
     });
+
+    firebase.db.collection("producto").onSnapshot((querySnapshot) => {
+      const docs = [];
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id });
+      });
+      cambiartablaProducto(docs);
+      // console.log(docs);
+    });
+  }, []);
+
+  const cerrarSesion = async () => {
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log("Se cerro sesion");
+        setTimeout(() => {
+          irInicio();
+        }, 0);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const filtradoProd = () => {
+    cambiarFiltroProd(
+      tablaProducto.filter(function (item) {
+        // console.log(item.nombre_producto);
+
+        return item.nombre_producto
+          .toString()
+          .toLowerCase()
+          .includes(busqueda.campo.toLowerCase());
+      })
+    );
+  };
+  const sumCant = () => {
+    cambiarCant({ campo: parseInt(cant.campo) + 1 });
+  };
+  if (parseInt(cant.campo) < 0) {
+    cambiarCant({ campo: "" });
   }
 
+  // console.log(index);
+  const validacion = () => {
+    if (
+      expresiones.cantidad.test(cant.campo) &&
+      parseInt(cant.campo) > 0 &&
+      productoU.campo !== ""
+    ) {
+      const aux = tablaProducto.filter((item) => {
+        return item.id
+          .toString()
+          .toLowerCase()
+          .includes(productoU.id.toLowerCase());
+      });
+      // console.log(aux[0].id);
+      const subt = parseFloat(cant.campo) * parseFloat(aux[0].precio);
+      const lista = listaProd;
+      // lista.map((value, indice) => {
+      //   if (value.id === aux[0].id) {
+      //     // setauxcant(value.cantidad);
+      //     value.cantidad = value.cantidad + cant.campo;
+      //     value.subtotal = parseFloat(value.precio) + parseInt(value.cantidad);
+      //     setcontrol(value);
+      //     setindex(aux[0].id);
+      //     cambiarBusqueda({ campo: "" });
+      //     // console.log(value);
+      //   }
+      // });
 
-  // useEffect(() => {
-  //   tomarTabla(tablaProducto, "producto");
-  // }, []);
-  // useEffect(() => {
-  //   firebase.db.collection("producto").onSnapshot((querySnapshot) => {
-  //     const docs = [];
-  //     querySnapshot.forEach((doc) => {
-  //       docs.push({ ...doc.data(), id: doc.id });
-  //     });
-  //     cambiartablaProducto(docs);
-  //     console.log(docs);
-  //   });
-  // }, []);
+      // lista.splice(index, 1);
+      lista.push({
+        id: aux[0].id,
+        nombre_producto: aux[0].nombre_producto,
+        modelo: aux[0].modelo,
+        precio: parseFloat(aux[0].precio),
+        cantidad: cant.campo,
+        sub_total: subt,
+      });
+      // setcontrol([]);
+      cambiarTotal({
+        campo: parseFloat(total.campo) + subt,
+      });
+      cambiarBusqueda({ campo: "" });
+      cambiarlistaProd(lista);
+      cambiarFiltroProd([]);
+      cambiarCant({ campo: 0 });
+      cambiarProductoU({ campo: "", id: "" });
+      MostrarAlerta3("objeto añadido corectamente", () => {
+        console.log("funciona");
+      });
+    } else {
+      cambiarBusqueda({ campo: "" });
+      cambiarFiltroProd([]);
+      cambiarCant({ campo: 0 });
+      cambiarProductoU({ campo: "", id: "" });
+      MostrarAlerta1(
+        "Error datos no validos, intente de nuevo",
+        "Error",
+        2,
+        () => {
+          console.log("error");
+        }
+      );
+    }
+  };
+  // console.log(control);
+  // console.log(tablaProducto);
 
   //rederizacion
   return (
@@ -282,7 +330,7 @@ const VstNt = () => {
         />
         <CmpBotonPrincipal
           cadTipofuncion="6"
-          funcion={() => cerrarSesion()}
+          funcion={cerrarSesion}
           cadTipo="4"
           cadTexto={Cadenas.cerrarSesion}
           cadMensaje="¿Desea cerrar sesión?"
@@ -320,11 +368,12 @@ const VstNt = () => {
               estCambiarEstado={cambiarBusqueda}
               cadPlaceholder="Buscar"
               cadNombre="busqueda"
+              filtro={filtradoProd}
             />
             <div className="busqueda">
               <CmpCajaCombo
-                tipodatos="1"
-                arrLista={preguntas}
+                tipoDatos="2"
+                arrLista={filtroProd}
                 cadEtiqueta="Resultado productos:"
                 cadNombre={"productoU"}
                 estEstado={productoU}
@@ -346,19 +395,14 @@ const VstNt = () => {
                 <div>
                   <br></br>
                 </div>
-                <ElmIconAddProduct
-                  icon={faPlusCircle}
-                  onClick={() => console.log("click")}
-                />
+                <ElmIconAddProduct icon={faPlusCircle} onClick={sumCant} />
               </div>
             </div>
             <div className="tres">
               <div></div>
               <CmpBotonPrincipal
-                cadTipofuncion="2"
-                funcion={() => {
-                  console.log("hola");
-                }}
+                cadTipofuncion="0"
+                funcion={validacion}
                 cadTipo="1"
                 cadTexto="Añadir"
                 cadMensaje="¿Desea agregar producto?"
@@ -366,10 +410,13 @@ const VstNt = () => {
             </div>
             <div className="tabla">
               <CmpTablas
+                tipodatos={"7"}
                 titulos={titulosTab}
-                datos={data}
-                tipodatos="1"
+                datos={listaProd}
                 columnas="6"
+                total={total}
+                camTotal={cambiarTotal}
+                cambiarDatos={cambiarlistaProd}
               />
             </div>
           </ElmContNt>
@@ -385,6 +432,7 @@ const VstNt = () => {
             />
 
             <CmpCajaCombo
+              tipodatos="1"
               arrLista={preguntas}
               cadEtiqueta="Resultado clientes:"
               cadNombre={"Cliente"}

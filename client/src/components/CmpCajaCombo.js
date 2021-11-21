@@ -21,48 +21,88 @@ const CompSeleccion = ({
   cadNombre,
   estEstado,
   estCambiarEstado,
-  tipodatos,
+  tipoDatos,
 }) => {
   // console.log(estado);
   const onChange = (e) => {
     estCambiarEstado({ ...estEstado, campo: e.target.value });
   };
-  const reder1 = (value) => {
+  const onClick = (value) => {
+    estCambiarEstado({ ...estEstado, id: value });
+  };
+  const datos1 = () => {
     return (
-      <option key={value.id} value={value.nombre}>
-        {value.nombre}
-      </option>
+      <div>
+        <ElmEtiquetaGbl htmlFor={cadNombre}>{cadEtiqueta}</ElmEtiquetaGbl>
+        <ElmGrupoTextoIns>
+          <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
+            {arrLista.map((value) => {
+              return (
+                <option key={value.id} value={value.nombre}>
+                  {value.nombre}
+                </option>
+              );
+            })}
+          </ElmSeleccionGbl>
+          <ElmIconoComboCaja icon={faChevronDown} />
+        </ElmGrupoTextoIns>
+      </div>
     );
   };
-  const reder2 = (value) => {
+  const datos2 = () => {
     return (
-      <option key={value.id} value={value.nombre_producto}>
-        {value.nombre_producto}
-      </option>
+      <div>
+        <ElmEtiquetaGbl htmlFor={cadNombre}>{cadEtiqueta}</ElmEtiquetaGbl>
+        <ElmGrupoTextoIns>
+          <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
+            {arrLista.map((value) => {
+              return (
+                <option
+                  key={value.id}
+                  onClick={() => onClick(value.id)}
+                  value={value.nombre_producto}
+                >
+                  {value.nombre_producto}
+                </option>
+              );
+            })}
+            <option value={"Ninguno"}>Selecciona un Elemento</option>
+          </ElmSeleccionGbl>
+          <ElmIconoComboCaja icon={faChevronDown} />
+        </ElmGrupoTextoIns>
+      </div>
     );
   };
-
-  const funcionRender = (value) => {
-    const selectReder = {
-      1: reder1(value),
-      2: reder2(value),
-    };
-    return selectReder[tipodatos];
+  const datos3 = () => {
+    return (
+      <div>
+        <ElmEtiquetaGbl htmlFor={cadNombre}>{cadEtiqueta}</ElmEtiquetaGbl>
+        <ElmGrupoTextoIns>
+          <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
+            {arrLista.map((value) => {
+              return (
+                <option
+                  key={value.id}
+                  onClick={() => onClick(value.id)}
+                  value={value.nombre_empresa}
+                >
+                  {value.nombre_empresa}
+                </option>
+              );
+            })}
+            <option value={"Ninguno"}>Selecciona un Elemento</option>
+          </ElmSeleccionGbl>
+          <ElmIconoComboCaja icon={faChevronDown} />
+        </ElmGrupoTextoIns>
+      </div>
+    );
   };
-  console.log(arrLista);
-  return (
-    <div>
-      <ElmEtiquetaGbl htmlFor={cadNombre}>{cadEtiqueta}</ElmEtiquetaGbl>
-      <ElmGrupoTextoIns>
-        <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
-          {arrLista.map((value) => {
-            funcionRender(value);
-          })}
-        </ElmSeleccionGbl>
-        <ElmIconoComboCaja icon={faChevronDown} />
-      </ElmGrupoTextoIns>
-    </div>
-  );
+  const select = {
+    1: datos1(),
+    2: datos2(),
+    3: datos3(),
+  };
+  return <div>{select[tipoDatos || 1]}</div>;
 };
 
 export default CompSeleccion;

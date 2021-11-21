@@ -19,11 +19,12 @@ const CmpTextoBuscar = ({
   estCambiarEstado,
   cadPlaceholder,
   cadNombre,
+  filtro,
 }) => {
   const onChange = (e) => {
     estCambiarEstado({ ...estEstado, campo: e.target.value });
   };
-  console.log(estEstado);
+  // console.log(estEstado);
   return (
     <ElmGrupoTextoIns>
       <ElmIconoBusquedaGbl icon={faSearch} />
@@ -33,6 +34,7 @@ const CmpTextoBuscar = ({
         id={cadNombre}
         value={estEstado.campo}
         onChange={onChange}
+        onKeyUp={filtro}
       />
     </ElmGrupoTextoIns>
   );

@@ -53,7 +53,7 @@ const CmpTextoForm = ({
       funcion();
     }
   };
-  console.log(estEstado);
+  // console.log(estEstado);
   return (
     <div>
       <ElmEtiquetaGbl htmlFor={cadNombre} valido={estEstado.valido}>

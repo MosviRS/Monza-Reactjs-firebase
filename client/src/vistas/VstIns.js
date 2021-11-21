@@ -19,9 +19,7 @@ import { useHistory } from "react-router-dom";
 
 import firebase from "./../bd/conexion";
 
-import {
-  MostrarAlerta1
-} from "../components/CmpAlertas";
+import { MostrarAlerta1 } from "../components/CmpAlertas";
 import {
   Colores,
   ElmCont2VStIns,
@@ -33,17 +31,16 @@ import {
 import CmpTexto from "../components/CmpTexto";
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 
-
 const VstIns = () => {
   // Estilo del fondo
   document.body.style = "background:" + Colores.ColHueso + ";";
 
   // Variables de estado
-  const [correo, cambiarCorreo] = useState({ 
-    campo: ""
+  const [correo, cambiarCorreo] = useState({
+    campo: "",
   });
   const [contrasenia, cambiarContrasenia] = useState({
-    campo: ""
+    campo: "",
   });
 
   //Variables complementarias
@@ -58,77 +55,76 @@ const VstIns = () => {
   //Funciones
 
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/2");
   };
 
-
   useEffect(() => {
-    
     const ac = new AbortController();
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if(user != null){
-        ac.abort()
-        setTimeout(()=>{
-          irNotas()
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        ac.abort();
+        setTimeout(() => {
+          irNotas();
         }, 0);
-        
       }
-    })
+    });
 
     return () => ac.abort();
   });
 
-
   const inicia = () => {
-    
-    if(correo.campo == null || contrasenia.campo == null
-      || correo.campo === '' || contrasenia.campo === ''){
-      const mensaje  = 'Campos vacio, rellena los campos antes de inciar sesion';
+    if (
+      correo.campo == null ||
+      contrasenia.campo == null ||
+      correo.campo === "" ||
+      contrasenia.campo === ""
+    ) {
+      const mensaje = "Campos vacio, rellena los campos antes de inciar sesion";
 
-      MostrarAlerta1("", mensaje, "2", () => (console.log()));
-      console.log(mensaje)
-    }else {
-      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      MostrarAlerta1("", mensaje, "2", () => console.log());
+      console.log(mensaje);
+    } else {
+      firebase
+        .auth()
+        .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
         .then(() => {
           // Existing and future Auth states are now persisted in the current
           // session only. Closing the window would clear any existing state even
           // if a user forgets to sign out.
           // ...
           // New sign-in will be persisted with session persistence.
-          return firebase.auth().signInWithEmailAndPassword(correo.campo, contrasenia.campo)
-             .then((userCredential) => {
-               // Signed in
-               const user = userCredential.user;
-               const mensaje  = 'Usuario iniciado para: ' + user.email;
+          return firebase
+            .auth()
+            .signInWithEmailAndPassword(correo.campo, contrasenia.campo)
+            .then((userCredential) => {
+              // Signed in
+              const user = userCredential.user;
+              const mensaje = "Usuario iniciado para: " + user.email;
 
-               MostrarAlerta1("Correcto", mensaje, "1", () => (console.log()));
-               console.log(mensaje)
-               
-               cambiarCorreo({campo: ""})
-               cambiarContrasenia({campo: ""})
-               setTimeout(()=>{
-                irNotas()
+              MostrarAlerta1("Correcto", mensaje, "1", () => console.log());
+              console.log(mensaje);
+
+              cambiarCorreo({ campo: "" });
+              cambiarContrasenia({ campo: "" });
+              setTimeout(() => {
+                irNotas();
               }, 0);
-               
-             })
-             .catch((error) => {
-               const mensaje  = 'Credenciales incorrectas del usuario';
+            })
+            .catch((error) => {
+              const mensaje = "Credenciales incorrectas del usuario";
 
-               MostrarAlerta1("", mensaje, "2", () => (console.log()));
-               console.log(mensaje)
+              MostrarAlerta1("", mensaje, "2", () => console.log());
+              console.log(mensaje);
             });
         })
         .catch((error) => {
           // Handle Errors here.
         });
-      
     }
-  }
-
-
+  };
 
   //rederizacion
   return (

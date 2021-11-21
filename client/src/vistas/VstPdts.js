@@ -20,7 +20,7 @@ Archivos relacionados:
     CmpTablas.js,
 */
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 //importacion de Elementos graficos
 import {
   Cadenas,
@@ -36,30 +36,31 @@ import CmpTextoForm from "../components/CmpTextoForm";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
-
+import CmpCajaCombo from "../components/CmpCajaCombo";
 import firebase from "../bd/conexion";
-import {guardarProductos} from "../bd/servicios";
-
+import { guardarProductos } from "../bd/servicios";
 
 const VstPdts = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
-  const [tablaProducto,cambiarTablaProducto] =useState({});
-  const [tablaFiltrada,cambiarTablaFiltrada] =useState({});
+  const [tablaProveedor, cambiarTablaProveedor] = useState([]);
+  const [tablaProducto, cambiarTablaProducto] = useState([]);
+  const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [precio, cambiarPrecio] = useState({ campo: "", valido: null });
   const [cantidad, cambiarCantidad] = useState({ campo: "", valido: null });
   const [marca, cambiarMarca] = useState({ campo: "", valido: null });
-  const [modelo, cambiarModelo] = useState({ campo: "", valido: null });
+  const [proveedor, cambiarProveedor] = useState({ campo: "", valido: null });
+  const [modelo, cambiarModelo] = useState({ campo: "", id: "" });
   const expresiones = {
     nombre: /^[A-Za-z]{4,50}$/, // Letras
     precio: /^[0-9]|[0-9]+([.][0-9]+){1,15}$/, // Letras y espacios, pueden llevar acentos.
-    cantidad:/^\d{1,15}$/, // 4 a 12 digitos.
-    marca: /^[A-Za-z]{4,50}$/,//
-    modelo:/^[a-zA-Z0-9_-]{4,16}$/, // 7 a 14 numeros.
+    cantidad: /^\d{1,15}$/, // 4 a 12 digitos.
+    marca: /^[A-Za-z]{4,50}$/, //
+    modelo: /^[a-zA-Z0-9_-]{4,16}$/, // 7 a 14 numeros.
   };
   //Variables Complementarias
   const titulosTab = [
@@ -96,47 +97,46 @@ const VstPdts = () => {
       e: "XXXX",
     },
   ];
- 
 
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     window.location.replace("/");
   };
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/2");
   };
   const irProductos = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/3");
   };
   const irClientes = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/4");
   };
   const irEntregas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/5");
   };
   const irProveedores = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/6");
   };
   const irBitacora = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/7");
   };
   const irRegistro = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/1");
   };
@@ -150,43 +150,43 @@ const VstPdts = () => {
     7: irBitacora,
     8: irRegistro,
   };
-
- 
   useEffect(() => {
-    
     const ac = new AbortController();
-    
-    var mensaje = ""
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if(user != null){
-        ac.abort()
-        mensaje = 'Se restablecio la sesion para: ' + user.email;
-        console.log(mensaje)
+    var mensaje = "";
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        ac.abort();
+        mensaje = "Se restablecio la sesion para: " + user.email;
+        console.log(mensaje);
       } else {
-        mensaje = 'La sesion caduco'
-        console.log(mensaje)
-        ac.abort()
-        setTimeout(()=>{
-          irInicio()
+        mensaje = "La sesion caduco";
+        console.log(mensaje);
+        ac.abort();
+        setTimeout(() => {
+          irInicio();
         }, 0);
       }
-    })
+    });
 
     return () => ac.abort();
   });
 
-  const cerrarSesion = async () =>{
-    await firebase.auth().signOut().then(() => {
-      console.log('Se cerro sesion')
-      setTimeout(()=>{
-        irInicio()
-      }, 0);
-    }).catch((error) => {
-      console.log(error)
-    });
-  }
-
+  const cerrarSesion = async () => {
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log("Se cerro sesion");
+        setTimeout(() => {
+          irInicio();
+        }, 0);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   useEffect(() => {
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
@@ -197,11 +197,19 @@ const VstPdts = () => {
       cambiarTablaProducto(docs);
       //console.log(docs);
     });
+    firebase.db.collection("proveedor").onSnapshot((querySnapshot) => {
+      const docs = [];
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id });
+      });
+      cambiarTablaProveedor(docs);
+      //console.log(docs);
+    });
   }, []);
 
-  const filtradoProductos = ()=>{
+  const filtradoProductos = () => {
     cambiarTablaFiltrada(
-      tablaProducto.filter(function(item){
+      tablaProducto.filter(function (item) {
         return item.nombre
           .toString()
           .toLowerCase()
@@ -274,7 +282,7 @@ const VstPdts = () => {
               <CmpTablas
                 titulos={titulosTab}
                 datos={data}
-                tipodatos="3"
+                tipodatos="6"
                 columnas="6"
               />
             </div>
@@ -312,11 +320,11 @@ const VstPdts = () => {
               estEstado={cantidad}
               estCambiarEstado={cambiarCantidad}
               bolTipo={true}
-              cadEtiqueta="Cantidad:"
+              cadEtiqueta="Existencia:"
               cadPlaceholder="7"
               cadLeyenda="Solo se admiten numeros"
               bolObligatorio={true}
-              cadNombre="Cantidad"
+              cadNombre="Existencia"
               exprExpresionR={expresiones.cantidad}
             />
             <CmpTextoForm
@@ -324,12 +332,21 @@ const VstPdts = () => {
               estEstado={marca}
               estCambiarEstado={cambiarMarca}
               bolTipo={true}
-              cadEtiqueta="Marca/Proveedor:"
+              cadEtiqueta="Marca:"
               cadPlaceholder="Don Pancho"
               cadLeyenda="Solo se admiten letras"
               bolObligatorio={true}
               cadNombre="Marca"
               exprExpresionR={expresiones.marca}
+            />
+
+            <CmpCajaCombo
+              tipoDatos="3"
+              arrLista={tablaProveedor}
+              cadEtiqueta="Proveedor:"
+              cadNombre={"Proveedor"}
+              estEstado={proveedor}
+              estCambiarEstado={cambiarProveedor}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -346,7 +363,9 @@ const VstPdts = () => {
             <CmpBotonPrincipal
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => guardarProductos(cantidad,marca,modelo,nombre,precio)}
+              funcion={() =>
+                guardarProductos(cantidad, marca, modelo, nombre, precio)
+              }
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar o actualizar los datos?"
             />
