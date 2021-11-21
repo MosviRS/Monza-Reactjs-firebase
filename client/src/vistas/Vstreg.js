@@ -23,7 +23,8 @@ import {
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpTextoForm from "../components/CmpTextoForm";
 import CmpCajaCombo from "../components/CmpCajaCombo";
-
+import {RegistraUsuario} from "../bd/servicios";
+import {MostrarAlerta1} from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
 
 const VstReg = () => {
@@ -40,8 +41,6 @@ const VstReg = () => {
   const [apMaterno, cambiarApMaterno] = useState({ campo: "", valido: null });
   const [correo, cambiarCorreo] = useState({ campo: "", valido: null });
   const [repContra, cambiarRepContra] = useState({ campo: "", valido: null });
-  const [pregunta, cambiarPregunta] = useState({ campo: "", valido: null });
-  const [respuesta, cambiarRespuesta] = useState({ campo: "", valido: null });
   const [contrasenia, cambiarContrasenia] = useState({
     campo: "",
     valido: null,
@@ -49,22 +48,13 @@ const VstReg = () => {
 
   //Variables Complementarias
   const expresiones = {
-    usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
-    nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-    password: /^.{4,12}$/, // 4 a 12 digitos.
+    usuario: /^[a-zA-Z0-9_-]{4,45}$/, // Letras, numeros, guion y guion_bajo
+    nombre: /^[a-zA-ZÀ-ÿ\s]{1,45}$/, // Letras y espacios, pueden llevar acentos.
+    password: /^.{6,15}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
     telefono: /^\d{7,14}$/, // 7 a 14 numeros.
   };
-  const preguntas = [
-    { id: "1", nombre: "A" },
-    { id: "2", nombre: "B" },
-    { id: "3", nombre: "C" },
-    { id: "4", nombre: "D" },
-    { id: "5", nombre: "F" },
-    { id: "6", nombre: "G" },
-    { id: "7", nombre: "H" },
-    { id: "8", nombre: "I" },
-  ];
+  
   const history = useHistory();
   //Funciones
   const validarcontraseña2 = () => {
@@ -90,6 +80,35 @@ const VstReg = () => {
     2: irNotas
   };
 
+  const ValidaCampos = () => {
+    let resp;
+    if(nombre.valido === "true" && apPaterno.valido === "true" && apMaterno.valido === "true" && correo.valido === "true" &&
+      repContra.valido === "true" && contrasenia.valido==="true"){
+      resp = RegistraUsuario(nombre.campo,apPaterno.campo, apMaterno.campo, correo.campo, repContra.campo, contrasenia.campo);
+      console.log(resp);
+      // cambiarNombre({campo: "", valido: null});
+      // cambiarApPaterno({campo: "", valido: null});
+      // cambiarApMaterno({campo: "", valido: null});
+      // cambiarCorreo({campo: "", valido: null});
+      // cambiarContrasenia({campo: "", valido: null});
+      // cambiarRepContra({campo: "", valido: null});
+
+    }else{
+      if(repContra.valido === "false" | contrasenia.valido === "false"){
+        MostrarAlerta1("Contraseñas no coinciden", "Problema al registrar", 2, ()=>{});
+      }else{
+        MostrarAlerta1("Llene todos los campos", "Problema al registrar", 2, ()=>{});
+      }
+    }
+    switch(resp){
+        case 1:
+          MostrarAlerta1("Usuario agregado correctamente", "Registro realizado", 1, ()=>{});
+        break;
+        case 2: 
+          MostrarAlerta1("El correo ya existe", "Problema al registrar", 2, ()=>{});
+        break;
+    }
+  }
 
   //rederizacion
   return (
@@ -171,31 +190,12 @@ const VstReg = () => {
           funcion={validarcontraseña2}
           exprExpresionR={expresiones.password}
         />
-        <CmpCajaCombo
-          arrLista={preguntas}
-          cadEtiqueta="Pregunta de Seguridad"
-          cadNombre={"Pregunta"}
-          estEstado={pregunta}
-          estCambiarEstado={cambiarPregunta}
-        />
-        <CmpTextoForm
-          cadTipoprincipal="1"
-          estEstado={respuesta}
-          estCambiarEstado={cambiarRespuesta}
-          bolTipo={true}
-          cadEtiqueta="Respuesta"
-          cadPlaceholder="Respuesta"
-          cadLeyenda="ejemplo solo letras, 10 a 15 caracteres etc..."
-          bolObligatorio={true}
-          cadNombre={"Respuesta"}
-          exprExpresionR={expresiones.nombre}
-        />
         <div className="botones">
           <div className="boton1">
             <CmpBotonPrincipal
-              cadTipofuncion="1"
+              cadTipofuncion="0"
               cadTipo="1"
-              
+              funcion={()=>{ValidaCampos()}}
               cadTexto="Registrar"
               cadMensaje="Registro"
             />
