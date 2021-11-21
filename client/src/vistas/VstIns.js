@@ -16,6 +16,9 @@ Archivos relacionados: Elementos.js, CmpTexto.js, CmpBotonPrincipal.js
 */
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+
+import firebase from "./../bd/conexion";
+
 import {
   Colores,
   ElmCont2VStIns,
@@ -85,6 +88,55 @@ const VstIns = () => {
     { id: "Monto Subtotal" },
   ];
 
+  const crearCuenta = () =>{
+
+    if(correo.campo == null || contrasenia.campo == null
+      || correo.campo === '' || contrasenia.campo === ''){
+      console.log('Campos vacios raza :c')
+    } else {
+      firebase.auth().createUserWithEmailAndPassword(correo.campo, contrasenia.campo)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+
+        console.log('Usuario creado e iniciado')
+        
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        
+        console.log('No se creo usuario')
+      })
+    }
+  }
+
+  const inicia = () => {
+    
+    if(correo.campo == null || contrasenia.campo == null
+      || correo.campo === '' || contrasenia.campo === ''){
+      console.log('Campos vacios raza :c')
+    }else {
+      const auth = firebase.auth;
+      firebase.auth().signInWithEmailAndPassword(correo.campo, contrasenia.campo)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          
+          console.log('Usuario iniciado')
+
+          irNotas();
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+
+          console.log('credenciales incorrectas del usuario')
+       });
+    }
+  }
+
+
   //rederizacion
   return (
     <ELmVStIns>
@@ -118,7 +170,7 @@ const VstIns = () => {
           <CmpBotonPrincipal
             cadTipofuncion={"8"}
             cadMensaje={"Mensaje de prueba"}
-            funcion={Rutas[2]}
+            funcion={() => inicia()}
             cadTipo={"1"}
             cadTexto={"Ingresar"}
           />
@@ -127,7 +179,7 @@ const VstIns = () => {
           <CmpBotonPrincipal
             cadTipofuncion={"8"}
             cadMensaje={"Mensaje de prueba"}
-            funcion={() => console.log("click")}
+            //funcion={() => inicia()}
             cadTipo={"5"}
             cadTexto={"Olvide mi Contraseña"}
           />

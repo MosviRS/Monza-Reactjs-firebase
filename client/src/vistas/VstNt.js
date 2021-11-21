@@ -47,7 +47,9 @@ import CmpTextoArea from "../components/CmpTextoArea";
 import CmpRevisionCaja from "../components/CmpRevisionCaja";
 import CmpCajaCombo from "../components/CmpCajaCombo";
 import { tomarTabla } from "../bd/servicios";
+
 import firebase from "./../bd/conexion";
+
 const VstNt = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
@@ -168,6 +170,23 @@ const VstNt = () => {
     7: irBitacora,
     8: irRegistro,
   };
+
+  const cerrarSesion = () =>{
+
+    firebase.auth().signOut().then(() => {
+      // Sign-out successful.
+      console.log('Se cerro sesion')
+      irInicio();
+
+    }).catch((error) => {
+      // An error happened.
+      console.log('Ocurrio un error al intentar cerrar sesion')
+    });
+  }
+
+
+
+
   // useEffect(() => {
   //   tomarTabla(tablaProducto, "producto");
   // }, []);
@@ -225,7 +244,7 @@ const VstNt = () => {
         />
         <CmpBotonPrincipal
           cadTipofuncion="6"
-          funcion={Rutas[1]}
+          funcion={() => cerrarSesion()}
           cadTipo="4"
           cadTexto={Cadenas.cerrarSesion}
           cadMensaje="¿Desea cerrar sesión?"
