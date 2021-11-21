@@ -19,7 +19,7 @@ Archivos relacionados:
     CmpTextoBuscar.js,
     CmpTablas.js,
 */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 //importacion de Elementos graficos
 import {
   Cadenas,
@@ -30,44 +30,49 @@ import {
 } from "../Elementos/Elementos";
 import { useHistory } from "react-router-dom";
 //Importacion Componentes
-import firebase from "../bd/conexion";
-import { guardarProveedores } from "../bd/servicios";
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpTextoForm from "../components/CmpTextoForm";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
-import { faHospitalAlt } from "@fortawesome/free-solid-svg-icons";
 const VstPvds = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
-  //Variables estado  
-  const [tablaProveedor, cambiarTablaProveedor] = useState([]);
-  const [tablaFiltrada,cambiarTablaFiltrada] = useState([]);
+  //Variables estado
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
   const [telefono, cambiarTelefono] = useState({ campo: "", valido: null });
-  const [correo, cambiarCorreo] = useState({ campo: "", valido: null });  
+  const [correo, cambiarCorreo] = useState({ campo: "", valido: null });
+  const [mercancia, cambiarMercancia] = useState({ campo: "", valido: null });
   //Variables Complementarias//Variables Complementarias
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
     nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    telefono: /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
+    telefono: /^\d{7,14}$/, // 7 a 14 numeros.
   };
 
   const titulosTab = [
-    { id: "Nombre" },    
+    { id: "Nombre" },
+    { id: "Apellidos" },
     { id: "Direccion / Domicilio" },
     { id: "Telefono" },
-    { id: "Correo" },    
+    { id: "Correo" },
+    { id: "Tipo de mercancia" },
   ];
-
-  
-
+  const data = [
+    {
+      id: "1",
+      a: "name",
+      b: "Apellido",
+      c: "Edad",
+      d: "Email",
+      e: "Telefono",
+    },
+  ];
   const history = useHistory();
   //Funciones
   const irInicio = () => {
@@ -104,31 +109,6 @@ const VstPvds = () => {
     7: irBitacora,
     8: irRegistro,
   };
-
-  useEffect(()=>{
-    firebase.db.collection("proveedor").onSnapshot((querySnapshot)=>{
-      const documentos= [];
-      querySnapshot.forEach((doc)=>{
-        documentos.push({ ...doc.data(), id:doc.id});
-      });
-      cambiarTablaProveedor(documentos);
-    });
-  },[]);
-
-  const filtradoProvedores = ()=>{
-    cambiarTablaFiltrada(
-      tablaProveedor.filter(function(item){
-        return item.nombre
-          .toString()
-          .toLowerCase()
-          .includes(busqueda.campo.toLowerCase());
-      })
-    );
-  };
-
-
-
-
   //rederizacion
   return (
     <ElmVstNt>
@@ -183,21 +163,21 @@ const VstPvds = () => {
         <div className="subCont1">
           <ElmContNt>
             <div className="titulo">Lista de proveedores</div>
+
             <CmpTextoBuscar
               estEstado={busqueda}
               estCambiarEstado={cambiarBusqueda}
               cadPlaceholder="Filtrar proveedores"
               cadNombre="busqueda"
-            />            
-
-            <div className="tabla">                                                
+            />
+            <div className="tabla">
               <CmpTablas
-                  columnas="4"
-                  titulos={titulosTab}
-                  datos={tablaProveedor||tablaFiltrada}
-                  tipodatos="5"
-                />                           
-            </div>            
+                columnas="6"
+                titulos={titulosTab}
+                datos={data}
+                tipodatos="3"
+              />
+            </div>
           </ElmContNt>
         </div>
         <div className="subCont2">
@@ -251,12 +231,25 @@ const VstPvds = () => {
               cadNombre={"Correo"}
               exprExpresionR={expresiones.correo}
             />
+            <CmpTextoForm
+              cadTipoprincipal="1"
+              estEstado={mercancia}
+              estCambiarEstado={cambiarMercancia}
+              bolTipo={true}
+              cadEtiqueta="Mercancia"
+              cadPlaceholder="Muebles de Otoño"
+              cadLeyenda="ejemplo solo letras, 10 a 15 caracteres etc..."
+              bolObligatorio={true}
+              cadNombre={"mercancia"}
+              exprExpresionR={expresiones.nombre}
+            />
+
             <CmpBotonPrincipal
               cadTipofuncion="6"
-              cadTipo="3"              
-              funcion={()=>guardarProveedores(correo.campo, direccion.campo,nombre.campo,telefono.campo)}              
+              cadTipo="3"
+              funcion={() => console.log("click")}
               cadTexto="Guardar"
-              cadMensaje="¿Desea guardar o actualizar los datos?"              
+              cadMensaje="¿Desea guardar o actualizar los datos?"
             />
           </ElmFormNt>
         </div>

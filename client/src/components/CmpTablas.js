@@ -93,24 +93,12 @@ const CmpTablas = ({ titulos, datos, tipodatos, columnas }) => {
     );
   };
 
-  const tabProveedores= (value)=>{
-    return(
-      <ELmContenedorTablaCont key={value.id} fraccion={columnas}>
-        <div>{value.nombre_empresa}</div>
-        <div>{value.direccion}</div>
-        <div>{value.telefono}</div>
-        <div>{value.correo}</div>                        
-      </ELmContenedorTablaCont>
-    );
-  };
-
   const funcionprincipal = (value) => {
     const selectDatos = {
       1: data1(value),
       2: data2(value),
       3: data3(value),
       4: data4(value),
-      5: tabProveedores(value),
     };
     return selectDatos[tipodatos];
   };
@@ -118,7 +106,7 @@ const CmpTablas = ({ titulos, datos, tipodatos, columnas }) => {
     <div>
       <ELmContenedorTabla fraccion={columnas}>
         {titulos.map((value) => {
-          return <div key={value.id}>{value.id}</div>;  
+          return <div key={value.id}>{value.id}</div>;
         })}
       </ELmContenedorTabla>
       {datos.map((value) => {
