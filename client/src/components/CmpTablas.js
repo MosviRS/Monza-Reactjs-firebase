@@ -147,6 +147,19 @@ const CmpTablas = ({
       </ELmContenedorTablaCont>
     );
   };
+
+  const tabBitacora = (value) => {
+    return (
+      <ELmContenedorTablaCont
+        key={value.id}
+        fraccion={columnas}
+      >
+        <div>{value.nombre}</div>
+        <div>{value.mov}</div>
+        <div>{value.fecha_movimiento}</div>
+      </ELmContenedorTablaCont>
+    );
+  }
   const eliminar = (value, index) => {
     console.log(index);
     datos.splice(index, 1);
@@ -162,6 +175,7 @@ const CmpTablas = ({
       5: tabProveedores(value),
       6: tabProductos(value),
       7: tabNotas(value),
+      8: tabBitacora(value),
     };
     return selectDatos[tipodatos];
   };

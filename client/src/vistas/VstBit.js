@@ -28,6 +28,7 @@ import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
+import CmpFecha from "../components/CmpFecha";
 
 import firebase from "./../bd/conexion";
 
@@ -36,14 +37,16 @@ const VstBit = () => {
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
-  const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
+  const [busqueda, cambiarBusqueda] = useState(new Date());
+  const [tablaUsuarios, cambiarTablaUsuarios] = useState([]);
+  const [tablaMovimiento, cambiarTablaMovimiento] = useState([]);
+  const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   //Variables Complementarias//Variables Complementarias
 
   const titulosTab = [
     { id: "Nombre empleado" },
     { id: "Movimiento" },
     { id: "Fecha de movimiento" },
-    { id: "Monto resultante del movimiento" },
   ];
   const data = [
     {
@@ -63,37 +66,37 @@ const VstBit = () => {
   const irNotas = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/2");
+     window.location.replace("/2");
   };
   const irProductos = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/3");
+     window.location.replace("/3");
   };
   const irClientes = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/4");
+     window.location.replace("/4");
   };
   const irEntregas = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/5");
+     window.location.replace("/5");
   };
   const irProveedores = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/6");
+     window.location.replace("/6");
   };
   const irBitacora = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/7");
+     window.location.replace("/7");
   };
   const irRegistro = () => {
     var length=history.length;     
     history.go(-length);
-    history.replace("/1");
+     window.location.replace("/1");
   };
   const Rutas = {
     1: irInicio,
@@ -108,27 +111,66 @@ const VstBit = () => {
   
   useEffect(() => {
     
-    const ac = new AbortController();
-    
     var mensaje = ""
 
     firebase.auth().onAuthStateChanged(function(user) {
       if(user != null){
-        ac.abort()
         mensaje = 'Se restablecio la sesion para: ' + user.email;
         console.log(mensaje)
       } else {
         mensaje = 'La sesion caduco'
         console.log(mensaje)
-        ac.abort()
         setTimeout(()=>{
           irInicio()
         }, 0);
       }
     })
 
-    return () => ac.abort();
-  });
+    firebase.db.collection("movimiento").onSnapshot((querySnapshot) => {
+      const movimientos = [];
+      querySnapshot.forEach((doc) => {
+        var movTemp = doc.data()
+        var fechaConsulta = movTemp['fecha_movimiento']
+        var fechaActual = new Date().toDateString();
+        var fechaComparar = fechaConsulta.toDate().toDateString() + '';
+        var nombreCompleto = ''
+
+        if(fechaActual === fechaComparar){
+          firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
+            const usuarios = [];
+            querySnapshot.forEach((doc) => {
+              var usuarioTemp = doc.data()
+              if(doc.id === movTemp['idcuenta']){
+                nombreCompleto = usuarioTemp['nombre_usuario'] + ' ' +
+                usuarioTemp['apaterno'] + ' ' + usuarioTemp['amaterno']
+                movimientos.push({ nombre: nombreCompleto, mov: movTemp['mov'], fecha_movimiento: fechaComparar });
+              }
+            });
+            cambiarTablaUsuarios(usuarios);
+          });
+        }
+      });
+      cambiarTablaMovimiento(movimientos);
+    });
+
+    console.log('tablaUsuarios')
+    console.log(tablaUsuarios)
+    console.log('tablamovimientos')
+    console.log(tablaMovimiento)
+
+  }, []);
+
+  
+
+  const filtradoMovimientoSelectorFecha = () => {
+    cambiarTablaFiltrada(
+      tablaMovimiento.filter(function (item) {
+        return item.fecha_movimiento
+          .toString()
+          .includes(busqueda);
+      })
+    );
+  };
 
   const cerrarSesion = async () =>{
     await firebase.auth().signOut().then(() => {
@@ -191,23 +233,35 @@ const VstBit = () => {
           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
+
+
       <div className="contenedor3">
         <ElmContNt>
           <div className="titulo">Registros</div>
 
-          <CmpTextoBuscar
+          {/* <CmpTextoBuscar
             estEstado={busqueda}
             estCambiarEstado={cambiarBusqueda}
             cadPlaceholder="Filtrar"
             cadNombre="busqueda"
+            filtro={filtradoMovimientoSelectorFecha}
+          /> */}
+          
+          <CmpFecha
+            estEstado={busqueda}
+            estCambiarEstado={cambiarBusqueda}
+            cadEtiqueta="Filtrar por fecha"
+            cadNombre="busqueda"
+            bolObligatorio={false}
+            tipoFormato="2"
           />
+
           <div className="tabla">
             <CmpTablas
-              columnas={"4"}
+              columnas={"3"}
               titulos={titulosTab}
-              datos={data}
-              tipodatos="4"
-            />
+              datos={tablaMovimiento}
+              tipodatos="8"/>
           </div>
         </ElmContNt>
       </div>
