@@ -1,0 +1,19 @@
+{
+  "name": "monza-reactjs-firebase",
+  "version": "1.0.0",
+  "description": "Sistema de Inventario y gestión de información para una muebleria.\r ![LogoMonza](https://user-images.githubusercontent.com/33562426/128617397-7b7d2a86-d417-4fa1-a9fb-6b82a962dc8e.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MosviRS/Monza-Reactjs-firebase.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MosviRS/Monza-Reactjs-firebase/issues"
+  },
+  "homepage": "https://github.com/MosviRS/Monza-Reactjs-firebase#readme"
+}
