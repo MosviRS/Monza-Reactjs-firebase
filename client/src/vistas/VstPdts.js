@@ -210,10 +210,10 @@ const VstPdts = () => {
   const filtradoProductos = () => {
     cambiarTablaFiltrada(
       tablaProducto.filter(function (item) {
-        return item.nombre
-          .toString()
-          .toLowerCase()
-          .includes(busqueda.campo.toLowerCase());
+        if(item.nombre_producto.toLowerCase().includes(busqueda.campo.toLowerCase())){
+        return item.nombre_producto
+          .toString();
+        }
       })
     );
   };
@@ -277,11 +277,12 @@ const VstPdts = () => {
               estCambiarEstado={cambiarBusqueda}
               cadPlaceholder="Filtrar Productos"
               cadNombre="busqueda"
+              filtro={filtradoProductos}
             />
             <div className="tabla">
               <CmpTablas
                 titulos={titulosTab}
-                datos={tablaProducto}
+                datos={busqueda.campo ? tablaFiltrada:tablaProducto}
                 tipodatos="6"
                 columnas="6"
               />
