@@ -19,8 +19,11 @@ Archivos relacionados:
     CmpTextoBuscar.js,
     CmpTablas.js,
 */
+
 import React, { useState, useEffect } from "react";
+
 //importacion de Elementos graficos
+
 import {
   Cadenas,
   Colores,
@@ -37,6 +40,9 @@ import CmpTextoForm from "../components/CmpTextoForm";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
+
+import firebase from "./../bd/conexion";
+
 const VstPvds = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
@@ -79,28 +85,44 @@ const VstPvds = () => {
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    history.push("/");
+    var length=history.length;     
+    history.go(-length);
+    window.location.replace("/");
   };
   const irNotas = () => {
-    history.push("/2");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/2");
   };
   const irProductos = () => {
-    history.push("/3");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/3");
   };
   const irClientes = () => {
-    history.push("/4");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/4");
   };
   const irEntregas = () => {
-    history.push("/5");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/5");
   };
   const irProveedores = () => {
-    history.push("/6");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/6");
   };
   const irBitacora = () => {
-    history.push("/7");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/7");
   };
   const irRegistro = () => {
-    history.push("/1");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/1");
   };
   const Rutas = {
     1: irInicio,
@@ -112,6 +134,43 @@ const VstPvds = () => {
     7: irBitacora,
     8: irRegistro,
   };
+
+  
+  useEffect(() => {
+    
+    const ac = new AbortController();
+    
+    var mensaje = ""
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if(user != null){
+        ac.abort()
+        mensaje = 'Se restablecio la sesion para: ' + user.email;
+        console.log(mensaje)
+      } else {
+        mensaje = 'La sesion caduco'
+        console.log(mensaje)
+        ac.abort()
+        setTimeout(()=>{
+          irInicio()
+        }, 0);
+      }
+    })
+
+    return () => ac.abort();
+  });
+
+  const cerrarSesion = async () =>{
+    await firebase.auth().signOut().then(() => {
+      console.log('Se cerro sesion')
+      setTimeout(()=>{
+        irInicio()
+      }, 0);
+    }).catch((error) => {
+      console.log(error)
+    });
+  }
+
   useEffect(()=>{
     firebase.db.collection("proveedor").onSnapshot((querySnapshot)=>{
       const documentos= [];
@@ -132,6 +191,7 @@ const VstPvds = () => {
       })
     );
   };
+
 
   //rederizacion
   return (
@@ -176,11 +236,11 @@ const VstPvds = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
-          cadTipofuncion="6"
-          funcion={Rutas[1]}
-          cadTipo="4"
-          cadTexto={Cadenas.cerrarSesion}
-          cadMensaje="¿Desea cerrar sesión?"
+           cadTipofuncion="6"
+           funcion={() => cerrarSesion()}
+           cadTipo="4"
+           cadTexto={Cadenas.cerrarSesion}
+           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
       <div className="contenedor2">

@@ -14,11 +14,14 @@ Modificaciones:
 -19/11/2021 - Correciones 
 Archivos relacionados: Elementos.js, CmpTexto.js, CmpBotonPrincipal.js
 */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 import firebase from "./../bd/conexion";
 
+import {
+  MostrarAlerta1
+} from "../components/CmpAlertas";
 import {
   Colores,
   ElmCont2VStIns,
@@ -29,15 +32,18 @@ import {
 // Componentes
 import CmpTexto from "../components/CmpTexto";
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
+
+
 const VstIns = () => {
   // Estilo del fondo
   document.body.style = "background:" + Colores.ColHueso + ";";
 
   // Variables de estado
-  const [correo, cambiarCorreo] = useState({ campo: "", valido: null });
+  const [correo, cambiarCorreo] = useState({ 
+    campo: ""
+  });
   const [contrasenia, cambiarContrasenia] = useState({
-    campo: "",
-    valido: null,
+    campo: ""
   });
 
   //Variables complementarias
@@ -50,91 +56,78 @@ const VstIns = () => {
   };
   const history = useHistory();
   //Funciones
-  const irInicio = () => {
-    history.push("/");
-  };
+
   const irNotas = () => {
-    history.push("/2");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/2");
   };
-  const irProductos = () => {
-    history.push("/3");
-  };
-  const irClientes = () => {
-    history.push("/4");
-  };
-  const irEntregas = () => {
-    history.push("/5");
-  };
-  const irProveedores = () => {
-    history.push("/6");
-  };
-  const irBitacora = () => {
-    history.push("/7");
-  };
-  const Rutas = {
-    1: irInicio,
-    2: irNotas,
-    3: irProductos,
-    4: irClientes,
-    5: irEntregas,
-    6: irProveedores,
-    7: irBitacora,
-  };
-  const titulosTab = [
-    { id: "ID (Modelo)" },
-    { id: "Nombre del Proyecto" },
-    { id: "Cantidad" },
-    { id: "Monto Unidad" },
-    { id: "Monto Subtotal" },
-  ];
 
-  const crearCuenta = () =>{
 
-    if(correo.campo == null || contrasenia.campo == null
-      || correo.campo === '' || contrasenia.campo === ''){
-      console.log('Campos vacios raza :c')
-    } else {
-      firebase.auth().createUserWithEmailAndPassword(correo.campo, contrasenia.campo)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
+  useEffect(() => {
+    
+    const ac = new AbortController();
 
-        console.log('Usuario creado e iniciado')
+    firebase.auth().onAuthStateChanged(function(user) {
+      if(user != null){
+        ac.abort()
+        setTimeout(()=>{
+          irNotas()
+        }, 0);
         
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        
-        console.log('No se creo usuario')
-      })
-    }
-  }
+      }
+    })
+
+    return () => ac.abort();
+  });
+
 
   const inicia = () => {
     
     if(correo.campo == null || contrasenia.campo == null
       || correo.campo === '' || contrasenia.campo === ''){
-      console.log('Campos vacios raza :c')
-    }else {
-      const auth = firebase.auth;
-      firebase.auth().signInWithEmailAndPassword(correo.campo, contrasenia.campo)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          
-          console.log('Usuario iniciado')
+      const mensaje  = 'Campos vacio, rellena los campos antes de inciar sesion';
 
-          irNotas();
+      MostrarAlerta1("", mensaje, "2", () => (console.log()));
+      console.log(mensaje)
+    }else {
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+          // Existing and future Auth states are now persisted in the current
+          // session only. Closing the window would clear any existing state even
+          // if a user forgets to sign out.
+          // ...
+          // New sign-in will be persisted with session persistence.
+          return firebase.auth().signInWithEmailAndPassword(correo.campo, contrasenia.campo)
+             .then((userCredential) => {
+               // Signed in
+               const user = userCredential.user;
+               const mensaje  = 'Usuario iniciado para: ' + user.email;
+
+               MostrarAlerta1("Correcto", mensaje, "1", () => (console.log()));
+               console.log(mensaje)
+               
+               cambiarCorreo({campo: ""})
+               cambiarContrasenia({campo: ""})
+               setTimeout(()=>{
+                irNotas()
+              }, 0);
+               
+             })
+             .catch((error) => {
+               const mensaje  = 'Credenciales incorrectas del usuario';
+
+               MostrarAlerta1("", mensaje, "2", () => (console.log()));
+               console.log(mensaje)
+            });
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-
-          console.log('credenciales incorrectas del usuario')
-       });
+          // Handle Errors here.
+        });
+      
     }
   }
+
 
 
   //rederizacion
@@ -168,10 +161,9 @@ const VstIns = () => {
         </div>
         <div className="boton">
           <CmpBotonPrincipal
-            cadTipofuncion={"8"}
-            cadMensaje={"Mensaje de prueba"}
-            funcion={() => inicia()}
+            cadTipofuncion={"0"}
             cadTipo={"1"}
+            funcion={() => inicia()}
             cadTexto={"Ingresar"}
           />
         </div>
