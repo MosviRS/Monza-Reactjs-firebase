@@ -11,7 +11,7 @@ Modificaciones:
 -19/11/2021 - Correciones 
 Archivos relacionados: Elementos.js, CmpBotonPrincipal.js CmpTextoForm.js CmpCajaCombo.js, 
 */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 //importacion de Elementos graficos
 import {
@@ -23,6 +23,9 @@ import {
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpTextoForm from "../components/CmpTextoForm";
 import CmpCajaCombo from "../components/CmpCajaCombo";
+
+import firebase from "./../bd/conexion";
+
 const VstReg = () => {
   //Estilo del Fondo
   document.body.style =
@@ -77,36 +80,17 @@ const VstReg = () => {
       }
     }
   };
-  const irInicio = () => {
-    history.push("/");
-  };
   const irNotas = () => {
-    history.push("/2");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/2");
   };
-  const irProductos = () => {
-    history.push("/3");
-  };
-  const irClientes = () => {
-    history.push("/4");
-  };
-  const irEntregas = () => {
-    history.push("/5");
-  };
-  const irProveedores = () => {
-    history.push("/6");
-  };
-  const irBitacora = () => {
-    history.push("/7");
-  };
+
   const Rutas = {
-    1: irInicio,
-    2: irNotas,
-    3: irProductos,
-    4: irClientes,
-    5: irEntregas,
-    6: irProveedores,
-    7: irBitacora,
+    2: irNotas
   };
+
+
   //rederizacion
   return (
     <ELmVStIns>
@@ -211,7 +195,7 @@ const VstReg = () => {
             <CmpBotonPrincipal
               cadTipofuncion="1"
               cadTipo="1"
-              funcion={Rutas[2]}
+              
               cadTexto="Registrar"
               cadMensaje="Registro"
             />

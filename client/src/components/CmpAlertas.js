@@ -68,7 +68,7 @@ const MostrarAlerta3 = (cadTitulo, funcion) => {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 1000,
+    timer: 2000,
     timerProgressBar: true,
     height: 20,
     width: 600,

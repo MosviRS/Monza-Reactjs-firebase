@@ -25,6 +25,7 @@ Archivos relacionados:
 */
 import React, { useState, useEffect } from "react";
 //importacion de Elementos graficos
+
 import {
   Cadenas,
   Colores,
@@ -137,28 +138,44 @@ const VstNt = () => {
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    history.push("/");
+    var length=history.length;     
+    history.go(-length);
+    window.location.replace("/");
   };
   const irNotas = () => {
-    history.push("/2");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/2");
   };
   const irProductos = () => {
-    history.push("/3");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/3");
   };
   const irClientes = () => {
-    history.push("/4");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/4");
   };
   const irEntregas = () => {
-    history.push("/5");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/5");
   };
   const irProveedores = () => {
-    history.push("/6");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/6");
   };
   const irBitacora = () => {
-    history.push("/7");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/7");
   };
   const irRegistro = () => {
-    history.push("/1");
+    var length=history.length;     
+    history.go(-length);
+    history.replace("/1");
   };
   const Rutas = {
     1: irInicio,
@@ -171,35 +188,56 @@ const VstNt = () => {
     8: irRegistro,
   };
 
-  const cerrarSesion = () =>{
+  useEffect(() => {
+    
+    const ac = new AbortController();
+    
+    var mensaje = ""
 
-    firebase.auth().signOut().then(() => {
-      // Sign-out successful.
+    firebase.auth().onAuthStateChanged(function(user) {
+      if(user != null){
+        ac.abort()
+        mensaje = 'Se restablecio la sesion para: ' + user.email;
+        console.log(mensaje)
+      } else {
+        mensaje = 'La sesion caduco'
+        console.log(mensaje)
+        ac.abort()
+        setTimeout(()=>{
+          irInicio()
+        }, 0);
+      }
+    })
+
+    return () => ac.abort();
+  });
+
+  const cerrarSesion = async () =>{
+    await firebase.auth().signOut().then(() => {
       console.log('Se cerro sesion')
-      irInicio();
-
+      setTimeout(()=>{
+        irInicio()
+      }, 0);
     }).catch((error) => {
-      // An error happened.
-      console.log('Ocurrio un error al intentar cerrar sesion')
+      console.log(error)
     });
   }
-
-
 
 
   // useEffect(() => {
   //   tomarTabla(tablaProducto, "producto");
   // }, []);
-  useEffect(() => {
-    firebase.db.collection("producto").onSnapshot((querySnapshot) => {
-      const docs = [];
-      querySnapshot.forEach((doc) => {
-        docs.push({ ...doc.data(), id: doc.id });
-      });
-      cambiartablaProducto(docs);
-      console.log(docs);
-    });
-  }, []);
+  // useEffect(() => {
+  //   firebase.db.collection("producto").onSnapshot((querySnapshot) => {
+  //     const docs = [];
+  //     querySnapshot.forEach((doc) => {
+  //       docs.push({ ...doc.data(), id: doc.id });
+  //     });
+  //     cambiartablaProducto(docs);
+  //     console.log(docs);
+  //   });
+  // }, []);
+
   //rederizacion
   return (
     <ElmVstNt subCont1="20px">
