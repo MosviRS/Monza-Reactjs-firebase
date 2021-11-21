@@ -127,7 +127,7 @@ const CmpTablas = ({
         <div>{value.precio}</div>
         <div>{value.existencia}</div>
         <div>{value.marca}</div>
-        <div>{value.nombre_empresa}</div>
+        <div>{value.proveedor}</div>
       </ELmContenedorTablaCont>
     );
   };

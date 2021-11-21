@@ -56,7 +56,7 @@ const VstPdts = () => {
   const [proveedor, cambiarProveedor] = useState({ campo: "", id: "" });
   const [modelo, cambiarModelo] = useState({ campo: "", valido: null });
   const expresiones = {
-    nombre: /^[A-Za-z]{4,50}$/, // Letras
+    nombre: /^[A-Za-z ]{4,50}$/, // Letras
     precio: /^[0-9]|[0-9]+([.][0-9]+){1,15}$/, // Letras y espacios, pueden llevar acentos.
     cantidad: /^\d{1,15}$/, // 4 a 12 digitos.
     marca: /^[A-Za-z]{4,50}$/, //
@@ -190,12 +190,12 @@ const VstPdts = () => {
 
   useEffect(() => {
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
-      const docs = [];
+      const DatosProductos = [];
       querySnapshot.forEach((doc) => {
-        docs.push({ ...doc.data(), id: doc.id });
+        DatosProductos.push({ ...doc.data(), id: doc.id });
       });
-      cambiarTablaProducto(docs);
-      //console.log(docs);
+      cambiarTablaProducto(DatosProductos);
+      console.log(DatosProductos);
     });
     firebase.db.collection("proveedor").onSnapshot((querySnapshot) => {
       const docs = [];
@@ -281,7 +281,7 @@ const VstPdts = () => {
             <div className="tabla">
               <CmpTablas
                 titulos={titulosTab}
-                datos={data}
+                datos={tablaProducto}
                 tipodatos="6"
                 columnas="6"
               />
@@ -364,7 +364,7 @@ const VstPdts = () => {
               cadTipofuncion="6"
               cadTipo="3"
               funcion={() =>
-                guardarProductos(cantidad, marca, modelo, nombre, precio)
+                guardarProductos(cantidad, marca, modelo, nombre, precio, proveedor)
               }
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar o actualizar los datos?"

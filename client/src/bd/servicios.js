@@ -20,11 +20,12 @@ const guardarProveedores = async (correo,direccion, nombre_empresa, telefono) =>
     .set({ correo: correo, direccion:direccion, nombre_empresa:nombre_empresa,telefono:telefono });  
 };
 
-const guardarProductos = async (existencia,marca,modelo,nombre_producto,precio) => {
+const guardarProductos = async (existencia,marca,modelo,nombre_producto,precio, proveedor) => {
   await firebase.db
     .collection("producto")
     .doc()
-    .set({ existencia:existencia.campo, marca:marca.campo, modelo:modelo.campo,nombre_producto:nombre_producto.campo,precio:precio.campo});
+    .set({ existencia:existencia.campo, marca:marca.campo, modelo:modelo.campo, nombre_producto:nombre_producto.campo,
+      precio:precio.campo, proveedor: proveedor.campo});
 };
 
 const RegistraUsuario = async (nombre, apaterno, amaterno, correo, contra) => {
