@@ -99,8 +99,20 @@ const CmpTablas = ({ titulos, datos, tipodatos, columnas }) => {
       2: data2(value),
       3: data3(value),
       4: data4(value),
+      5: tabProveedores(value),
     };
     return selectDatos[tipodatos];
+  };
+
+  const tabProveedores= (value)=>{
+    return(
+      <ELmContenedorTablaCont key={value.id} fraccion={columnas}>
+        <div>{value.nombre_empresa}</div>
+        <div>{value.direccion}</div>
+        <div>{value.telefono}</div>
+        <div>{value.correo}</div>                        
+      </ELmContenedorTablaCont>
+    );
   };
   return (
     <div>

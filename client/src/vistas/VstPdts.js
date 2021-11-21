@@ -19,7 +19,8 @@ Archivos relacionados:
     CmpTextoBuscar.js,
     CmpTablas.js,
 */
-import React, { useEffect, useState } from "react";
+
+import React, { useState,useEffect } from "react";
 //importacion de Elementos graficos
 import {
   Cadenas,
@@ -36,19 +37,30 @@ import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 
-import firebase from "./../bd/conexion";
+import firebase from "../bd/conexion";
+import {guardarProductos} from "../bd/servicios";
+
 
 const VstPdts = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [tablaProducto,cambiarTablaProducto] =useState({});
+  const [tablaFiltrada,cambiarTablaFiltrada] =useState({});
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [precio, cambiarPrecio] = useState({ campo: "", valido: null });
   const [cantidad, cambiarCantidad] = useState({ campo: "", valido: null });
   const [marca, cambiarMarca] = useState({ campo: "", valido: null });
-  const [categoria, cambiarCategoria] = useState({ campo: "", valido: null });
+  const [modelo, cambiarModelo] = useState({ campo: "", valido: null });
+  const expresiones = {
+    nombre: /^[A-Za-z]{4,50}$/, // Letras
+    precio: /^[0-9]|[0-9]+([.][0-9]+){1,15}$/, // Letras y espacios, pueden llevar acentos.
+    cantidad:/^\d{1,15}$/, // 4 a 12 digitos.
+    marca: /^[A-Za-z]{4,50}$/,//
+    modelo:/^[a-zA-Z0-9_-]{4,16}$/, // 7 a 14 numeros.
+  };
   //Variables Complementarias
   const titulosTab = [
     { id: "Modelo" },
@@ -84,6 +96,8 @@ const VstPdts = () => {
       e: "XXXX",
     },
   ];
+ 
+
   const history = useHistory();
   //Funciones
   const irInicio = () => {
@@ -136,6 +150,7 @@ const VstPdts = () => {
     7: irBitacora,
     8: irRegistro,
   };
+
  
   useEffect(() => {
     
@@ -171,6 +186,29 @@ const VstPdts = () => {
       console.log(error)
     });
   }
+
+
+  useEffect(() => {
+    firebase.db.collection("producto").onSnapshot((querySnapshot) => {
+      const docs = [];
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id });
+      });
+      cambiarTablaProducto(docs);
+      //console.log(docs);
+    });
+  }, []);
+
+  const filtradoProductos = ()=>{
+    cambiarTablaFiltrada(
+      tablaProducto.filter(function(item){
+        return item.nombre
+          .toString()
+          .toLowerCase()
+          .includes(busqueda.campo.toLowerCase());
+      })
+    );
+  };
 
   //rederizacion
   return (
@@ -252,9 +290,10 @@ const VstPdts = () => {
               bolTipo={true}
               cadEtiqueta="Nombre del Producto:"
               cadPlaceholder="Escritorio"
-              cadLeyenda="Nombre del producto"
+              cadLeyenda="Solo se admiten letras"
               bolObligatorio={true}
               cadNombre="nombre"
+              exprExpresionR={expresiones.nombre}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -263,9 +302,10 @@ const VstPdts = () => {
               bolTipo={true}
               cadEtiqueta="Precio Unitario:"
               cadPlaceholder="$ 0000.00"
-              cadLeyenda="Precio del producto"
+              cadLeyenda="Solo se admiten numeros"
               bolObligatorio={true}
               cadNombre="precio"
+              exprExpresionR={expresiones.precio}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -274,9 +314,10 @@ const VstPdts = () => {
               bolTipo={true}
               cadEtiqueta="Cantidad:"
               cadPlaceholder="7"
-              cadLeyenda="Cantidad del producto"
+              cadLeyenda="Solo se admiten numeros"
               bolObligatorio={true}
               cadNombre="Cantidad"
+              exprExpresionR={expresiones.cantidad}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -285,25 +326,27 @@ const VstPdts = () => {
               bolTipo={true}
               cadEtiqueta="Marca/Proveedor:"
               cadPlaceholder="Don Pancho"
-              cadLeyenda="Marca/Proveedor"
+              cadLeyenda="Solo se admiten letras"
               bolObligatorio={true}
               cadNombre="Marca"
+              exprExpresionR={expresiones.marca}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
-              estEstado={categoria}
-              estCambiarEstado={cambiarCategoria}
+              estEstado={modelo}
+              estCambiarEstado={cambiarModelo}
               bolTipo={true}
-              cadEtiqueta="Categoria:"
+              cadEtiqueta="Modelo:"
               cadPlaceholder="Mueble"
-              cadLeyenda="Categoria"
+              cadLeyenda="Solo se admiten letras"
               bolObligatorio={true}
-              cadNombre="Categoria"
+              cadNombre="Modelo"
+              exprExpresionR={expresiones.modelo}
             />
             <CmpBotonPrincipal
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => console.log("click")}
+              funcion={() => guardarProductos(cantidad,marca,modelo,nombre,precio)}
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar o actualizar los datos?"
             />
