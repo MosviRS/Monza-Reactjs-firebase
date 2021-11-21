@@ -67,21 +67,11 @@ const VstPvds = () => {
 
   const titulosTab = [
     { id: "Nombre" },
-    { id: "Apellidos" },
     { id: "Direccion / Domicilio" },
     { id: "Telefono" },
     { id: "Correo" },
   ];
-  const data = [
-    {
-      id: "1",
-      a: "name",
-      b: "Apellido",
-      c: "Edad",
-      d: "Email",
-      e: "Telefono",
-    },
-  ];
+
   const history = useHistory();
   //Funciones
   const irInicio = () => {
@@ -155,8 +145,15 @@ const VstPvds = () => {
       }
     });
 
+    firebase.db.collection("proveedor").onSnapshot((querySnapshot) => {
+      const documentos = [];
+      querySnapshot.forEach((doc) => {
+        documentos.push({ ...doc.data(), id: doc.id });
+      });
+      cambiarTablaProveedor(documentos);
+    });
     return () => ac.abort();
-  });
+  }, []);
 
   const cerrarSesion = async () => {
     await firebase
@@ -173,20 +170,10 @@ const VstPvds = () => {
       });
   };
 
-  useEffect(() => {
-    firebase.db.collection("proveedor").onSnapshot((querySnapshot) => {
-      const documentos = [];
-      querySnapshot.forEach((doc) => {
-        documentos.push({ ...doc.data(), id: doc.id });
-      });
-      cambiarTablaProveedor(documentos);
-    });
-  }, []);
-
   const filtradoProvedores = () => {
     cambiarTablaFiltrada(
       tablaProveedor.filter(function (item) {
-        return item.nombre
+        return item.nombre_empresa
           .toString()
           .toLowerCase()
           .includes(busqueda.campo.toLowerCase());
@@ -254,14 +241,16 @@ const VstPvds = () => {
               estCambiarEstado={cambiarBusqueda}
               cadPlaceholder="Filtrar proveedores"
               cadNombre="busqueda"
+              filtro={filtradoProvedores}
             />
             <div className="tabla">
               <CmpTablas
                 columnas="4"
                 titulos={titulosTab}
-                datos={tablaProveedor || tablaFiltrada}
+                datos={busqueda.campo == "" ? tablaProveedor : tablaFiltrada}
                 tipodatos="5"
               />
+              {console.log(tablaFiltrada)}
             </div>
           </ElmContNt>
         </div>

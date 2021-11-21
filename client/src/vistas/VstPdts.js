@@ -53,8 +53,8 @@ const VstPdts = () => {
   const [precio, cambiarPrecio] = useState({ campo: "", valido: null });
   const [cantidad, cambiarCantidad] = useState({ campo: "", valido: null });
   const [marca, cambiarMarca] = useState({ campo: "", valido: null });
-  const [proveedor, cambiarProveedor] = useState({ campo: "", valido: null });
-  const [modelo, cambiarModelo] = useState({ campo: "", id: "" });
+  const [proveedor, cambiarProveedor] = useState({ campo: "", id: "" });
+  const [modelo, cambiarModelo] = useState({ campo: "", valido: null });
   const expresiones = {
     nombre: /^[A-Za-z]{4,50}$/, // Letras
     precio: /^[0-9]|[0-9]+([.][0-9]+){1,15}$/, // Letras y espacios, pueden llevar acentos.
@@ -217,7 +217,7 @@ const VstPdts = () => {
       })
     );
   };
-
+  console.log(proveedor.id);
   //rederizacion
   return (
     <ElmVstNt>
