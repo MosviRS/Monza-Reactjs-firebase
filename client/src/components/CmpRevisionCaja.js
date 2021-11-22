@@ -13,7 +13,7 @@ import {
   ElmEtqRevCajaGbl,
   ElmOpcion,
 } from "../Elementos/Elementos";
-const CmpRevisionCaja = ({ tipo, estEstado, estCambiarEstado }) => {
+const CmpRevisionCaja = ({ tipo, estEstado, estCambiarEstado, funcion }) => {
   const onClick = (e) => {
     estCambiarEstado({ ...estEstado, campo: e.target.value });
   };
@@ -55,8 +55,8 @@ const CmpRevisionCaja = ({ tipo, estEstado, estCambiarEstado }) => {
           <ElmOpcion>
             <input
               type="checkbox"
-              value="Entregado"
-              checked={estEstado.campo === "Entregado"}
+              value="entregado"
+              checked={estEstado.campo == "entregado"}
               onChange={onClick}
             />
             <label>Entregado</label>
@@ -67,11 +67,11 @@ const CmpRevisionCaja = ({ tipo, estEstado, estCambiarEstado }) => {
             <input
               type="checkbox"
               visibility="hidden"
-              value="Noentregado"
-              checked={estEstado.campo === "Noentregado"}
+              value="pendiente"
+              checked={estEstado.campo == "pendiente"}
               onChange={onClick}
             />
-            <label>No entregado</label>
+            <label>Pendiente</label>
           </ElmOpcion>
         </div>
       </ElmContenedorRevCaja>

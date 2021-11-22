@@ -66,6 +66,7 @@ const VstNt = () => {
     campo: "",
     valido: null,
   });
+  const [tipousuario, camtipousuario] = useState(true);
   const [listaProd, cambiarlistaProd] = useState([]);
   const [tablaProducto, cambiartablaProducto] = useState([]);
   const [filtroProd, cambiarFiltroProd] = useState([]);

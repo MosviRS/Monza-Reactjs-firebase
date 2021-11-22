@@ -40,29 +40,44 @@ import CmpRevisionCaja from "../components/CmpRevisionCaja";
 
 import firebase from "./../bd/conexion";
 import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { actualizar } from "../bd/servicios";
 
 const VstEtgs = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
-  
+
+  const [index, camIndex] = useState("");
+  const [entregasEdit, camEntregasEdit] = useState([
+    {
+      id: "",
+      nombre: "",
+      direccion: "",
+      referencia: "",
+      fecha_ent: "",
+      hora_ent: "",
+      telefono: "",
+      estado: "",
+      idventa: "",
+    },
+  ]);
   const [btnControl, definirbtnControl] = useState(null);
 
-  const [datosEntregas,cambiarEntregas]= useState([]);
+  const [datosEntregas, cambiarEntregas] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
-  const [datosVentas,cambiarVentas]= useState([]);
-  const [datosClientes,cambiarClientes]= useState([]);
+  const [datosVentas, cambiarVentas] = useState([]);
+  const [datosClientes, cambiarClientes] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
-  const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
-  const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
+  const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
+  const [nota, cambiarNota] = useState({ campo: "", valido: null });
   const [estadoEntrega, cambiarEstadoEntrega] = useState({
-    campo: "12360",
+    campo: "",
     valido: null,
   });
   //Variables Complementarias
 
-  const titulosTab = [    
+  const titulosTab = [
     { id: "Nombre" },
     { id: "Direccion" },
     { id: "Referencia" },
@@ -70,16 +85,6 @@ const VstEtgs = () => {
     { id: "Hora de entrega" },
     { id: "Telefono" },
     { id: "Estado" },
-  ];
-  const data = [
-    {
-      id: "1",
-      a: "name",
-      b: "Apellido",
-      c: "Edad",
-      d: "Email",
-      e: "Email",
-    },
   ];
   const history = useHistory();
   //Funciones
@@ -133,27 +138,25 @@ const VstEtgs = () => {
     7: irBitacora,
     8: irRegistro,
   };
-   
-  
-  useEffect(() => {
 
+  useEffect(() => {
     var mensaje = "";
     //Verifica sesion del usuario
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email
+        const email = user.email;
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
         //verifica tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data()
-            if(email === usuarioObtenido['correo']){
-              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
-                definirbtnControl(false)     
-              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
-                definirbtnControl(true)
+            const usuarioObtenido = user.data();
+            if (email === usuarioObtenido["correo"]) {
+              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
+                definirbtnControl(false);
+              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
+                definirbtnControl(true);
               }
             }
           });
@@ -169,48 +172,60 @@ const VstEtgs = () => {
     //Consulta la tabla Entregas
     firebase.db.collection("entrega").onSnapshot((querySnapshot) => {
       const entregas = [];
-      querySnapshot.forEach((doc) => {        
-        var entregaTemp= doc.data();
-        var fechaEntrega= entregaTemp['fecha_ent'];
-        var horaEntrega= entregaTemp['hora_ent'];
-        var referencia= entregaTemp['referencia'];        
-        var estado= entregaTemp['estado'];
+      querySnapshot.forEach((doc) => {
+        var idEntrega = doc.id;
+        var entregaTemp = doc.data();
+        var fechaEntrega = entregaTemp["fecha_ent"];
+        var horaEntrega = entregaTemp["hora_ent"];
+        var referencia = entregaTemp["referencia"];
+        var estado = entregaTemp["estado"];
         //Consulta la tabla ventas
         firebase.db.collection("venta").onSnapshot((querySnapshot) => {
           const ventas = [];
           querySnapshot.forEach((doc) => {
-            var ventaTemp = doc.data()
-            if(doc.id === entregaTemp['idventa']){
-              var idventa=entregaTemp['idventa'];
-              var idAsociado=ventaTemp['idcliente'];
+            var ventaTemp = doc.data();
+            if (doc.id === entregaTemp["idventa"]) {
+              var idventa = entregaTemp["idventa"];
+              var idAsociado = ventaTemp["idcliente"];
               //Consulta la tabla clientes
-              firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
+              firebase.db.collection("cliente").onSnapshot((querySnapshot2) => {
                 const cliente = [];
-                querySnapshot.forEach((doc) => {
-                  var clienteTemp = doc.data();
-                  if(doc.id === idAsociado){
-                    var nombreCompleto = clienteTemp['nombre_cliente'] + ' ' +
-                    clienteTemp['apaterno'] + ' ' + clienteTemp['amaterno'];
-                    var direccion=  clienteTemp['direccion'];
-                    var telefono= clienteTemp['telefono'];
-                    entregas.push({ nombre: nombreCompleto, direccion: direccion, referencia:referencia, fecha_ent:fechaEntrega, hora_ent: horaEntrega, telefono:telefono, estado: estado });
+                querySnapshot2.forEach((doc2) => {
+                  var clienteTemp = doc2.data();
+                  if (doc2.id === idAsociado) {
+                    var nombreCompleto =
+                      clienteTemp["nombre_cliente"] +
+                      " " +
+                      clienteTemp["apaterno"] +
+                      " " +
+                      clienteTemp["amaterno"];
+                    var direccion = clienteTemp["direccion"];
+                    var telefono = clienteTemp["telefono"];
+                    entregas.push({
+                      id: idEntrega,
+                      nombre: nombreCompleto,
+                      direccion: direccion,
+                      referencia: referencia,
+                      fecha_ent: fechaEntrega,
+                      hora_ent: horaEntrega,
+                      telefono: telefono,
+                      estado: estado,
+                      idventa: idventa,
+                    });
                   }
                 });
-              cambiarClientes(cliente)  
-              });                            
+                cambiarClientes(cliente);
+              });
             }
-          });        
+          });
           cambiarVentas(ventas);
-        });      
+        });
       });
-      cambiarEntregas(entregas);        
-    });      
-  },[]);
-  
-  console.log('Tabla Entregas');
-  console.log(datosEntregas);
+      cambiarEntregas(entregas);
+    });
+  }, []);
 
-  //Cerrar la sesion 
+  //Cerrar la sesion
   const cerrarSesion = async () => {
     await firebase
       .auth()
@@ -224,8 +239,8 @@ const VstEtgs = () => {
       .catch((error) => {
         console.log(error);
       });
-  }
-    
+  };
+
   const filtradoEntregas = () => {
     cambiarTablaFiltrada(
       datosEntregas.filter(function (item) {
@@ -236,38 +251,63 @@ const VstEtgs = () => {
       })
     );
   };
+  const filtrogeneralbyId = (cambiar, tab, id) => {
+    cambiar(
+      tab.filter(function (item) {
+        return item.id.toString().toLowerCase().includes(id.toLowerCase());
+      })
+    );
+  };
+  const actualizarEntrega = () => {
+    actualizar("entrega", index, {
+      estado: estadoEntrega.campo,
+      fecha_ent: entregasEdit[0].fecha_ent,
+      hora_ent: entregasEdit[0].hora_ent,
+      idventa: entregasEdit[0].idventa,
+      referencia: entregasEdit[0].referencia,
+    });
+  };
 
+  const obtEtgs = (id) => {
+    camIndex(id);
+    filtrogeneralbyId(camEntregasEdit, datosEntregas, id);
+    cambiarNombre({ campo: entregasEdit[0].nombre, valido: "true" });
+    cambiarNota({ campo: entregasEdit[0].idventa, valido: "true" });
+    cambiarEstadoEntrega({ campo: entregasEdit[0].estado, valido: "true" });
+  };
+  console.log(entregasEdit[0].idventa);
   //rederizacion
   return (
     <ElmVstNt>
       <div className="contenedor1">
         <div className="titulo">{Cadenas.vstEtgs}</div>
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[2]}
           cadicono="1"
           cadTipo="1"
           cadTexto={Cadenas.vstNt}
         />
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
           cadTexto={Cadenas.vstPdts}
         />
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[4]}
           cadicono="3"
           cadTipo="1"
           cadTexto="Abonos"
         />
-        <CmpBotonMenu 
-        bolVisibilidad={true}
-        cadicono="4" 
-        cadTipo="2" 
-        cadTexto="Entregas" />
+        <CmpBotonMenu
+          bolVisibilidad={true}
+          cadicono="4"
+          cadTipo="2"
+          cadTexto="Entregas"
+        />
         <CmpBotonMenu
           bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[6]}
@@ -276,14 +316,14 @@ const VstEtgs = () => {
           cadTexto={Cadenas.vstPvds}
         />
         <CmpBotonMenu
-        bolVisibilidad={btnControl ? false : true}
+          bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[7]}
           cadicono="6"
           cadTipo="1"
           cadTexto={Cadenas.vstBit}
         />
         <CmpBotonMenu
-        bolVisibilidad={btnControl ? false : true}
+          bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"
@@ -312,9 +352,10 @@ const VstEtgs = () => {
             />
             <div className="tabla">
               <CmpTablas
+                funcion={obtEtgs}
                 columnas="7"
                 titulos={titulosTab}
-                datos={busqueda.campo=== "" ? datosEntregas: tablaFiltrada}
+                datos={busqueda.campo === "" ? datosEntregas : tablaFiltrada}
                 tipodatos="9"
               />
             </div>
@@ -349,6 +390,14 @@ const VstEtgs = () => {
               tipo="2"
               estEstado={estadoEntrega}
               estCambiarEstado={cambiarEstadoEntrega}
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={true}
+              cadTipofuncion="6"
+              cadTipo="3"
+              funcion={actualizarEntrega}
+              cadTexto="Actualizar"
+              cadMensaje="¿Desea actualizar los datos?"
             />
           </ElmFormNt>
         </div>

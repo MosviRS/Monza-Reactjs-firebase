@@ -151,32 +151,27 @@ const CmpTablas = ({
 
   const tabBitacora = (value) => {
     return (
-      <ELmContenedorTablaCont
-        key={value.id}
-        fraccion={columnas}
-      >
+      <ELmContenedorTablaCont key={value.id} fraccion={columnas}>
         <div>{value.nombre}</div>
         <div>{value.mov}</div>
         <div>{value.fecha_movimiento}</div>
       </ELmContenedorTablaCont>
     );
-  }
-  const tabEntregas= (value) => {
+  };
+  const tabEntregas = (value) => {
     return (
       <ELmContenedorTablaCont
-        onClick={() => {
-          console.log(value.id);
-        }}
+        onClick={() => funcion(value.id)}
         key={value.id}
         fraccion={columnas}
-      >        
+      >
         <div>{value.nombre}</div>
         <div>{value.direccion}</div>
         <div>{value.referencia}</div>
         <div>{value.fecha_ent}</div>
         <div>{value.hora_ent}</div>
-        <div>{value.telefono}</div>        
-        <div>{value.estado}</div>        
+        <div>{value.telefono}</div>
+        <div>{value.estado}</div>
       </ELmContenedorTablaCont>
     );
   };
