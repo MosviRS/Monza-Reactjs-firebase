@@ -123,7 +123,11 @@ const CmpTablas = ({
   };
   const tabProductos = (value) => {
     return (
-      <ELmContenedorTablaCont key={value.id} fraccion={columnas}>
+      <ELmContenedorTablaCont 
+          onClick={() => funcion(value.id)}
+          key={value.id} 
+          fraccion={columnas}
+        >
         <div>{value.modelo}</div>
         <div>{value.nombre_producto}</div>
         <div>{value.precio}</div>

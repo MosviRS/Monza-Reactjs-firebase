@@ -38,7 +38,12 @@ import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 import CmpCajaCombo from "../components/CmpCajaCombo";
 import firebase from "../bd/conexion";
-import { guardarProductos } from "../bd/servicios";
+import { guardarProductos, actualizar } from "../bd/servicios";
+import {
+  MostrarAlerta1,
+  MostrarAlerta2,
+  MostrarAlerta3,
+} from "../components/CmpAlertas";
 
 const VstPdts = () => {
   //Estilo del Fondo
@@ -46,16 +51,20 @@ const VstPdts = () => {
 
   //Variables estado
   const [btnControl, definirbtnControl] = useState(null);
-
-  const [tablaProveedor, cambiarTablaProveedor] = useState([]);
+  const [index, camIndex] = useState("");
+  const [prodEdit, camprodEdit] = useState([
+    { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+  ]);
+  const [botonControl, camBotonControl] = useState(true);
   const [tablaProducto, cambiarTablaProducto] = useState([]);
+  const [tablaProveedor, cambiarTablaProveedor] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [precio, cambiarPrecio] = useState({ campo: "", valido: null });
   const [cantidad, cambiarCantidad] = useState({ campo: "", valido: null });
   const [marca, cambiarMarca] = useState({ campo: "", valido: null });
-  const [proveedor, cambiarProveedor] = useState({ campo: "", id: "" });
+  const [proveedor, cambiarProveedor] = useState({ campo: "", id:"" });
   const [modelo, cambiarModelo] = useState({ campo: "", valido: null });
   const expresiones = {
     nombre: /^[A-Za-z ]{4,50}$/, // Letras
@@ -73,33 +82,7 @@ const VstPdts = () => {
     { id: "Marca" },
     { id: "Proveedor" },
   ];
-  const data = [
-    {
-      id: "1",
-      a: "name",
-      b: "$00.00",
-      c: "100",
-      d: "XXXX",
-      e: "XXXX",
-    },
-    {
-      id: "2",
-      a: "name",
-      b: "$00.00",
-      c: "100",
-      d: "XXXX",
-      e: "XXXX",
-    },
-    {
-      id: "3",
-      a: "name",
-      b: "$00.00",
-      c: "100",
-      d: "XXXX",
-      e: "XXXX",
-    },
-  ];
-
+  
   const history = useHistory();
   //Funciones
   const irInicio = () => {
@@ -153,23 +136,24 @@ const VstPdts = () => {
     8: irRegistro,
   };
   useEffect(() => {
+
     var mensaje = "";
 
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email;
+        const email = user.email
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
 
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data();
-            if (email === usuarioObtenido["correo"]) {
-              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
-                definirbtnControl(false);
-              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
-                definirbtnControl(true);
+            const usuarioObtenido = user.data()
+            if(email === usuarioObtenido['correo']){
+              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
+                definirbtnControl(false)     
+              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
+                definirbtnControl(true)
               }
             }
           });
@@ -201,6 +185,7 @@ const VstPdts = () => {
 
   //proceso antes de la renderizacion de react
   useEffect(() => {
+
     //Consulta de productos
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
       const DatosProductos = [];
@@ -224,17 +209,145 @@ const VstPdts = () => {
   const filtradoProductos = () => {
     cambiarTablaFiltrada(
       tablaProducto.filter(function (item) {
-        if (
-          item.nombre_producto
-            .toLowerCase()
-            .includes(busqueda.campo.toLowerCase())
-        ) {
-          return item.nombre_producto.toString();
+        if(item.nombre_producto.toLowerCase().includes(busqueda.campo.toLowerCase())){
+        return item.nombre_producto
+          .toString();
         }
       })
     );
   };
   console.log(proveedor.id);
+
+  const guardarProducto = () => {
+    if (
+      modelo.valido === "true" &&
+      nombre.valido === "true" &&
+      precio.valido === "true" &&
+      cantidad.valido === "true" &&
+      marca.valido === "true" &&
+      proveedor.campo !== "" 
+    ) {
+      MostrarAlerta2(
+        () =>
+          MostrarAlerta3("Datos Guardados Correctamente", () => {
+            guardarProductos(
+              cantidad,
+              marca,
+              modelo,
+              nombre,
+              precio,
+              proveedor
+            );
+          }),
+        "¿Desaea Guardar datos?",
+        "Pregunta!",
+        "4"
+      );
+
+      camprodEdit([
+        { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+      ]);
+      cambiarModelo({ campo: "", valido: "" });
+      cambiarNombre({ campo: "", valido: "" });
+      cambiarPrecio({ campo: "", valido: "" });
+      cambiarCantidad({ campo: "", valido: "" });
+      cambiarMarca({ campo: "", valido: "" });
+      cambiarProveedor({ campo: "", id: "" });
+      camBotonControl(true);
+    } else {
+      MostrarAlerta1(
+        "Favor revice todos los campos",
+        "Error!",
+        "2",
+        () => {
+          console.log("error");
+        }
+      );
+    }
+  };
+
+  //limpiar campos del proveedor
+  const cancelEdicion = () => {
+    camprodEdit([
+      { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+    ]);
+    cambiarModelo({ campo: "", valido: "" });
+    cambiarNombre({ campo: "", valido: "" });
+    cambiarPrecio({ campo: "", valido: "" });
+    cambiarCantidad({ campo: "", valido: "" });
+    cambiarMarca({ campo: "", valido: "" });
+    cambiarProveedor({ campo: "", id: "" });
+    camBotonControl(true);
+  };
+
+  const actualizarProducto = () => {
+    if (
+      modelo.campo !== "" &&
+      nombre.campo !== "" &&
+      precio.campo !== "" &&
+      cantidad.campo !== "" &&
+      marca.valido === "true" &&
+      proveedor.campo !== ""
+    ) {
+      MostrarAlerta2(
+        () =>
+          MostrarAlerta3("Datos Actualizados Correctamente", () => {
+            actualizar("producto", index, {
+              modelo: modelo.campo,
+              nombre_producto: nombre.campo,
+              precio: precio.campo,
+              existencia: cantidad.campo,
+              marca: marca.campo,
+              proveedor: proveedor.campo
+            });
+          }),
+        "¿Desaea Actualizar datos?",
+        "Pregunta!",
+        "4"
+      );
+      camprodEdit([
+        { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+      ]);
+      cambiarModelo({ campo: "", valido: "" });
+      cambiarNombre({ campo: "", valido: "" });
+      cambiarPrecio({ campo: "", valido: "" });
+      cambiarCantidad({ campo: "", valido: "" });
+      cambiarMarca({ campo: "", valido: "" });
+      cambiarProveedor({ campo: "", id: "" });
+      camBotonControl(true);
+    } else {
+      MostrarAlerta1(
+        "Favor de revisar que los datos esten correctos",
+        "Error!",
+        "2",
+        () => {
+          console.log("error");
+        }
+      );
+    }
+  };
+
+  //Filtro por id para proveedores
+  const filtrogeneralbyId = (cambiar, tab, id) => {
+    cambiar(
+      tab.filter(function (item) {
+        return item.id.toString().toLowerCase().includes(id.toLowerCase());
+      })
+    );
+  };
+
+  const obtProvId = (id) => {
+    camIndex(id);
+    camBotonControl(false);
+    filtrogeneralbyId(camprodEdit, tablaProducto, id);
+    cambiarModelo({ campo: prodEdit[0].modelo, valido: "true" });//
+    cambiarNombre({ campo: prodEdit[0].nombre_producto, valido: "true" });
+    cambiarPrecio({ campo: prodEdit[0].precio, valido: "true" });//
+    cambiarCantidad({ campo: prodEdit[0].existencia, valido: "true" });
+    cambiarMarca({ campo: prodEdit[0].marca, valido: "true" });//
+    cambiarProveedor({ campo: prodEdit[0].proveedor, id: "true" });
+  };
+
   //rederizacion
   return (
     <ElmVstNt>
@@ -305,8 +418,9 @@ const VstPdts = () => {
             />
             <div className="tabla">
               <CmpTablas
+                funcion={obtProvId}
                 titulos={titulosTab}
-                datos={busqueda.campo ? tablaFiltrada : tablaProducto}
+                datos={busqueda.campo ? tablaFiltrada:tablaProducto}
                 tipodatos="6"
                 columnas="6"
               />
@@ -366,9 +480,6 @@ const VstPdts = () => {
             />
 
             <CmpCajaCombo
-              funcion={() => {
-                console.log("hola");
-              }}
               tipoDatos="3"
               arrLista={tablaProveedor}
               cadEtiqueta="Proveedor:"
@@ -383,27 +494,36 @@ const VstPdts = () => {
               bolTipo={true}
               cadEtiqueta="Modelo:"
               cadPlaceholder="Mueble"
-              cadLeyenda="Solo se admiten letras"
+              cadLeyenda="Solo se admiten letras y números"
               bolObligatorio={true}
               cadNombre="Modelo"
               exprExpresionR={expresiones.modelo}
             />
             <CmpBotonPrincipal
-              bolVisibilidad={true}
-              cadTipofuncion="6"
+              bolVisibilidad={botonControl}
+              cadTipofuncion="0"
               cadTipo="3"
               funcion={() =>
-                guardarProductos(
-                  cantidad,
-                  marca,
-                  modelo,
-                  nombre,
-                  precio,
-                  proveedor
-                )
+                guardarProducto()
               }
               cadTexto="Guardar"
-              cadMensaje="¿Desea guardar o actualizar los datos?"
+              cadMensaje="¿Desea guardar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
+              cadTipofuncion="0"
+              cadTipo="3"
+              funcion={actualizarProducto}
+              cadTexto="Actualizar"
+              cadMensaje="¿Desea actualizar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
+              cadTipofuncion="0"
+              cadTipo="4"
+              funcion={cancelEdicion}
+              cadTexto="Cancelar"
+              cadMensaje="¿Desea cancelar cambios?"
             />
           </ElmFormNt>
         </div>
