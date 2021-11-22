@@ -85,4 +85,25 @@ const MostrarAlerta3 = (cadTitulo, funcion) => {
     funcion();
   });
 };
-export { MostrarAlerta1, MostrarAlerta2, MostrarAlerta3 };
+
+const MostrarAlerta4 = (funcion) => {
+  
+  const { value: email } = MySwal.fire({
+    title: 'Recuperar contraseña',
+    input: 'email',
+    inputLabel: 'Ingresa tu correo electronico',
+    inputPlaceholder: 'Tu email: '
+  }).then((email) => {
+    funcion(email.value)
+  });
+
+};
+
+const MostrarAlerta5 = (email, icon, title, text) => {
+  MySwal.fire({
+    icon: icon,
+    title: title,
+    text: text
+  })
+};
+export { MostrarAlerta1, MostrarAlerta2, MostrarAlerta3, MostrarAlerta4, MostrarAlerta5 };

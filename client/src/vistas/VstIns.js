@@ -19,7 +19,7 @@ import { useHistory } from "react-router-dom";
 
 import firebase from "./../bd/conexion";
 
-import { MostrarAlerta1 } from "../components/CmpAlertas";
+import { MostrarAlerta1, MostrarAlerta4, MostrarAlerta5 } from "../components/CmpAlertas";
 import {
   Colores,
   ElmCont2VStIns,
@@ -27,6 +27,8 @@ import {
   ElmTituloVStIns,
   ELmVStIns,
 } from "../Elementos/Elementos";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 // Componentes
 import CmpTexto from "../components/CmpTexto";
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
@@ -118,6 +120,22 @@ const VstIns = () => {
         });
     }
   };
+  
+  //funcion para recuperar la contraseña
+  const recuperarContra = (email) =>{
+    console.log(email)
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        // Password reset email sent!
+        console.log('se envio la repueracion de contraseña')
+        MostrarAlerta5(email, 'success', 'Recuperacion exitosa', `Verifica ${email} para restablecer tu contraseña !`)
+      })
+      .catch((error) => {
+        console.log('se envio la repueracion de contraseña')
+        MostrarAlerta5(email, 'error', 'Opps...', `Hubo un problema al restablecer la contraseña de ${email} \n Contacta a un gerente para mayor informacion`)
+      });
+
+  }
 
   //rederizacion
   return (
@@ -160,9 +178,10 @@ const VstIns = () => {
         <div className="boton2">
           <CmpBotonPrincipal
             bolVisibilidad={true}
-            cadTipofuncion={"8"}
+            cadTipofuncion={"0"}
             cadMensaje={"Mensaje de prueba"}
             cadTipo={"5"}
+            funcion={() => MostrarAlerta4(recuperarContra)}
             cadTexto={"Olvide mi Contraseña"}
           />
         </div>
