@@ -127,9 +127,9 @@ const VstBit = () => {
 
     firebase.db.collection("movimiento").onSnapshot((querySnapshot) => {
       const movimientos = [];
-      querySnapshot.forEach((doc) => {
-        var movTemp = doc.data();
-        var fechaConsulta = movTemp["fecha_movimiento"];
+      querySnapshot.forEach((doc) =>{
+        var movTemp = doc.data()
+        var fechaConsulta = movTemp['fecha_movimiento']
         var fechaActual = new Date().toDateString();
         var fechaComparar = fechaConsulta.toDate().toDateString() + "";
         var nombreCompleto = "";

@@ -161,6 +161,26 @@ const CmpTablas = ({
       </ELmContenedorTablaCont>
     );
   }
+  const tabEntregas= (value) => {
+    return (
+      <ELmContenedorTablaCont
+        onClick={() => {
+          console.log(value.id);
+        }}
+        key={value.id}
+        fraccion={columnas}
+      >        
+        <div>{value.nombre}</div>
+        <div>{value.direccion}</div>
+        <div>{value.referencia}</div>
+        <div>{value.fecha_ent}</div>
+        <div>{value.hora_ent}</div>
+        <div>{value.telefono}</div>        
+        <div>{value.estado}</div>        
+      </ELmContenedorTablaCont>
+    );
+  };
+
   const eliminar = (value, index) => {
     // console.log(index);
     datos.splice(index, 1);
@@ -177,6 +197,7 @@ const CmpTablas = ({
       6: tabProductos(value),
       7: tabNotas(value),
       8: tabBitacora(value),
+      9: tabEntregas(value),
     };
     return selectDatos[tipodatos];
   };

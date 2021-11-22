@@ -46,6 +46,10 @@ const VstEtgs = () => {
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [datosEntregas,cambiarEntregas]= useState([]);
+  const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
+  const [datosVentas,cambiarVentas]= useState([]);
+  const [datosClientes,cambiarClientes]= useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
   const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
@@ -55,12 +59,12 @@ const VstEtgs = () => {
   });
   //Variables Complementarias
 
-  const titulosTab = [
-    { id: "ID (Venta)" },
+  const titulosTab = [    
     { id: "Nombre" },
     { id: "Direccion" },
     { id: "Referencia" },
     { id: "Fecha de entrega" },
+    { id: "Hora de entrega" },
     { id: "Telefono" },
     { id: "Estado" },
   ];
@@ -126,7 +130,8 @@ const VstEtgs = () => {
     7: irBitacora,
     8: irRegistro,
   };
-
+   
+  
   useEffect(() => {
     const ac = new AbortController();
 
@@ -146,9 +151,50 @@ const VstEtgs = () => {
         }, 0);
       }
     });
+    //Consulta la tabla Entregas
+    firebase.db.collection("entrega").onSnapshot((querySnapshot) => {
+      const entregas = [];
+      querySnapshot.forEach((doc) => {        
+        var entregaTemp= doc.data();
+        var fechaEntrega= entregaTemp['fecha_ent'];
+        var horaEntrega= entregaTemp['hora_ent'];
+        var referencia= entregaTemp['referencia'];        
+        var estado= entregaTemp['estado'];
+        //Consulta la tabla ventas
+        firebase.db.collection("venta").onSnapshot((querySnapshot) => {
+          const ventas = [];
+          querySnapshot.forEach((doc) => {
+            var ventaTemp = doc.data()
+            if(doc.id === entregaTemp['idventa']){
+              var idventa=entregaTemp['idventa'];
+              var idAsociado=ventaTemp['idcliente'];
+              //Consulta la tabla clientes
+              firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
+                const cliente = [];
+                querySnapshot.forEach((doc) => {
+                  var clienteTemp = doc.data();
+                  if(doc.id === idAsociado){
+                    var nombreCompleto = clienteTemp['nombre_cliente'] + ' ' +
+                    clienteTemp['apaterno'] + ' ' + clienteTemp['amaterno'];
+                    var direccion=  clienteTemp['direccion'];
+                    var telefono= clienteTemp['telefono'];
+                    entregas.push({ nombre: nombreCompleto, direccion: direccion, referencia:referencia, fecha_ent:fechaEntrega, hora_ent: horaEntrega, telefono:telefono, estado: estado });
+                  }
+                });
+              cambiarClientes(cliente)  
+              });                            
+            }
+          });        
+          cambiarVentas(ventas);
+        });      
+      });
+      cambiarEntregas(entregas);        
+    });      
+  },[]);
+  
+  console.log('Tabla Entregas');
+  console.log(datosEntregas);
 
-    return () => ac.abort();
-  });
 
   const cerrarSesion = async () => {
     await firebase
@@ -163,6 +209,17 @@ const VstEtgs = () => {
       .catch((error) => {
         console.log(error);
       });
+  }
+    
+  const filtradoEntregas = () => {
+    cambiarTablaFiltrada(
+      datosEntregas.filter(function (item) {
+        return item.nombre
+          .toString()
+          .toLowerCase()
+          .includes(busqueda.campo.toLowerCase());
+      })
+    );
   };
 
   //rederizacion
@@ -226,13 +283,14 @@ const VstEtgs = () => {
               estCambiarEstado={cambiarBusqueda}
               cadPlaceholder="Filtrar entregas"
               cadNombre="busqueda"
+              filtro={filtradoEntregas}
             />
             <div className="tabla">
               <CmpTablas
-                columnas="6"
+                columnas="7"
                 titulos={titulosTab}
-                datos={data}
-                tipodatos="3"
+                datos={busqueda.campo== "" ? datosEntregas: tablaFiltrada}
+                tipodatos="9"
               />
             </div>
           </ElmContNt>
