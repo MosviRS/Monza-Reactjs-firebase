@@ -59,7 +59,7 @@ const VstPvds = () => {
   const [botonControl, camBotonControl] = useState(true);
   const [tablaProveedor, cambiarTablaProveedor] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
-  const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
+  const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: "" });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: "" });
   const [direccion, cambiarDireccion] = useState({ campo: "", valido: "" });
   const [telefono, cambiarTelefono] = useState({ campo: "", valido: "" });
@@ -69,7 +69,7 @@ const VstPvds = () => {
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
     nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-    direccion: /^[\wÀ-ÿ#,.\s]{1,200}$/, // Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios
+    direccion: /(.+?)(?:(?:first)|(?:second)|(?:third)|(?:fourth)|$)/gim, // Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
     telefono:
@@ -165,7 +165,6 @@ const VstPvds = () => {
     });
 
     return () => ac.abort();
-    
   }, []);
 
   const cerrarSesion = async () => {
@@ -274,7 +273,6 @@ const VstPvds = () => {
         "Pregunta!",
         "4"
       );
-
       camprovEdit([
         { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
       ]);
@@ -306,10 +304,10 @@ const VstPvds = () => {
     camIndex(id);
     camBotonControl(false);
     filtrogeneralbyId(camprovEdit, tablaProveedor, id);
-    cambiarNombre({ campo: provEdit[0].nombre_empresa });
-    cambiarDireccion({ campo: provEdit[0].direccion });
-    cambiarTelefono({ campo: provEdit[0].telefono });
-    cambiarCorreo({ campo: provEdit[0].correo });
+    cambiarNombre({ campo: provEdit[0].nombre_empresa, valido: "true" });
+    cambiarDireccion({ campo: provEdit[0].direccion, valido: "true" });
+    cambiarTelefono({ campo: provEdit[0].telefono, valido: "true" });
+    cambiarCorreo({ campo: provEdit[0].correo, valido: "true" });
   };
   console.log(provEdit);
 
