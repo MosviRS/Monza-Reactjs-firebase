@@ -278,7 +278,6 @@ const VstEtgs = () => {
     cambiarEstadoEntrega({ campo: entregasEdit[0].estado, valido: "true" });
   };
 
-  // console.log(datosEntregas);
   //rederizacion
   return (
     <ElmVstNt>
