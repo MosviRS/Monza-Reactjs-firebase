@@ -262,60 +262,54 @@ const VstAbns = () => {
       })
     );
   };
-
+  const limpiarCampos= ()=>{
+    camAbonosEdit([
+      {
+        id: "",
+        idventa: "",
+        nombre: "",
+        direccion: "",
+        fecha_venta: "",
+        total: "",
+        cant_abonada: "",
+        adeudo: "",
+        idabono: "",
+      },
+    ]);
+    cambiarNombre({ campo: "", valido: null });
+    cambiarNota({ campo: "", valido: null });
+    cambiarAbono({ campo: "", valido: null });
+  }
   const actualizarAbonos = () => {
     var cantidad =
       parseFloat(abono.campo) + parseFloat(abonosEdit[0].cant_abonada);
     console.log(cantidad);
-    if (parseFloat(abonosEdit[0].adeudo) >= parseFloat(abono.campo)) {
-      guardarAbonos(fechaAbn, cantidad, nota.campo, abonosEdit[0].idabono);
-      guardarMovimientos(fechaAbn, usuario, pago);
-      camAbonosEdit([
-        {
-          id: "",
-          idventa: "",
-          nombre: "",
-          direccion: "",
-          fecha_venta: "",
-          total: "",
-          cant_abonada: "",
-          adeudo: "",
-          idabono: "",
-        },
-      ]);
-      cambiarNombre({ campo: "", valido: null });
-      cambiarNota({ campo: "", valido: null });
-      cambiarAbono({ campo: "", valido: null });
-    } else {
-      if (parseFloat(abonosEdit[0].adeudo) != 0) {
-        MostrarAlerta1(
-          "Esta venta ya esta Saldada",
-          "No es posible",
-          2,
-          () => {}
-        );
-      } else {
-        MostrarAlerta1("Verifica la cantidad ingresada", "Error", 2, () => {});
-      }
+    if(nombre.campo!=""){
+      if (parseFloat(abonosEdit[0].adeudo) >= parseFloat(abono.campo)) {      
+          guardarAbonos(fechaAbn, cantidad, nota.campo, abonosEdit[0].idabono);
+          guardarMovimientos(fechaAbn, usuario, pago);
+          
+          limpiarCampos();
 
-      camAbonosEdit([
-        {
-          id: "",
-          idventa: "",
-          nombre: "",
-          direccion: "",
-          fecha_venta: "",
-          total: "",
-          cant_abonada: "",
-          adeudo: "",
-          idabono: "",
-        },
-      ]);
-      cambiarNombre({ campo: "", valido: null });
-      cambiarNota({ campo: "", valido: null });
-      cambiarAbono({ campo: "", valido: null });
+      } else {
+        if (parseFloat(abonosEdit[0].adeudo) === 0) {
+          MostrarAlerta1(
+            "Esta venta ya esta Saldada",
+            "No es posible",
+            2,
+            () => {}
+          );
+        } else {
+          MostrarAlerta1("Verifica la cantidad ingresada", "Error", 2, () => {});
+        }
+
+        limpiarCampos();
+      }
+    }else{
+      MostrarAlerta1("Seleccione un cliente", "Error", 2, () => {});
     }
   };
+
 
   const obtAbns = (id) => {
     camIndex(id);
@@ -448,6 +442,14 @@ const VstAbns = () => {
               funcion={() => actualizarAbonos()}
               cadTexto="Abonar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={true}
+              cadTipofuncion="0"
+              cadTipo="4"
+              funcion={()=>limpiarCampos()}
+              cadTexto="Cancelar"
+              cadMensaje="¿Desea actualizar los datos?"
             />
           </ElmFormNt>
         </div>
