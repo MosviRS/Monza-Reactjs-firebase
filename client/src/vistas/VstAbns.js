@@ -32,9 +32,11 @@ import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 
 import firebase from "./../bd/conexion";
-import { guardarMovimientos } from "../bd/servicios";
-import { guardarAbonos } from "../bd/servicios";
-import { ActualizarVenta } from "../bd/servicios";
+import {
+  guardarMovimientos,
+  guardarAbonos,
+  ActualizarVenta,
+} from "../bd/servicios";
 import { MostrarAlerta1 } from "../components/CmpAlertas";
 
 const VstAbns = () => {
@@ -56,7 +58,7 @@ const VstAbns = () => {
       idabono: "",
     },
   ]);
-
+  const [botonControl, camBotonControl] = useState(true);
   const [datosAbonos, cambiarTablaAbonos] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [fechaAbn, setFechaAbn] = useState(new Date());
@@ -262,7 +264,7 @@ const VstAbns = () => {
       })
     );
   };
-  const limpiarCampos= ()=>{
+  const limpiarCampos = () => {
     camAbonosEdit([
       {
         id: "",
@@ -279,18 +281,18 @@ const VstAbns = () => {
     cambiarNombre({ campo: "", valido: null });
     cambiarNota({ campo: "", valido: null });
     cambiarAbono({ campo: "", valido: null });
-  }
+    camBotonControl(true);
+  };
   const actualizarAbonos = () => {
     var cantidad =
       parseFloat(abono.campo) + parseFloat(abonosEdit[0].cant_abonada);
     console.log(cantidad);
-    if(nombre.campo!=""){
-      if (parseFloat(abonosEdit[0].adeudo) >= parseFloat(abono.campo)) {      
-          guardarAbonos(fechaAbn, cantidad, nota.campo, abonosEdit[0].idabono);
-          guardarMovimientos(fechaAbn, usuario, pago);
-          
-          limpiarCampos();
+    if (nombre.campo != "") {
+      if (parseFloat(abonosEdit[0].adeudo) >= parseFloat(abono.campo)) {
+        guardarAbonos(fechaAbn, cantidad, nota.campo, abonosEdit[0].idabono);
+        guardarMovimientos(fechaAbn, usuario, pago);
 
+        limpiarCampos();
       } else {
         if (parseFloat(abonosEdit[0].adeudo) === 0) {
           MostrarAlerta1(
@@ -300,22 +302,26 @@ const VstAbns = () => {
             () => {}
           );
         } else {
-          MostrarAlerta1("Verifica la cantidad ingresada", "Error", 2, () => {});
+          MostrarAlerta1(
+            "Verifica la cantidad ingresada",
+            "Error",
+            2,
+            () => {}
+          );
         }
-
         limpiarCampos();
       }
-    }else{
+    } else {
       MostrarAlerta1("Seleccione un cliente", "Error", 2, () => {});
     }
   };
-
 
   const obtAbns = (id) => {
     camIndex(id);
     filtrogeneralbyId(camAbonosEdit, datosAbonos, id);
     cambiarNombre({ campo: abonosEdit[0].nombre, valido: "true" });
     cambiarNota({ campo: abonosEdit[0].id, valido: "true" });
+    camBotonControl(false);
   };
 
   console.log(abonosEdit[0].idabono);
@@ -444,10 +450,10 @@ const VstAbns = () => {
               cadMensaje="¿Todos los datos son correcto en la venta?"
             />
             <CmpBotonPrincipal
-              bolVisibilidad={true}
+              bolVisibilidad={!botonControl}
               cadTipofuncion="0"
               cadTipo="4"
-              funcion={()=>limpiarCampos()}
+              funcion={() => limpiarCampos()}
               cadTexto="Cancelar"
               cadMensaje="¿Desea actualizar los datos?"
             />
