@@ -49,6 +49,7 @@ import CmpRevisionCaja from "../components/CmpRevisionCaja";
 import CmpCajaCombo from "../components/CmpCajaCombo";
 import { MostrarAlerta1, MostrarAlerta3 } from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
+import {guardarMovimientos} from "../bd/servicios";
 
 const VstNt = () => {
   //Estilo del Fondo
@@ -80,6 +81,7 @@ const VstNt = () => {
     campo: "",
     valido: null,
   });
+  const [usuario,setDataUsuario]=useState({campo:"",id:""});
   //Variables Complementarias
   const expresiones = {
     cantidad: /^\d+/, // 7 a 14 numeros. Letras y espacios, pueden llevar acentos.
@@ -165,6 +167,7 @@ const VstNt = () => {
         ac.abort();
         mensaje = "Se restablecio la sesion para: " + user.email;
         console.log(mensaje);
+        setDataUsuario({campo:user.email,id:user.uid});
       } else {
         mensaje = "La sesion caduco";
         console.log(mensaje);
@@ -527,7 +530,9 @@ const VstNt = () => {
               bolVisibilidad={true}
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => console.log("click")}
+              funcion={() => 
+                guardarMovimientos(fechaEnt,usuario,pago)
+              }
               cadTexto="Pagar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
             />

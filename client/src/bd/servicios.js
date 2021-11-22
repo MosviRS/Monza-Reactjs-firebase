@@ -49,6 +49,20 @@ const guardarProductos = async (
       proveedor: proveedor.campo,
     });
 };
+const guardarMovimientos = async (
+  fecha_movimiento,
+  idcuenta,
+  mov
+) => {
+  await firebase.db
+    .collection("movimiento")
+    .doc()
+    .set({
+      fecha_movimiento: fecha_movimiento,
+      idcuenta: idcuenta.id,
+      mov: mov.campo
+    });
+};
 
 const RegistraUsuario = async (nombre, apaterno, amaterno, correo, contra) => {
   console.log("Registrando");
@@ -105,4 +119,5 @@ export {
   guardarProveedores,
   RegistraUsuario,
   actualizar,
+  guardarMovimientos
 };

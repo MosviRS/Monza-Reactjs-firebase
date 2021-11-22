@@ -32,16 +32,20 @@ import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 
 import firebase from "./../bd/conexion";
+import {guardarMovimientos} from "../bd/servicios";
 
 const VstAbns = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [fechaAbn, setFechaAbn] = useState(new Date());
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
   const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
   const [abono, cambiarAbono] = useState({ campo: "", valido: null });
+  const [usuario,setDataUsuario]=useState({campo:"",id:""});
+  const [pago,cambiarPago]=useState({campo:"Abono"});
   //Variables Complementarias
 
   const titulosTab = [
@@ -127,6 +131,7 @@ const VstAbns = () => {
         ac.abort();
         mensaje = "Se restablecio la sesion para: " + user.email;
         console.log(mensaje);
+        setDataUsuario({campo:user.email,id:user.uid});
       } else {
         mensaje = "La sesion caduco";
         console.log(mensaje);
@@ -267,7 +272,9 @@ const VstAbns = () => {
               bolVisibilidad={true}
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => console.log("click")}
+              funcion={() => 
+                guardarMovimientos(fechaAbn,usuario,pago)
+              }
               cadTexto="Abonar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
             />
