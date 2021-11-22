@@ -158,7 +158,7 @@ const CmpTablas = ({
       </ELmContenedorTablaCont>
     );
   };
-  const tabEntregas = (value) => {
+  const tabEntregas= (value) => {
     return (
       <ELmContenedorTablaCont
         onClick={() => funcion(value.id)}
@@ -172,6 +172,25 @@ const CmpTablas = ({
         <div>{value.hora_ent}</div>
         <div>{value.telefono}</div>
         <div>{value.estado}</div>
+      </ELmContenedorTablaCont>
+    );
+  };
+  const tabClientes= (value) => {
+    return (
+      <ELmContenedorTablaCont
+        onClick={() => {
+          console.log(value.id);
+        }}
+        key={value.id}
+        fraccion={columnas}
+      >        
+        <div>{value.idventa}</div>
+        <div>{value.nombre}</div>
+        <div>{value.direccion}</div>
+        <div>{value.fecha_venta}</div>                
+        <div>{value.total}</div>        
+        <div>{value.cant_abonada}</div>        
+        <div>{value.adeudo}</div>
       </ELmContenedorTablaCont>
     );
   };
@@ -193,6 +212,7 @@ const CmpTablas = ({
       7: tabNotas(value),
       8: tabBitacora(value),
       9: tabEntregas(value),
+      10:tabClientes(value),
     };
     return selectDatos[tipodatos];
   };

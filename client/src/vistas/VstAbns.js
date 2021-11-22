@@ -39,9 +39,12 @@ const VstAbns = () => {
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [datosAbonos, cambiarTablaAbonos]= useState([]);
+  const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [fechaAbn, setFechaAbn] = useState(new Date());
   const [btnControl, definirbtnControl] = useState(null);
-
+  const [datosVentas,cambiarVentas]= useState([]);
+  const [datosClientes,cambiarClientes]= useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
   const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
@@ -153,10 +156,61 @@ const VstAbns = () => {
           irInicio();
         }, 0);
       }
-    });
-
+    });    
+    //Consulta la tabla venta
+    firebase.db.collection("venta").onSnapshot((querySnapshot) => {
+      const ventas = [];
+      querySnapshot.forEach((doc) => {        
+        var ventaTemp = doc.data()
+        var idventa=doc.id;
+        var idAsociado=ventaTemp['idcliente'];
+        var fech=ventaTemp['fecha_venta'];
+        var fecha_venta=fech.toDate().toDateString() + "";
+        var total=ventaTemp['total'];                                                      
+        //Consulta la tabla clientes
+        firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
+          const clientes = [];
+          querySnapshot.forEach((doc) => {
+            var clienteTemp = doc.data()
+            if(doc.id===idAsociado){              
+              var nombreCompleto = clienteTemp['nombre_cliente'] + ' ' +
+                    clienteTemp['apaterno'] + ' ' + clienteTemp['amaterno'];
+              var direccion=  clienteTemp['direccion'];                                                         
+              //Consulta la tabla abonos
+              firebase.db.collection("abono").onSnapshot((querySnapshot) => {                
+                const abonos = [];
+                querySnapshot.forEach((doc) => {
+                  var abonoTemp = doc.data();
+                  var cant_abonada=0;
+                  if(idventa === abonoTemp['idventa']){                                                                                                    
+                    cant_abonada=((cant_abonada) + (abonoTemp['cant_abonada']));              
+                    var fecha_abono=abonoTemp['fecha_abono'];                                                                           
+                    var adeudo=total-cant_abonada;
+                    abonos.push({
+                      idventa:idventa, 
+                      nombre:nombreCompleto, 
+                      direccion:direccion,
+                      fecha_venta:fecha_venta,                      
+                      total:total,
+                      cant_abonada:cant_abonada,
+                      adeudo:adeudo,
+                    });
+                  }
+                });
+              cambiarTablaAbonos(abonos);
+              });                            
+            }
+          });        
+          cambiarClientes(clientes);
+        });      
+      });
+      cambiarVentas(ventas);              
+    });              
   }, []);
-  //Cerrar sesion del usuario
+
+  console.log('Tabla Abonos');
+  console.log(datosAbonos);
+
   const cerrarSesion = async () => {
     await firebase
       .auth()
@@ -170,6 +224,17 @@ const VstAbns = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const filtradoClientes = () => {
+    cambiarTablaFiltrada(
+      datosAbonos.filter(function (item) {
+        return item.nombre
+          .toString()
+          .toLowerCase()
+          .includes(busqueda.campo.toLowerCase());
+      })
+    );
   };
 
   //rederizacion
@@ -239,13 +304,14 @@ const VstAbns = () => {
               estCambiarEstado={cambiarBusqueda}
               cadPlaceholder="Filtrar clientes"
               cadNombre="busqueda"
+              filtro={filtradoClientes}
             />
             <div className="tabla">
               <CmpTablas
                 columnas="7"
                 titulos={titulosTab}
-                datos={data}
-                tipodatos="3"
+                datos={busqueda.campo== "" ? datosAbonos: tablaFiltrada}
+                tipodatos="10"
               />
             </div>
           </ElmContNt>
