@@ -187,31 +187,30 @@ const VstAbns = () => {
                 clienteTemp["amaterno"];
               var direccion = clienteTemp["direccion"];
               //Consulta la tabla abonos
-              firebase.db.collection("abono").onSnapshot((querySnapshot) => {                
-                const abonos = [];                
-                querySnapshot.forEach((doc) => {     
-                  
-                  var abonoTemp = doc.data(); 
+              firebase.db.collection("abono").onSnapshot((querySnapshot) => {
+                const abonos = [];
+                querySnapshot.forEach((doc) => {
+                  var abonoTemp = doc.data();
 
-                    if(idventa === abonoTemp['idventa']){
-                      var idabono = doc.id;
-                      var fecha_abono=abonoTemp['fecha_abono'];                                                                                  
-                      var cant_abonada=abonoTemp['cant_abonada'];  //((cant_abonada) + parseFloat(abonoTemp['cant_abonada']));                                                            
-                      var adeudo=  (parseFloat(total)-parseFloat(cant_abonada));   
-                      
-                      if(adeudo===0){
-                        ActualizarVenta("pagado",idventa);
-                      }
-                      
-                      console.log("Adeudo",adeudo);
+                  if (idventa === abonoTemp["idventa"]) {
+                    var idabono = doc.id;
+                    var fecha_abono = abonoTemp["fecha_abono"];
+                    var cant_abonada = abonoTemp["cant_abonada"]; //((cant_abonada) + parseFloat(abonoTemp['cant_abonada']));
+                    var adeudo = parseFloat(total) - parseFloat(cant_abonada);
+
+                    if (adeudo === 0) {
+                      ActualizarVenta("pagado", idventa);
+                    }
+
+                    console.log("Adeudo", adeudo);
                     abonos.push({
                       id: idventa,
-                      nombre:nombreCompleto, 
-                      direccion:direccion,
-                      fecha_venta:fecha_venta,                      
-                      total:total,
-                      cant_abonada:cant_abonada,
-                      adeudo:adeudo,
+                      nombre: nombreCompleto,
+                      direccion: direccion,
+                      fecha_venta: fecha_venta,
+                      total: total,
+                      cant_abonada: cant_abonada,
+                      adeudo: adeudo,
                       idabono,
                     });
                   }
@@ -322,7 +321,7 @@ const VstAbns = () => {
     camIndex(id);
     filtrogeneralbyId(camAbonosEdit, datosAbonos, id);
     cambiarNombre({ campo: abonosEdit[0].nombre, valido: "true" });
-    cambiarNota({ campo: abonosEdit[0].idventa, valido: "true" });
+    cambiarNota({ campo: abonosEdit[0].id, valido: "true" });
   };
 
   console.log(abonosEdit[0].idabono);
