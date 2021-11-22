@@ -32,11 +32,10 @@ import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 
 import firebase from "./../bd/conexion";
-
-import {guardarMovimientos} from "../bd/servicios";
-import {guardarAbonos}from "../bd/servicios";
+import { guardarMovimientos } from "../bd/servicios";
+import { guardarAbonos } from "../bd/servicios";
 import { ActualizarVenta } from "../bd/servicios";
-import {MostrarAlerta1}from "../components/CmpAlertas";
+import { MostrarAlerta1 } from "../components/CmpAlertas";
 
 const VstAbns = () => {
   //Estilo del Fondo
@@ -46,30 +45,31 @@ const VstAbns = () => {
   const [index, camIndex] = useState("");
   const [abonosEdit, camAbonosEdit] = useState([
     {
-      id:"",
-      idventa: "",      
-      nombre:"",      
-      direccion:"",      
-      fecha_venta:"",      
-      total:"",      
-      cant_abonada:"",      
-      adeudo:"", 
-      idabono:"",     
+      id: "",
+      idventa: "",
+      nombre: "",
+      direccion: "",
+      fecha_venta: "",
+      total: "",
+      cant_abonada: "",
+      adeudo: "",
+      idabono: "",
     },
   ]);
 
-  const [datosAbonos, cambiarTablaAbonos]= useState([]);
+  const [datosAbonos, cambiarTablaAbonos] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [fechaAbn, setFechaAbn] = useState(new Date());
   const [btnControl, definirbtnControl] = useState(null);
   const [datosVentas, cambiarVentas] = useState([]);
   const [datosClientes, cambiarClientes] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
-  const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
-  const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
+  const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
+  const [nota, cambiarNota] = useState({ campo: "", valido: null });
   const [abono, cambiarAbono] = useState({ campo: "", valido: null });
   const [usuario, setDataUsuario] = useState({ campo: "", id: "" });
-  const [pago, cambiarPago] = useState({ campo: "Abono" });
+  const [pago, cambiarPago] = useState({ campo: "" });
+  //Variables Complementarias
 
   //Variables Complementarias
   const titulosTab = [
@@ -79,16 +79,6 @@ const VstAbns = () => {
     { id: "Total a pagar" },
     { id: "Abonado" },
     { id: "Adeudo" },
-  ];
-  const data = [
-    {
-      a: "name",
-      b: "Apellido",
-      c: "Edad",
-      d: "Email",
-      e: "Email",
-      f: "Email",
-    },
   ];
   const history = useHistory();
   //Funciones
@@ -176,13 +166,13 @@ const VstAbns = () => {
     //Consulta la tabla venta
     firebase.db.collection("venta").onSnapshot((querySnapshot) => {
       const ventas = [];
-      querySnapshot.forEach((doc) => {        
-        var ventaTemp = doc.data()
-        var idventa=doc.id;
-        var idAsociado=ventaTemp['idcliente'];
-        var fech=ventaTemp['fecha_venta'];
-        var fecha_venta=fech.toDate().toDateString() + "";
-        var total=ventaTemp['total'];                
+      querySnapshot.forEach((doc) => {
+        var ventaTemp = doc.data();
+        var idventa = doc.id;
+        var idAsociado = ventaTemp["idcliente"];
+        var fech = ventaTemp["fecha_venta"];
+        var fecha_venta = fech.toDate().toDateString() + "";
+        var total = ventaTemp["total"];
         //Consulta la tabla clientes
         firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
           const clientes = [];
@@ -225,9 +215,9 @@ const VstAbns = () => {
                       idabono,
                     });
                   }
-                });                
-              cambiarTablaAbonos(abonos);
-              });                            
+                });
+                cambiarTablaAbonos(abonos);
+              });
             }
           });
           cambiarClientes(clientes);
@@ -254,7 +244,7 @@ const VstAbns = () => {
         console.log(error);
       });
   };
-  
+
   const filtradoClientes = () => {
     cambiarTablaFiltrada(
       datosAbonos.filter(function (item) {
@@ -274,62 +264,65 @@ const VstAbns = () => {
     );
   };
 
-  const actualizarAbonos=()=>{    
-    var cantidad=(parseFloat(abono.campo)+ parseFloat(abonosEdit[0].cant_abonada));
+  const actualizarAbonos = () => {
+    var cantidad =
+      parseFloat(abono.campo) + parseFloat(abonosEdit[0].cant_abonada);
     console.log(cantidad);
-      if(parseFloat(abonosEdit[0].adeudo)>=parseFloat(abono.campo)){    
-        guardarAbonos(fechaAbn,cantidad ,nota.campo,abonosEdit[0].idabono);                
-        guardarMovimientos(fechaAbn,usuario,pago);                
-        camAbonosEdit([
-          {
-            id:"",
-            idventa: "",      
-            nombre:"",      
-            direccion:"",      
-            fecha_venta:"",      
-            total:"",      
-            cant_abonada:"",      
-            adeudo:"", 
-            idabono:"",     
-          },
-        ]);
-        cambiarNombre({ campo:"", valido: null });
-        cambiarNota({ campo:"", valido: null }); 
-        cambiarAbono({campo:"",valido:null});      
-      }else{
-        
-        if(parseFloat(abonosEdit[0].adeudo)!=0){     
-          MostrarAlerta1("Esta venta ya esta Saldada", "No es posible",2,()=>{});            
-        }else{
-          MostrarAlerta1("Verifica la cantidad ingresada", "Error",2,()=>{});
-        }
-              
-        camAbonosEdit([
-          {
-            id:"",
-            idventa: "",      
-            nombre:"",      
-            direccion:"",      
-            fecha_venta:"",      
-            total:"",      
-            cant_abonada:"",      
-            adeudo:"", 
-            idabono:"",     
-          },
-        ]);
-        cambiarNombre({ campo:"", valido: null });
-        cambiarNota({ campo:"", valido: null }); 
-        cambiarAbono({campo:"",valido:null});
-      }      
-  };
+    if (parseFloat(abonosEdit[0].adeudo) >= parseFloat(abono.campo)) {
+      guardarAbonos(fechaAbn, cantidad, nota.campo, abonosEdit[0].idabono);
+      guardarMovimientos(fechaAbn, usuario, pago);
+      camAbonosEdit([
+        {
+          id: "",
+          idventa: "",
+          nombre: "",
+          direccion: "",
+          fecha_venta: "",
+          total: "",
+          cant_abonada: "",
+          adeudo: "",
+          idabono: "",
+        },
+      ]);
+      cambiarNombre({ campo: "", valido: null });
+      cambiarNota({ campo: "", valido: null });
+      cambiarAbono({ campo: "", valido: null });
+    } else {
+      if (parseFloat(abonosEdit[0].adeudo) != 0) {
+        MostrarAlerta1(
+          "Esta venta ya esta Saldada",
+          "No es posible",
+          2,
+          () => {}
+        );
+      } else {
+        MostrarAlerta1("Verifica la cantidad ingresada", "Error", 2, () => {});
+      }
 
+      camAbonosEdit([
+        {
+          id: "",
+          idventa: "",
+          nombre: "",
+          direccion: "",
+          fecha_venta: "",
+          total: "",
+          cant_abonada: "",
+          adeudo: "",
+          idabono: "",
+        },
+      ]);
+      cambiarNombre({ campo: "", valido: null });
+      cambiarNota({ campo: "", valido: null });
+      cambiarAbono({ campo: "", valido: null });
+    }
+  };
 
   const obtAbns = (id) => {
     camIndex(id);
     filtrogeneralbyId(camAbonosEdit, datosAbonos, id);
     cambiarNombre({ campo: abonosEdit[0].nombre, valido: "true" });
-    cambiarNota({ campo: abonosEdit[0].id, valido: "true" });   
-           
+    cambiarNota({ campo: abonosEdit[0].idventa, valido: "true" });
   };
 
   console.log(abonosEdit[0].idabono);
@@ -453,9 +446,7 @@ const VstAbns = () => {
               bolVisibilidad={true}
               cadTipofuncion="0"
               cadTipo="3"
-              funcion={() => 
-                actualizarAbonos()                
-              }
+              funcion={() => actualizarAbonos()}
               cadTexto="Abonar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
             />

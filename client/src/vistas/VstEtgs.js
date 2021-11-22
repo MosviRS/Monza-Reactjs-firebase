@@ -150,8 +150,8 @@ const VstEtgs = () => {
         console.log(mensaje);
         //verifica tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
-          querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data();
+          querySnapshot.forEach((user2) => {
+            const usuarioObtenido = user2.data();
             if (email === usuarioObtenido["correo"]) {
               if (usuarioObtenido["tipo_usuario"] === "Gerente") {
                 definirbtnControl(false);
@@ -254,7 +254,7 @@ const VstEtgs = () => {
   const filtrogeneralbyId = (cambiar, tab, id) => {
     cambiar(
       tab.filter(function (item) {
-        return item.idventa.toString().toLowerCase().includes(id.toLowerCase());
+        return item.id.toString().toLowerCase().includes(id.toLowerCase());
       })
     );
   };
@@ -270,14 +270,15 @@ const VstEtgs = () => {
   };
 
   const obtEtgs = (id) => {
+    // console.log(id);
     camIndex(id);
-    filtrogeneralbyId(camEntregasEdit, datosEntregas, id);
+    filtrogeneralbyId(camEntregasEdit, datosEntregas, index);
     cambiarNombre({ campo: entregasEdit[0].nombre, valido: "true" });
     cambiarNota({ campo: entregasEdit[0].idventa, valido: "true" });
     cambiarEstadoEntrega({ campo: entregasEdit[0].estado, valido: "true" });
   };
 
-  console.log(entregasEdit[0].idventa);
+  // console.log(datosEntregas);
   //rederizacion
   return (
     <ElmVstNt>

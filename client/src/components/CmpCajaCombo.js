@@ -30,8 +30,7 @@ const CompSeleccion = ({
   };
   const onClick = (value) => {
     estCambiarEstado({ ...estEstado, id: value });
-    // funcion(value);
-    // console.log(value);
+
     funcion();
   };
   const datos1 = () => {

@@ -35,7 +35,7 @@ const VstReg = () => {
     "@media (max-width: 1000px) {background-size: auto; }";
 
   //Variables estado
-  const [{}, definirbtnControl] = useState(null);
+  const [control, definirbtnControl] = useState(null);
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [apPaterno, cambiarApPaterno] = useState({ campo: "", valido: null });
   const [apMaterno, cambiarApMaterno] = useState({ campo: "", valido: null });
