@@ -83,10 +83,42 @@ const guardarMovimientos = async (
     });
 };
 
+const guardarAbonos = async (
+  fecha_abono,
+  cant_abonada,
+  idventa,
+  id
+) => {
+  await   
+  firebase.db
+    .collection("abono")
+    .doc(id)
+    .update({
+      cant_abonada: cant_abonada,
+      fecha_abono: fecha_abono,
+      idventa: idventa
+    });
+};
+const ActualizarVenta= async (
+  estatus,  
+  idventa  
+  )=> {
+  await   
+  firebase.db
+    .collection("venta")
+    .doc(idventa)
+    .update({
+      estatus: estatus,      
+    });
+};
+
+
 export {
   tomarTabla,
   guardarProductos,
   guardarProveedores,
   actualizar,
-  guardarMovimientos
+  guardarMovimientos,
+  guardarAbonos,
+  ActualizarVenta,
 };

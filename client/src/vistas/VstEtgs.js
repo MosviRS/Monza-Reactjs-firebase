@@ -254,10 +254,11 @@ const VstEtgs = () => {
   const filtrogeneralbyId = (cambiar, tab, id) => {
     cambiar(
       tab.filter(function (item) {
-        return item.id.toString().toLowerCase().includes(id.toLowerCase());
+        return item.idventa.toString().toLowerCase().includes(id.toLowerCase());
       })
     );
   };
+
   const actualizarEntrega = () => {
     actualizar("entrega", index, {
       estado: estadoEntrega.campo,
@@ -275,6 +276,7 @@ const VstEtgs = () => {
     cambiarNota({ campo: entregasEdit[0].idventa, valido: "true" });
     cambiarEstadoEntrega({ campo: entregasEdit[0].estado, valido: "true" });
   };
+
   console.log(entregasEdit[0].idventa);
   //rederizacion
   return (

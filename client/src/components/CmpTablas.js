@@ -178,9 +178,7 @@ const CmpTablas = ({
   const tabClientes= (value) => {
     return (
       <ELmContenedorTablaCont
-        onClick={() => {
-          console.log(value.id);
-        }}
+        onClick={() => funcion(value.id)}
         key={value.id}
         fraccion={columnas}
       >        

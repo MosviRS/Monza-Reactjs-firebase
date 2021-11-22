@@ -33,12 +33,30 @@ import CmpTablas from "../components/CmpTablas";
 
 import firebase from "./../bd/conexion";
 import {guardarMovimientos} from "../bd/servicios";
+import {guardarAbonos}from "../bd/servicios";
+import { ActualizarVenta } from "../bd/servicios";
+import {MostrarAlerta1}from "../components/CmpAlertas";
 
 const VstAbns = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [index, camIndex] = useState("");
+  const [abonosEdit, camAbonosEdit] = useState([
+    {
+      id:"",
+      idventa: "",      
+      nombre:"",      
+      direccion:"",      
+      fecha_venta:"",      
+      total:"",      
+      cant_abonada:"",      
+      adeudo:"", 
+      idabono:"",     
+    },
+  ]);
+
   const [datosAbonos, cambiarTablaAbonos]= useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [fechaAbn, setFechaAbn] = useState(new Date());
@@ -166,7 +184,7 @@ const VstAbns = () => {
         var idAsociado=ventaTemp['idcliente'];
         var fech=ventaTemp['fecha_venta'];
         var fecha_venta=fech.toDate().toDateString() + "";
-        var total=ventaTemp['total'];                                                      
+        var total=ventaTemp['total'];                
         //Consulta la tabla clientes
         firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
           const clientes = [];
@@ -178,15 +196,22 @@ const VstAbns = () => {
               var direccion=  clienteTemp['direccion'];                                                         
               //Consulta la tabla abonos
               firebase.db.collection("abono").onSnapshot((querySnapshot) => {                
-                const abonos = [];
-                querySnapshot.forEach((doc) => {
-                  var abonoTemp = doc.data();
-                  var cant_abonada=0;
-                  if(idventa === abonoTemp['idventa']){                                                                                                    
-                    cant_abonada=((cant_abonada) + (abonoTemp['cant_abonada']));              
-                    var fecha_abono=abonoTemp['fecha_abono'];                                                                           
-                    var adeudo=total-cant_abonada;
+                const abonos = [];                
+                querySnapshot.forEach((doc) => {                  
+                  var abonoTemp = doc.data();                  
+                    if(idventa === abonoTemp['idventa']){
+                      var idabono=doc.id;
+                      var fecha_abono=abonoTemp['fecha_abono'];                                                                                  
+                      var cant_abonada=abonoTemp['cant_abonada'];  //((cant_abonada) + parseFloat(abonoTemp['cant_abonada']));                                                            
+                      var adeudo=  (parseFloat(total)-parseFloat(cant_abonada));   
+                      
+                      if(adeudo===0){
+                        ActualizarVenta("pagado",idventa);
+                      }
+                      
+                      console.log("Adeudo",adeudo);
                     abonos.push({
+                      id:idventa,
                       idventa:idventa, 
                       nombre:nombreCompleto, 
                       direccion:direccion,
@@ -194,9 +219,10 @@ const VstAbns = () => {
                       total:total,
                       cant_abonada:cant_abonada,
                       adeudo:adeudo,
+                      idabono,
                     });
                   }
-                });
+                });                
               cambiarTablaAbonos(abonos);
               });                            
             }
@@ -225,7 +251,7 @@ const VstAbns = () => {
         console.log(error);
       });
   };
-
+  
   const filtradoClientes = () => {
     cambiarTablaFiltrada(
       datosAbonos.filter(function (item) {
@@ -237,6 +263,73 @@ const VstAbns = () => {
     );
   };
 
+  const filtrogeneralbyId = (cambiar, tab, id) => {
+    cambiar(
+      tab.filter(function (item) {
+        return item.id.toString().toLowerCase().includes(id.toLowerCase());
+      })
+    );
+  };
+
+  const actualizarAbonos=()=>{    
+    var cantidad=(parseFloat(abono.campo)+ parseFloat(abonosEdit[0].cant_abonada));
+    console.log(cantidad);
+      if(parseFloat(abonosEdit[0].adeudo)>=parseFloat(abono.campo)){    
+        guardarAbonos(fechaAbn,cantidad ,nota.campo,abonosEdit[0].idabono);                
+        guardarMovimientos(fechaAbn,usuario,pago);                
+        camAbonosEdit([
+          {
+            id:"",
+            idventa: "",      
+            nombre:"",      
+            direccion:"",      
+            fecha_venta:"",      
+            total:"",      
+            cant_abonada:"",      
+            adeudo:"", 
+            idabono:"",     
+          },
+        ]);
+        cambiarNombre({ campo:"", valido: null });
+        cambiarNota({ campo:"", valido: null }); 
+        cambiarAbono({campo:"",valido:null});      
+      }else{
+        
+        if(parseFloat(abonosEdit[0].adeudo)!=0){     
+          MostrarAlerta1("Esta venta ya esta Saldada", "No es posible",2,()=>{});            
+        }else{
+          MostrarAlerta1("Verifica la cantidad ingresada", "Error",2,()=>{});
+        }
+              
+        camAbonosEdit([
+          {
+            id:"",
+            idventa: "",      
+            nombre:"",      
+            direccion:"",      
+            fecha_venta:"",      
+            total:"",      
+            cant_abonada:"",      
+            adeudo:"", 
+            idabono:"",     
+          },
+        ]);
+        cambiarNombre({ campo:"", valido: null });
+        cambiarNota({ campo:"", valido: null }); 
+        cambiarAbono({campo:"",valido:null});
+      }      
+  };
+
+
+  const obtAbns = (id) => {
+    camIndex(id);
+    filtrogeneralbyId(camAbonosEdit, datosAbonos, id);
+    cambiarNombre({ campo: abonosEdit[0].nombre, valido: "true" });
+    cambiarNota({ campo: abonosEdit[0].idventa, valido: "true" });   
+           
+  };
+
+  console.log(abonosEdit[0].idabono);
   //rederizacion
   return (
     <ElmVstNt>
@@ -308,6 +401,7 @@ const VstAbns = () => {
             />
             <div className="tabla">
               <CmpTablas
+                funcion={obtAbns}
                 columnas="7"
                 titulos={titulosTab}
                 datos={busqueda.campo== "" ? datosAbonos: tablaFiltrada}
@@ -357,7 +451,7 @@ const VstAbns = () => {
               cadTipofuncion="6"
               cadTipo="3"
               funcion={() => 
-                guardarMovimientos(fechaAbn,usuario,pago)
+                actualizarAbonos()                
               }
               cadTexto="Abonar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
