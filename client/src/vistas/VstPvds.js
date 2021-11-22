@@ -65,10 +65,11 @@ const VstPvds = () => {
   const [telefono, cambiarTelefono] = useState({ campo: "", valido: "" });
   const [correo, cambiarCorreo] = useState({ campo: "", valido: "" });
   //Variables Complementarias//Variables Complementarias
+  // /(.+?)(?:(?:first)|(?:second)|(?:third)|(?:fourth)|$)/gim, //Expresion regular para buscar en un string
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
     nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-    direccion: /^[a-zA-ZÀ-ÿ0-9_.+-\s]{1,200}$/, // Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios
+    direccion: /^[\wÀ-ÿ#,.\s]{1,200}$/, // Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
     telefono:
@@ -197,10 +198,10 @@ const VstPvds = () => {
     camprovEdit([
       { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
     ]);
-    cambiarNombre({ campo: "", valido: null });
-    cambiarDireccion({ campo: "", valido: null });
-    cambiarTelefono({ campo: "", valido: null });
-    cambiarCorreo({ campo: "", valido: null });
+    cambiarNombre({ campo: "", valido: "" });
+    cambiarDireccion({ campo: "", valido: "" });
+    cambiarTelefono({ campo: "", valido: "" });
+    cambiarCorreo({ campo: "", valido: "" });
     camBotonControl(true);
   };
   const guardarProveedor = () => {
@@ -226,8 +227,17 @@ const VstPvds = () => {
           }),
         "¿Desaea Guardar datos?",
         "Pregunta!",
-        "3"
+        "4"
       );
+
+      camprovEdit([
+        { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
+      ]);
+      cambiarNombre({ campo: "", valido: "" });
+      cambiarDireccion({ campo: "", valido: "" });
+      cambiarTelefono({ campo: "", valido: "" });
+      cambiarCorreo({ campo: "", valido: "" });
+      camBotonControl(true);
     } else {
       MostrarAlerta1(
         "Favor de revisar que los datos esten correctos",
@@ -240,12 +250,49 @@ const VstPvds = () => {
     }
   };
   const actualizarProveedor = () => {
-    actualizar("proveedor", index, {
-      correo: correo.campo,
-      direccion: direccion.campo,
-      nombre_empresa: nombre.campo,
-      telefono: telefono.campo,
-    });
+    if (
+      nombre.campo !== "" &&
+      direccion.campo !== "" &&
+      telefono.campo !== "" &&
+      correo.campo !== "" &&
+      nombre.valido === "true" &&
+      direccion.valido === "true" &&
+      telefono.valido === "true" &&
+      correo.valido === "true"
+    ) {
+      MostrarAlerta2(
+        () =>
+          MostrarAlerta3("Datos Actualizados Correctamente", () => {
+            actualizar("proveedor", index, {
+              correo: correo.campo,
+              direccion: direccion.campo,
+              nombre_empresa: nombre.campo,
+              telefono: telefono.campo,
+            });
+          }),
+        "¿Desaea Actualizar datos?",
+        "Pregunta!",
+        "4"
+      );
+
+      camprovEdit([
+        { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
+      ]);
+      cambiarNombre({ campo: "", valido: "" });
+      cambiarDireccion({ campo: "", valido: "" });
+      cambiarTelefono({ campo: "", valido: "" });
+      cambiarCorreo({ campo: "", valido: "" });
+      camBotonControl(true);
+    } else {
+      MostrarAlerta1(
+        "Favor de revisar que los datos esten correctos",
+        "Error!",
+        "2",
+        () => {
+          console.log("error");
+        }
+      );
+    }
   };
   const filtrogeneralbyId = (cambiar, tab, id) => {
     cambiar(
@@ -365,7 +412,7 @@ const VstPvds = () => {
               cadLeyenda="De 1 a 200 Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios ."
               bolObligatorio={true}
               cadNombre="Direccion"
-              exprExpresionR={expresiones.nombre}
+              exprExpresionR={expresiones.direccion}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -402,7 +449,7 @@ const VstPvds = () => {
             />
             <CmpBotonPrincipal
               bolVisibilidad={!botonControl}
-              cadTipofuncion="6"
+              cadTipofuncion="0"
               cadTipo="3"
               funcion={actualizarProveedor}
               cadTexto="Actualizar"

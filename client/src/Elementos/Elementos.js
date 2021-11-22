@@ -80,6 +80,12 @@ const Cadenas = {
 const ElmGrupoTextoIns = styled.div`
   position: relative;
   z-index: 0;
+
+  ${(props) =>
+    props.visibilidad === false &&
+    css`
+      display: none;
+    `}
 `;
 
 const ElmTextoIns = styled.input`

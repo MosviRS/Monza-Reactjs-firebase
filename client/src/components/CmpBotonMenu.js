@@ -34,9 +34,15 @@ const SeleccionIcono = {
   7: faFilePdf,
   8: faUserPlus,
 };
-const CmpBotonMenu = ({ cadicono, cadTipo, cadTexto, funcion }) => {
+const CmpBotonMenu = ({
+  cadicono,
+  cadTipo,
+  cadTexto,
+  funcion,
+  bolVisibilidad,
+}) => {
   return (
-    <ElmGrupoTextoIns>
+    <ElmGrupoTextoIns visibilidad={bolVisibilidad}>
       <ElmIconoBotonMenu icon={SeleccionIcono[cadicono]} />
       <ElmBotonMenu onClick={funcion} tipo={cadTipo}>
         {cadTexto}
