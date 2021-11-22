@@ -66,37 +66,37 @@ const VstBit = () => {
   const irNotas = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/2");
+    history.replace("/2");
   };
   const irProductos = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/3");
+    history.replace("/3");
   };
   const irClientes = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/4");
+    history.replace("/4");
   };
   const irEntregas = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/5");
+    history.replace("/5");
   };
   const irProveedores = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/6");
+    history.replace("/6");
   };
   const irBitacora = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/7");
+    history.replace("/7");
   };
   const irRegistro = () => {
     var length = history.length;
     history.go(-length);
-    window.location.replace("/1");
+    history.replace("/1");
   };
   const Rutas = {
     1: irInicio,
