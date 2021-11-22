@@ -36,6 +36,9 @@ const VstReg = () => {
     "@media (max-width: 1000px) {background-size: auto; }";
 
   //Variables estado
+
+  const [btnControl, definirbtnControl] = useState(null);
+  
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [apPaterno, cambiarApPaterno] = useState({ campo: "", valido: null });
   const [apMaterno, cambiarApMaterno] = useState({ campo: "", valido: null });
@@ -70,6 +73,11 @@ const VstReg = () => {
       }
     }
   };
+  const irInicio = () => {
+    var length = history.length;
+    history.go(-length);
+    window.location.replace("/");
+  };
   const irNotas = () => {
     var length = history.length;
     history.go(-length);
@@ -77,8 +85,42 @@ const VstReg = () => {
   };
 
   const Rutas = {
+    1: irInicio,
     2: irNotas,
   };
+
+  useEffect(() => {
+    var mensaje = "";
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        const email = user.email
+
+        mensaje = "Se restablecio la sesion para: " + email;
+        console.log(mensaje);
+
+        firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((user) => {
+            const usuarioObtenido = user.data()
+            if(email === usuarioObtenido['correo']){
+              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
+                definirbtnControl(false)     
+              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
+                irNotas();
+              }
+            }
+          });
+        });
+      } else {
+        mensaje = "La sesion caduco";
+        console.log(mensaje);
+        setTimeout(() => {
+          irInicio();
+        }, 0);
+      }
+    });
+
+  }, []);
 
   const ValidaCampos = () => {
     let resp;

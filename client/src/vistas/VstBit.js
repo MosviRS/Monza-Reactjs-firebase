@@ -37,6 +37,9 @@ const VstBit = () => {
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  
+  const [btnControl, definirbtnControl] = useState(null);
+
   const [busqueda, cambiarBusqueda] = useState(new Date());
   const [tablaUsuarios, cambiarTablaUsuarios] = useState([]);
   const [tablaMovimiento, cambiarTablaMovimiento] = useState([]);
@@ -114,8 +117,23 @@ const VstBit = () => {
 
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        mensaje = "Se restablecio la sesion para: " + user.email;
+        const email = user.email
+
+        mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
+
+        firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((user) => {
+            const usuarioObtenido = user.data()
+            if(email === usuarioObtenido['correo']){
+              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
+                definirbtnControl(false)     
+              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
+                irNotas();
+              }
+            }
+          });
+        });
       } else {
         mensaje = "La sesion caduco";
         console.log(mensaje);
@@ -160,10 +178,6 @@ const VstBit = () => {
       cambiarTablaMovimiento(movimientos);
     });
 
-    console.log("tablaUsuarios");
-    console.log(tablaUsuarios);
-    console.log("tablamovimientos");
-    console.log(tablaMovimiento);
   }, []);
 
   // const filtradoMovimientoSelectorFecha = () => {
@@ -195,37 +209,47 @@ const VstBit = () => {
       <div className="contenedor1">
         <div className="titulo">{Cadenas.vstBit}</div>
         <CmpBotonMenu
+        bolVisibilidad={true}
           funcion={Rutas[2]}
           cadicono="1"
           cadTipo="1"
           cadTexto={Cadenas.vstNt}
         />
         <CmpBotonMenu
+        bolVisibilidad={true}
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
           cadTexto={Cadenas.vstPdts}
         />
         <CmpBotonMenu
+        bolVisibilidad={true}
           funcion={Rutas[4]}
           cadicono="3"
           cadTipo="1"
           cadTexto={Cadenas.vstAbns}
         />
         <CmpBotonMenu
+        bolVisibilidad={true}
           funcion={Rutas[5]}
           cadicono="4"
           cadTipo="1"
           cadTexto={Cadenas.vstEtgs}
         />
         <CmpBotonMenu
+        bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[6]}
           cadicono="5"
           cadTipo="1"
           cadTexto={Cadenas.vstPvds}
         />
-        <CmpBotonMenu cadicono="6" cadTipo="2" cadTexto={Cadenas.vstBit} />
         <CmpBotonMenu
+        bolVisibilidad={btnControl ? false : true}
+        cadicono="6" 
+        cadTipo="2" 
+        cadTexto={Cadenas.vstBit} />
+        <CmpBotonMenu
+        bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"

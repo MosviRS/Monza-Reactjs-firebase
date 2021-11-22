@@ -36,6 +36,7 @@ const VstIns = () => {
   document.body.style = "background:" + Colores.ColHueso + ";";
 
   // Variables de estado
+  
   const [correo, cambiarCorreo] = useState({
     campo: "",
   });
@@ -61,18 +62,15 @@ const VstIns = () => {
   };
 
   useEffect(() => {
-    const ac = new AbortController();
 
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        ac.abort();
         setTimeout(() => {
           irNotas();
         }, 0);
       }
     });
 
-    return () => ac.abort();
   }, []);
 
   const inicia = () => {

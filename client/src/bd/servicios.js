@@ -76,7 +76,7 @@ const RegistraUsuario = async (nombre, apaterno, amaterno, correo, contra) => {
         contra: contra,
         correo: correo,
         nombre_usuario: nombre,
-        tipo_usuario: "Administrador",
+        tipo_usuario: "Vendedor",
       });
       console.log("Usuario registrado");
       MostrarAlerta1(
