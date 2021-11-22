@@ -9,17 +9,14 @@ Archivos relacionados: Elementos.js,
 */
 import React from "react";
 import { ElmBotonPrincipal } from "../Elementos/Elementos";
-import {
-  MostrarAlerta1,
-  MostrarAlerta2,
-  MostrarAlerta3,
-} from "./CmpAlertas";
+import { MostrarAlerta1, MostrarAlerta2, MostrarAlerta3 } from "./CmpAlertas";
 const CmpBotonPrincipal = ({
   cadTipofuncion,
   funcion,
   cadTipo,
   cadTexto,
   cadMensaje,
+  bolVisibilidad,
 }) => {
   const Alerta1 = () => {
     MostrarAlerta1("Correcto", cadMensaje, "1", funcion);
@@ -63,7 +60,11 @@ const CmpBotonPrincipal = ({
   };
   return (
     <div>
-      <ElmBotonPrincipal tipo={cadTipo} onClick={funciones[cadTipofuncion]}>
+      <ElmBotonPrincipal
+        visibilidad={bolVisibilidad ? true : false}
+        tipo={cadTipo}
+        onClick={funciones[cadTipofuncion]}
+      >
         {cadTexto}
       </ElmBotonPrincipal>
     </div>

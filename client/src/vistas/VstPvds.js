@@ -32,7 +32,7 @@ import {
   ElmVstNt,
 } from "../Elementos/Elementos";
 import { useHistory } from "react-router-dom";
-import { funcion } from "./../bd/servicios";
+import { actualizar, funcion } from "./../bd/servicios";
 //Importacion Componentes
 import firebase from "../bd/conexion";
 import { guardarProveedores } from "../bd/servicios";
@@ -41,24 +41,34 @@ import CmpTextoForm from "../components/CmpTextoForm";
 import CmpBotonMenu from "../components/CmpBotonMenu";
 import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
+import {
+  MostrarAlerta1,
+  MostrarAlerta2,
+  MostrarAlerta3,
+} from "../components/CmpAlertas";
 
 const VstPvds = () => {
   //Estilo del Fondo
   document.body.style = "background:" + Colores.ColNegroProgreso + ";";
 
   //Variables estado
+  const [index, camIndex] = useState("");
+  const [provEdit, camprovEdit] = useState([
+    { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
+  ]);
+  const [botonControl, camBotonControl] = useState(true);
   const [tablaProveedor, cambiarTablaProveedor] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
-  const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
-  const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
-  const [telefono, cambiarTelefono] = useState({ campo: "", valido: null });
-  const [correo, cambiarCorreo] = useState({ campo: "", valido: null });
-  const [mercancia, cambiarMercancia] = useState({ campo: "", valido: null });
+  const [nombre, cambiarNombre] = useState({ campo: "", valido: "" });
+  const [direccion, cambiarDireccion] = useState({ campo: "", valido: "" });
+  const [telefono, cambiarTelefono] = useState({ campo: "", valido: "" });
+  const [correo, cambiarCorreo] = useState({ campo: "", valido: "" });
   //Variables Complementarias//Variables Complementarias
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
     nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
+    direccion: /^[a-zA-ZÀ-ÿ0-9_.+-\s]{1,200}$/, // Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios
     password: /^.{4,12}$/, // 4 a 12 digitos.
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
     telefono:
@@ -152,6 +162,7 @@ const VstPvds = () => {
       });
       cambiarTablaProveedor(documentos);
     });
+
     return () => ac.abort();
   }, []);
 
@@ -180,6 +191,79 @@ const VstPvds = () => {
       })
     );
   };
+
+  const cancelEdicion = () => {
+    camprovEdit([
+      { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
+    ]);
+    cambiarNombre({ campo: "", valido: null });
+    cambiarDireccion({ campo: "", valido: null });
+    cambiarTelefono({ campo: "", valido: null });
+    cambiarCorreo({ campo: "", valido: null });
+    camBotonControl(true);
+  };
+  const guardarProveedor = () => {
+    if (
+      nombre.campo !== "" &&
+      direccion.campo !== "" &&
+      telefono.campo !== "" &&
+      correo.campo !== "" &&
+      nombre.valido === "true" &&
+      direccion.valido === "true" &&
+      telefono.valido === "true" &&
+      correo.valido === "true"
+    ) {
+      MostrarAlerta2(
+        () =>
+          MostrarAlerta3("Datos Guardados Correctamente", () => {
+            guardarProveedores(
+              correo.campo,
+              direccion.campo,
+              nombre.campo,
+              telefono.campo
+            );
+          }),
+        "¿Desaea Guardar datos?",
+        "Pregunta!",
+        "3"
+      );
+    } else {
+      MostrarAlerta1(
+        "Favor de revisar que los datos esten correctos",
+        "Error!",
+        "2",
+        () => {
+          console.log("error");
+        }
+      );
+    }
+  };
+  const actualizarProveedor = () => {
+    actualizar("proveedor", index, {
+      correo: correo.campo,
+      direccion: direccion.campo,
+      nombre_empresa: nombre.campo,
+      telefono: telefono.campo,
+    });
+  };
+  const filtrogeneralbyId = (cambiar, tab, id) => {
+    cambiar(
+      tab.filter(function (item) {
+        return item.id.toString().toLowerCase().includes(id.toLowerCase());
+      })
+    );
+  };
+
+  const obtProvId = (id) => {
+    camIndex(id);
+    camBotonControl(false);
+    filtrogeneralbyId(camprovEdit, tablaProveedor, id);
+    cambiarNombre({ campo: provEdit[0].nombre_empresa });
+    cambiarDireccion({ campo: provEdit[0].direccion });
+    cambiarTelefono({ campo: provEdit[0].telefono });
+    cambiarCorreo({ campo: provEdit[0].correo });
+  };
+  console.log(provEdit);
 
   //rederizacion
   return (
@@ -224,6 +308,7 @@ const VstPvds = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
+          bolVisibilidad={true}
           cadTipofuncion="6"
           funcion={() => cerrarSesion()}
           cadTipo="4"
@@ -245,12 +330,12 @@ const VstPvds = () => {
             />
             <div className="tabla">
               <CmpTablas
+                funcion={obtProvId}
                 columnas="4"
                 titulos={titulosTab}
                 datos={busqueda.campo == "" ? tablaProveedor : tablaFiltrada}
                 tipodatos="5"
               />
-              {console.log(tablaFiltrada)}
             </div>
           </ElmContNt>
         </div>
@@ -264,7 +349,7 @@ const VstPvds = () => {
               bolTipo={true}
               cadEtiqueta="Nombre(s) del proveedor:"
               cadPlaceholder="Laura"
-              cadLeyenda="Nombre del proveedor"
+              cadLeyenda="De 1 a 40 Letras y espacios, pueden llevar acentos."
               bolObligatorio={true}
               cadNombre="nombre"
               exprExpresionR={expresiones.nombre}
@@ -276,7 +361,7 @@ const VstPvds = () => {
               bolTipo={true}
               cadEtiqueta="Direccion/Domicilio:"
               cadPlaceholder="Calle Lagos #42 Col. Lagos C.P.43122"
-              cadLeyenda="Direccion del cliente"
+              cadLeyenda="De 1 a 200 Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios ."
               bolObligatorio={true}
               cadNombre="Direccion"
               exprExpresionR={expresiones.nombre}
@@ -288,7 +373,7 @@ const VstPvds = () => {
               bolTipo={true}
               cadEtiqueta="Telefono:"
               cadPlaceholder="7228642597"
-              cadLeyenda="Telefono del cliente"
+              cadLeyenda="7 a 14 numeros (Se admiten varios formatos de telefonia)."
               bolObligatorio={true}
               cadNombre="Telefono"
               exprExpresionR={expresiones.telefono}
@@ -300,37 +385,35 @@ const VstPvds = () => {
               bolTipo={true}
               cadEtiqueta="Correo"
               cadPlaceholder="example32@example.com"
-              cadLeyenda="ejemplo solo letras, 10 a 15 caracteres etc..."
+              cadLeyenda="solo formato de correos"
               bolObligatorio={true}
               cadNombre={"Correo"}
               exprExpresionR={expresiones.correo}
             />
-            <CmpTextoForm
-              cadTipoprincipal="1"
-              estEstado={mercancia}
-              estCambiarEstado={cambiarMercancia}
-              bolTipo={true}
-              cadEtiqueta="Mercancia"
-              cadPlaceholder="Muebles de Otoño"
-              cadLeyenda="ejemplo solo letras, 10 a 15 caracteres etc..."
-              bolObligatorio={true}
-              cadNombre={"mercancia"}
-              exprExpresionR={expresiones.nombre}
-            />
 
             <CmpBotonPrincipal
+              bolVisibilidad={botonControl}
+              cadTipofuncion="0"
+              cadTipo="3"
+              funcion={guardarProveedor}
+              cadTexto="Guardar"
+              cadMensaje="¿Desea guardar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() =>
-                guardarProveedores(
-                  correo.campo,
-                  direccion.campo,
-                  nombre.campo,
-                  telefono.campo
-                )
-              }
-              cadTexto="Guardar"
-              cadMensaje="¿Desea guardar o actualizar los datos?"
+              funcion={actualizarProveedor}
+              cadTexto="Actualizar"
+              cadMensaje="¿Desea actualizar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
+              cadTipofuncion="0"
+              cadTipo="4"
+              funcion={cancelEdicion}
+              cadTexto="Cancelar"
+              cadMensaje="¿Desea cancelar cambios?"
             />
           </ElmFormNt>
         </div>

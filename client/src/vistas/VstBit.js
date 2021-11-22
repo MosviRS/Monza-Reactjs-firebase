@@ -59,44 +59,44 @@ const VstBit = () => {
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     window.location.replace("/");
   };
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/2");
+    window.location.replace("/2");
   };
   const irProductos = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/3");
+    window.location.replace("/3");
   };
   const irClientes = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/4");
+    window.location.replace("/4");
   };
   const irEntregas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/5");
+    window.location.replace("/5");
   };
   const irProveedores = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/6");
+    window.location.replace("/6");
   };
   const irBitacora = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/7");
+    window.location.replace("/7");
   };
   const irRegistro = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
-     window.location.replace("/1");
+    window.location.replace("/1");
   };
   const Rutas = {
     1: irInicio,
@@ -108,42 +108,49 @@ const VstBit = () => {
     7: irBitacora,
     8: irRegistro,
   };
-  
-  useEffect(() => {
-    
-    var mensaje = ""
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if(user != null){
-        mensaje = 'Se restablecio la sesion para: ' + user.email;
-        console.log(mensaje)
+  useEffect(() => {
+    var mensaje = "";
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        mensaje = "Se restablecio la sesion para: " + user.email;
+        console.log(mensaje);
       } else {
-        mensaje = 'La sesion caduco'
-        console.log(mensaje)
-        setTimeout(()=>{
-          irInicio()
+        mensaje = "La sesion caduco";
+        console.log(mensaje);
+        setTimeout(() => {
+          irInicio();
         }, 0);
       }
-    })
+    });
 
     firebase.db.collection("movimiento").onSnapshot((querySnapshot) => {
       const movimientos = [];
       querySnapshot.forEach((doc) => {
-        var movTemp = doc.data()
-        var fechaConsulta = movTemp['fecha_movimiento']
+        var movTemp = doc.data();
+        var fechaConsulta = movTemp["fecha_movimiento"];
         var fechaActual = new Date().toDateString();
-        var fechaComparar = fechaConsulta.toDate().toDateString() + '';
-        var nombreCompleto = ''
+        var fechaComparar = fechaConsulta.toDate().toDateString() + "";
+        var nombreCompleto = "";
 
-        if(fechaActual === fechaComparar){
-          firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
+        if (fechaActual === fechaComparar) {
+          firebase.db.collection("usuario").onSnapshot((querySnapshot2) => {
             const usuarios = [];
-            querySnapshot.forEach((doc) => {
-              var usuarioTemp = doc.data()
-              if(doc.id === movTemp['idcuenta']){
-                nombreCompleto = usuarioTemp['nombre_usuario'] + ' ' +
-                usuarioTemp['apaterno'] + ' ' + usuarioTemp['amaterno']
-                movimientos.push({ nombre: nombreCompleto, mov: movTemp['mov'], fecha_movimiento: fechaComparar });
+            querySnapshot2.forEach((doc2) => {
+              var usuarioTemp = doc2.data();
+              if (doc2.id === movTemp["idcuenta"]) {
+                nombreCompleto =
+                  usuarioTemp["nombre_usuario"] +
+                  " " +
+                  usuarioTemp["apaterno"] +
+                  " " +
+                  usuarioTemp["amaterno"];
+                movimientos.push({
+                  nombre: nombreCompleto,
+                  mov: movTemp["mov"],
+                  fecha_movimiento: fechaComparar,
+                });
               }
             });
             cambiarTablaUsuarios(usuarios);
@@ -153,35 +160,34 @@ const VstBit = () => {
       cambiarTablaMovimiento(movimientos);
     });
 
-    console.log('tablaUsuarios')
-    console.log(tablaUsuarios)
-    console.log('tablamovimientos')
-    console.log(tablaMovimiento)
-
+    console.log("tablaUsuarios");
+    console.log(tablaUsuarios);
+    console.log("tablamovimientos");
+    console.log(tablaMovimiento);
   }, []);
 
-  
+  // const filtradoMovimientoSelectorFecha = () => {
+  //   cambiarTablaFiltrada(
+  //     tablaMovimiento.filter(function (item) {
+  //       return item.fecha_movimiento.toString().includes(busqueda);
+  //     })
+  //   );
+  // };
 
-  const filtradoMovimientoSelectorFecha = () => {
-    cambiarTablaFiltrada(
-      tablaMovimiento.filter(function (item) {
-        return item.fecha_movimiento
-          .toString()
-          .includes(busqueda);
+  const cerrarSesion = async () => {
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log("Se cerro sesion");
+        setTimeout(() => {
+          irInicio();
+        }, 0);
       })
-    );
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
-  const cerrarSesion = async () =>{
-    await firebase.auth().signOut().then(() => {
-      console.log('Se cerro sesion')
-      setTimeout(()=>{
-        irInicio()
-      }, 0);
-    }).catch((error) => {
-      console.log(error)
-    });
-  }
 
   //rederizacion
   return (
@@ -226,6 +232,7 @@ const VstBit = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
+          bolVisibilidad={true}
           cadTipofuncion="6"
           funcion={() => cerrarSesion()}
           cadTipo="4"
@@ -233,7 +240,6 @@ const VstBit = () => {
           cadMensaje="¿Desea cerrar sesión?"
         />
       </div>
-
 
       <div className="contenedor3">
         <ElmContNt>
@@ -246,22 +252,23 @@ const VstBit = () => {
             cadNombre="busqueda"
             filtro={filtradoMovimientoSelectorFecha}
           /> */}
-          
-          <CmpFecha
+
+          {/* <CmpFecha
             estEstado={busqueda}
             estCambiarEstado={cambiarBusqueda}
             cadEtiqueta="Filtrar por fecha"
             cadNombre="busqueda"
             bolObligatorio={false}
             tipoFormato="2"
-          />
+          /> */}
 
           <div className="tabla">
             <CmpTablas
               columnas={"3"}
               titulos={titulosTab}
               datos={tablaMovimiento}
-              tipodatos="8"/>
+              tipodatos="8"
+            />
           </div>
         </ElmContNt>
       </div>

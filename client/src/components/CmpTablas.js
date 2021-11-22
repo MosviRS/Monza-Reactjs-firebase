@@ -22,6 +22,7 @@ const CmpTablas = ({
   cambiarDatos,
   total,
   camTotal,
+  funcion,
 }) => {
   const data1 = (value) => {
     return (
@@ -110,6 +111,7 @@ const CmpTablas = ({
         <div>{value.cantidad}</div>
         <div>{value.sub_total}</div>
         <CmpBotonPrincipal
+          bolVisibilidad={true}
           cadTipofuncion="8"
           funcion={() => eliminar(value, datos.indexOf(value))}
           cadTipo="4"
@@ -131,12 +133,11 @@ const CmpTablas = ({
       </ELmContenedorTablaCont>
     );
   };
+
   const tabProveedores = (value) => {
     return (
       <ELmContenedorTablaCont
-        onClick={() => {
-          console.log(value.id);
-        }}
+        onClick={() => funcion(value.id)}
         key={value.id}
         fraccion={columnas}
       >
@@ -161,7 +162,7 @@ const CmpTablas = ({
     );
   }
   const eliminar = (value, index) => {
-    console.log(index);
+    // console.log(index);
     datos.splice(index, 1);
     cambiarDatos(datos);
     camTotal({ campo: total.campo - value.precio * value.cantidad });

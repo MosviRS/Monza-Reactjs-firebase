@@ -329,6 +329,11 @@ const ElmBotonPrincipal = styled.button`
     box-shadow: 3px 0px 30px rgba(163, 163, 163, 1);
   }
   ${(props) =>
+    props.visibilidad === false &&
+    css`
+      display: none;
+    `}
+  ${(props) =>
     props.tipo === "1" &&
     css`
       height: 55px;

@@ -67,42 +67,42 @@ const VstAbns = () => {
   const history = useHistory();
   //Funciones
   const irInicio = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     window.location.replace("/");
   };
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/2");
   };
   const irProductos = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/3");
   };
   const irClientes = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/4");
   };
   const irEntregas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/5");
   };
   const irProveedores = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/6");
   };
   const irBitacora = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/7");
   };
   const irRegistro = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/1");
   };
@@ -118,39 +118,42 @@ const VstAbns = () => {
   };
 
   useEffect(() => {
-    
     const ac = new AbortController();
-    
-    var mensaje = ""
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if(user != null){
-        ac.abort()
-        mensaje = 'Se restablecio la sesion para: ' + user.email;
-        console.log(mensaje)
+    var mensaje = "";
+
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user != null) {
+        ac.abort();
+        mensaje = "Se restablecio la sesion para: " + user.email;
+        console.log(mensaje);
       } else {
-        mensaje = 'La sesion caduco'
-        console.log(mensaje)
-        ac.abort()
-        setTimeout(()=>{
-          irInicio()
+        mensaje = "La sesion caduco";
+        console.log(mensaje);
+        ac.abort();
+        setTimeout(() => {
+          irInicio();
         }, 0);
       }
-    })
+    });
 
     return () => ac.abort();
-  });
+  }, []);
 
-  const cerrarSesion = async () =>{
-    await firebase.auth().signOut().then(() => {
-      console.log('Se cerro sesion')
-      setTimeout(()=>{
-        irInicio()
-      }, 0);
-    }).catch((error) => {
-      console.log(error)
-    });
-  }
+  const cerrarSesion = async () => {
+    await firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log("Se cerro sesion");
+        setTimeout(() => {
+          irInicio();
+        }, 0);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   //rederizacion
   return (
@@ -195,6 +198,7 @@ const VstAbns = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
+          bolVisibilidad={true}
           cadTipofuncion="6"
           funcion={() => cerrarSesion()}
           cadTipo="4"
@@ -260,6 +264,7 @@ const VstAbns = () => {
               cadNombre="abono"
             />
             <CmpBotonPrincipal
+              bolVisibilidad={true}
               cadTipofuncion="6"
               cadTipo="3"
               funcion={() => console.log("click")}

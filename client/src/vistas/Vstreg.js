@@ -23,8 +23,8 @@ import {
 import CmpBotonPrincipal from "../components/CmpBotonPrincipal";
 import CmpTextoForm from "../components/CmpTextoForm";
 import CmpCajaCombo from "../components/CmpCajaCombo";
-import {RegistraUsuario} from "../bd/servicios";
-import {MostrarAlerta1} from "../components/CmpAlertas";
+import { RegistraUsuario } from "../bd/servicios";
+import { MostrarAlerta1 } from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
 
 const VstReg = () => {
@@ -54,7 +54,7 @@ const VstReg = () => {
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
     telefono: /^\d{7,14}$/, // 7 a 14 numeros.
   };
-  
+
   const history = useHistory();
   //Funciones
   const validarcontraseña2 = () => {
@@ -71,20 +71,33 @@ const VstReg = () => {
     }
   };
   const irNotas = () => {
-    var length=history.length;     
+    var length = history.length;
     history.go(-length);
     history.replace("/2");
   };
 
   const Rutas = {
-    2: irNotas
+    2: irNotas,
   };
 
   const ValidaCampos = () => {
     let resp;
-    if(nombre.valido === "true" && apPaterno.valido === "true" && apMaterno.valido === "true" && correo.valido === "true" &&
-      repContra.valido === "true" && contrasenia.valido==="true"){
-      resp = RegistraUsuario(nombre.campo,apPaterno.campo, apMaterno.campo, correo.campo, repContra.campo, contrasenia.campo);
+    if (
+      nombre.valido === "true" &&
+      apPaterno.valido === "true" &&
+      apMaterno.valido === "true" &&
+      correo.valido === "true" &&
+      repContra.valido === "true" &&
+      contrasenia.valido === "true"
+    ) {
+      resp = RegistraUsuario(
+        nombre.campo,
+        apPaterno.campo,
+        apMaterno.campo,
+        correo.campo,
+        repContra.campo,
+        contrasenia.campo
+      );
       console.log(resp);
       // cambiarNombre({campo: "", valido: null});
       // cambiarApPaterno({campo: "", valido: null});
@@ -92,23 +105,42 @@ const VstReg = () => {
       // cambiarCorreo({campo: "", valido: null});
       // cambiarContrasenia({campo: "", valido: null});
       // cambiarRepContra({campo: "", valido: null});
-
-    }else{
-      if(repContra.valido === "false" | contrasenia.valido === "false"){
-        MostrarAlerta1("Contraseñas no coinciden", "Problema al registrar", 2, ()=>{});
-      }else{
-        MostrarAlerta1("Llene todos los campos", "Problema al registrar", 2, ()=>{});
+    } else {
+      if ((repContra.valido === "false") | (contrasenia.valido === "false")) {
+        MostrarAlerta1(
+          "Contraseñas no coinciden",
+          "Problema al registrar",
+          2,
+          () => {}
+        );
+      } else {
+        MostrarAlerta1(
+          "Llene todos los campos",
+          "Problema al registrar",
+          2,
+          () => {}
+        );
       }
     }
-    switch(resp){
-        case 1:
-          MostrarAlerta1("Usuario agregado correctamente", "Registro realizado", 1, ()=>{});
+    switch (resp) {
+      case 1:
+        MostrarAlerta1(
+          "Usuario agregado correctamente",
+          "Registro realizado",
+          1,
+          () => {}
+        );
         break;
-        case 2: 
-          MostrarAlerta1("El correo ya existe", "Problema al registrar", 2, ()=>{});
+      case 2:
+        MostrarAlerta1(
+          "El correo ya existe",
+          "Problema al registrar",
+          2,
+          () => {}
+        );
         break;
     }
-  }
+  };
 
   //rederizacion
   return (
@@ -193,15 +225,19 @@ const VstReg = () => {
         <div className="botones">
           <div className="boton1">
             <CmpBotonPrincipal
+              bolVisibilidad={true}
               cadTipofuncion="0"
               cadTipo="1"
-              funcion={()=>{ValidaCampos()}}
+              funcion={() => {
+                ValidaCampos();
+              }}
               cadTexto="Registrar"
               cadMensaje="Registro"
             />
           </div>
           <div className="boton2">
             <CmpBotonPrincipal
+              bolVisibilidad={true}
               cadTipofuncion="0"
               cadTipo="2"
               funcion={Rutas[2]}

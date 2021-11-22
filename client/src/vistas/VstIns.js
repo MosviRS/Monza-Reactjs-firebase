@@ -73,7 +73,7 @@ const VstIns = () => {
     });
 
     return () => ac.abort();
-  });
+  }, []);
 
   const inicia = () => {
     if (
@@ -157,6 +157,7 @@ const VstIns = () => {
         </div>
         <div className="boton">
           <CmpBotonPrincipal
+            bolVisibilidad={true}
             cadTipofuncion={"0"}
             cadTipo={"1"}
             funcion={() => inicia()}
@@ -165,6 +166,7 @@ const VstIns = () => {
         </div>
         <div className="boton2">
           <CmpBotonPrincipal
+            bolVisibilidad={true}
             cadTipofuncion={"8"}
             cadMensaje={"Mensaje de prueba"}
             //funcion={() => inicia()}

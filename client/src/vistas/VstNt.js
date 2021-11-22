@@ -233,20 +233,9 @@ const VstNt = () => {
           .includes(productoU.id.toLowerCase());
       });
       // console.log(aux[0].id);
-      const subt = parseFloat(cant.campo) * parseFloat(aux[0].precio);
+      const subt =
+        parseFloat(cant.campo) * parseFloat(aux[0].precio).toFixed(2);
       const lista = listaProd;
-      // lista.map((value, indice) => {
-      //   if (value.id === aux[0].id) {
-      //     // setauxcant(value.cantidad);
-      //     value.cantidad = value.cantidad + cant.campo;
-      //     value.subtotal = parseFloat(value.precio) + parseInt(value.cantidad);
-      //     setcontrol(value);
-      //     setindex(aux[0].id);
-      //     cambiarBusqueda({ campo: "" });
-      //     // console.log(value);
-      //   }
-      // });
-
       // lista.splice(index, 1);
       lista.push({
         id: aux[0].id,
@@ -258,7 +247,7 @@ const VstNt = () => {
       });
       // setcontrol([]);
       cambiarTotal({
-        campo: parseFloat(total.campo) + subt,
+        campo: (parseFloat(total.campo) + subt).toFixed(2),
       });
       cambiarBusqueda({ campo: "" });
       cambiarlistaProd(lista);
@@ -329,6 +318,7 @@ const VstNt = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
+          bolVisibilidad={true}
           cadTipofuncion="6"
           funcion={cerrarSesion}
           cadTipo="4"
@@ -401,6 +391,7 @@ const VstNt = () => {
             <div className="tres">
               <div></div>
               <CmpBotonPrincipal
+                bolVisibilidad={true}
                 cadTipofuncion="0"
                 funcion={validacion}
                 cadTipo="1"
@@ -533,6 +524,7 @@ const VstNt = () => {
               />
             </div>
             <CmpBotonPrincipal
+              bolVisibilidad={true}
               cadTipofuncion="6"
               cadTipo="3"
               funcion={() => console.log("click")}

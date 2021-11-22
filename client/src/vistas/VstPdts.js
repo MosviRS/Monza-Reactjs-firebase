@@ -261,6 +261,7 @@ const VstPdts = () => {
           cadTexto={Cadenas.vstReg}
         />
         <CmpBotonPrincipal
+          bolVisibilidad={true}
           cadTipofuncion="6"
           funcion={() => cerrarSesion()}
           cadTipo="4"
@@ -362,6 +363,7 @@ const VstPdts = () => {
               exprExpresionR={expresiones.modelo}
             />
             <CmpBotonPrincipal
+              bolVisibilidad={true}
               cadTipofuncion="6"
               cadTipo="3"
               funcion={() =>
