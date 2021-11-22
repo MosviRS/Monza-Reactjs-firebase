@@ -16,6 +16,7 @@ VstEtgs.js, VstPvds.js, VstBit.js
 */
 
 import fb from "./conexion";
+import fb2 from "./conexion";
 import firebase from "firebase";
 import { MostrarAlerta1 } from "../components/CmpAlertas";
 
@@ -82,71 +83,10 @@ const guardarMovimientos = async (
     });
 };
 
-const RegistraUsuario = async (nombre, apaterno, amaterno, correo, contra) => {
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCeS-ZZOWn1Z5oxVzjX42TsDfbFvONs5qw",
-    authDomain: "monza-daa09.firebaseapp.com",
-    projectId: "monza-daa09",
-    storageBucket: "monza-daa09.appspot.com",
-    messagingSenderId: "928034518483",
-    appId: "1:928034518483:web:3aa6a85e3c27146b5beb26",
-    measurementId: "G-TNKYMQ8PLM",
-  };
-  var cuentaSecundaria = firebase.initializeApp(firebaseConfig, 'Secondary')
-
-  console.log("Registrando");
-  await cuentaSecundaria.auth().createUserWithEmailAndPassword(correo, contra).then((resp) => {
-
-      cuentaSecundaria.auth().signOut()
-
-      fb.db.collection("usuario").doc(resp.user.uid).set({
-        amaterno: amaterno,
-        apaterno: apaterno,
-        correo: correo,
-        nombre_usuario: nombre,
-        tipo_usuario: "Vendedor",
-      });
-      console.log("Usuario registrado");
-      MostrarAlerta1(
-        "Usuario agregado correctamente",
-        "Registro realizado",
-        1,
-        () => {}
-      );
-      // console.log("---"+respuesta);
-      // return respuesta = Promise.resolve(1);
-    })
-    .catch((error) => {
-      if (error.code === "auth/email-already-in-use") {
-        console.log("Correo repetido");
-        MostrarAlerta1(
-          "El correo ya existe",
-          "Problema al registrar",
-          2,
-          () => {}
-        );
-        return error.code;
-        // console.log("---"+respuesta);
-        // return respuesta = Promise.resolve(2);
-      } else {
-        MostrarAlerta1(
-          "Error en la conexión",
-          "Problema al registrar",
-          2,
-          () => {}
-        );
-        // console.log("---"+respuesta);
-        return error.code;
-      }
-    });
-};
-
 export {
   tomarTabla,
   guardarProductos,
   guardarProveedores,
-  RegistraUsuario,
   actualizar,
   guardarMovimientos
 };

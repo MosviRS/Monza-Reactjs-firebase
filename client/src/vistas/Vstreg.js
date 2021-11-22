@@ -26,6 +26,7 @@ import CmpCajaCombo from "../components/CmpCajaCombo";
 import { RegistraUsuario } from "../bd/servicios";
 import { MostrarAlerta1 } from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
+import firebase2 from "firebase";
 
 const VstReg = () => {
   //Estilo del Fondo
@@ -129,7 +130,8 @@ const VstReg = () => {
 
   //Validacion de campos de registro
   const ValidaCampos = () => {
-    let resp;
+    var resp = 0
+
     if (
       nombre.valido === "true" &&
       apPaterno.valido === "true" &&
@@ -138,21 +140,60 @@ const VstReg = () => {
       repContra.valido === "true" &&
       contrasenia.valido === "true"
     ) {
-      resp = RegistraUsuario(
-        nombre.campo,
-        apPaterno.campo,
-        apMaterno.campo,
-        correo.campo,
-        repContra.campo,
-        contrasenia.campo
-      );
-      console.log(resp);
-      cambiarCorreo({campo: '', valido: ''})
-      cambiarNombre({campo: '', valido: ''})
-      cambiarApPaterno({campo: '', valido: ''})
-      cambiarApMaterno({campo: '', valido: ''})
-      cambiarContrasenia({campo: '', valido: ''})
-      cambiarRepContra({campo: '', valido: ''})
+    //Crear usario con segunda instancia de firebase evitando un cierre de sesion del usuario actual
+      var instancia2 = firebase2.initializeApp(firebase.firebaseConfig, 'Secondary');
+      instancia2.auth().createUserWithEmailAndPassword( correo.campo, contrasenia.campo).then((resp) => {
+
+        instancia2.database().goOffline()
+          //Insercion de datos a su coleccion
+          firebase.db.collection("usuario").doc(resp.user.uid).set({
+            amaterno: apMaterno.campo,
+            apaterno: apMaterno.campo,
+            correo: correo.campo,
+            nombre_usuario: nombre.campo,
+            tipo_usuario: "Vendedor",
+          });
+    
+          console.log("Usuario registrado");
+          setTimeout(() => {
+            irNotas()
+          }, 1000);
+          MostrarAlerta1(
+            "Usuario agregado correctamente",
+            "Registro realizado",
+            1,
+            () => {}
+          );
+
+          
+      })
+        .catch((error) => {
+          if (error.code === "auth/email-already-in-use") {
+            console.log("Correo repetido");
+            setTimeout(() => {
+              irRegistro()
+            }, 1000);
+            MostrarAlerta1(
+              "El correo ya existe",
+              "Problema al registrar",
+              2,
+              () => {}
+            );
+            
+          } else {
+            setTimeout(() => {
+              irRegistro()
+            }, 1000);
+            MostrarAlerta1(
+              "Error en la conexión",
+              "Problema al registrar",
+              2,
+              () => {}
+            );
+            
+          }
+        });
+
     } else {
       if ((repContra.valido === "false") | (contrasenia.valido === "false")) {
         MostrarAlerta1(
@@ -170,24 +211,7 @@ const VstReg = () => {
         );
       }
     }
-    switch (resp) {
-      case 1:
-        MostrarAlerta1(
-          "Usuario agregado correctamente",
-          "Registro realizado",
-          1,
-          () => {}
-        );
-        break;
-      case 2:
-        MostrarAlerta1(
-          "El correo ya existe",
-          "Problema al registrar",
-          2,
-          () => {}
-        );
-        break;
-    }
+
   };
 
   //rederizacion
