@@ -32,6 +32,7 @@ import CmpTextoBuscar from "../components/CmpTextoBuscar";
 import CmpTablas from "../components/CmpTablas";
 
 import firebase from "./../bd/conexion";
+
 import {guardarMovimientos} from "../bd/servicios";
 import {guardarAbonos}from "../bd/servicios";
 import { ActualizarVenta } from "../bd/servicios";
@@ -69,10 +70,9 @@ const VstAbns = () => {
   const [abono, cambiarAbono] = useState({ campo: "", valido: null });
   const [usuario, setDataUsuario] = useState({ campo: "", id: "" });
   const [pago, cambiarPago] = useState({ campo: "Abono" });
-  //Variables Complementarias
 
+  //Variables Complementarias
   const titulosTab = [
-    { id: "Id (Venta)" },
     { id: "Nombre" },
     { id: "Direccion / Domicilio" },
     { id: "Fecha de compra" },
@@ -82,7 +82,6 @@ const VstAbns = () => {
   ];
   const data = [
     {
-      id: "1",
       a: "name",
       b: "Apellido",
       c: "Edad",
@@ -200,10 +199,12 @@ const VstAbns = () => {
               //Consulta la tabla abonos
               firebase.db.collection("abono").onSnapshot((querySnapshot) => {                
                 const abonos = [];                
-                querySnapshot.forEach((doc) => {                  
-                  var abonoTemp = doc.data();                  
+                querySnapshot.forEach((doc) => {     
+                  
+                  var abonoTemp = doc.data(); 
+
                     if(idventa === abonoTemp['idventa']){
-                      var idabono=doc.id;
+                      var idabono = doc.id;
                       var fecha_abono=abonoTemp['fecha_abono'];                                                                                  
                       var cant_abonada=abonoTemp['cant_abonada'];  //((cant_abonada) + parseFloat(abonoTemp['cant_abonada']));                                                            
                       var adeudo=  (parseFloat(total)-parseFloat(cant_abonada));   
@@ -214,8 +215,7 @@ const VstAbns = () => {
                       
                       console.log("Adeudo",adeudo);
                     abonos.push({
-                      id:idventa,
-                      idventa:idventa, 
+                      id: idventa,
                       nombre:nombreCompleto, 
                       direccion:direccion,
                       fecha_venta:fecha_venta,                      
@@ -328,7 +328,7 @@ const VstAbns = () => {
     camIndex(id);
     filtrogeneralbyId(camAbonosEdit, datosAbonos, id);
     cambiarNombre({ campo: abonosEdit[0].nombre, valido: "true" });
-    cambiarNota({ campo: abonosEdit[0].idventa, valido: "true" });   
+    cambiarNota({ campo: abonosEdit[0].id, valido: "true" });   
            
   };
 
@@ -405,7 +405,7 @@ const VstAbns = () => {
             <div className="tabla">
               <CmpTablas
                 funcion={obtAbns}
-                columnas="7"
+                columnas="6"
                 titulos={titulosTab}
                 datos={busqueda.campo == "" ? datosAbonos : tablaFiltrada}
                 tipodatos="10"
@@ -422,7 +422,7 @@ const VstAbns = () => {
               estCambiarEstado={cambiarNombre}
               bolTipo={true}
               cadEtiqueta="Nombre(s):"
-              cadPlaceholder="Laura"
+              cadPlaceholder=""
               cadLeyenda="Nombre del cliente"
               bolObligatorio={false}
               cadNombre="nombre"
@@ -433,7 +433,7 @@ const VstAbns = () => {
               estCambiarEstado={cambiarNota}
               bolTipo={true}
               cadEtiqueta="Nota:"
-              cadPlaceholder="12385"
+              cadPlaceholder=""
               cadLeyenda="Nota"
               bolObligatorio={true}
               cadNombre="Nota"
@@ -451,7 +451,7 @@ const VstAbns = () => {
             />
             <CmpBotonPrincipal
               bolVisibilidad={true}
-              cadTipofuncion="6"
+              cadTipofuncion="0"
               cadTipo="3"
               funcion={() => 
                 actualizarAbonos()                

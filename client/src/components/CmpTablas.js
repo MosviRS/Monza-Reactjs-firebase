@@ -179,14 +179,13 @@ const CmpTablas = ({
       </ELmContenedorTablaCont>
     );
   };
-  const tabClientes= (value) => {
+  const tabAbonos= (value) => {
     return (
       <ELmContenedorTablaCont
         onClick={() => funcion(value.id)}
         key={value.id}
         fraccion={columnas}
       >        
-        <div>{value.idventa}</div>
         <div>{value.nombre}</div>
         <div>{value.direccion}</div>
         <div>{value.fecha_venta}</div>                
@@ -214,7 +213,7 @@ const CmpTablas = ({
       7: tabNotas(value),
       8: tabBitacora(value),
       9: tabEntregas(value),
-      10:tabClientes(value),
+      10:tabAbonos(value),
     };
     return selectDatos[tipodatos];
   };

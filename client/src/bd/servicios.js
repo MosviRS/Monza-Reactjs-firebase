@@ -90,7 +90,7 @@ const guardarAbonos = async (
   id
 ) => {
   await   
-  firebase.db
+  fb.db
     .collection("abono")
     .doc(id)
     .update({
@@ -104,7 +104,7 @@ const ActualizarVenta= async (
   idventa  
   )=> {
   await   
-  firebase.db
+  fb.db
     .collection("venta")
     .doc(idventa)
     .update({
