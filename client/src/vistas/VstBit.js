@@ -114,14 +114,14 @@ const VstBit = () => {
 
   useEffect(() => {
     var mensaje = "";
-
+    //verifica la sesion del usuario
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
-
+        // verifica el tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
             const usuarioObtenido = user.data()
@@ -141,8 +141,9 @@ const VstBit = () => {
           irInicio();
         }, 0);
       }
-    });
+    }); 
 
+    //consulta de movimientos para bitacora
     firebase.db.collection("movimiento").onSnapshot((querySnapshot) => {
       const movimientos = [];
       querySnapshot.forEach((doc) =>{
@@ -153,6 +154,7 @@ const VstBit = () => {
         var nombreCompleto = "";
 
         if (fechaActual === fechaComparar) {
+          //consulta los usuarios para obtener nombre
           firebase.db.collection("usuario").onSnapshot((querySnapshot2) => {
             const usuarios = [];
             querySnapshot2.forEach((doc2) => {
@@ -180,14 +182,7 @@ const VstBit = () => {
 
   }, []);
 
-  // const filtradoMovimientoSelectorFecha = () => {
-  //   cambiarTablaFiltrada(
-  //     tablaMovimiento.filter(function (item) {
-  //       return item.fecha_movimiento.toString().includes(busqueda);
-  //     })
-  //   );
-  // };
-
+  //cerrar sesion
   const cerrarSesion = async () => {
     await firebase
       .auth()
@@ -268,23 +263,6 @@ const VstBit = () => {
       <div className="contenedor3">
         <ElmContNt>
           <div className="titulo">Registros</div>
-
-          {/* <CmpTextoBuscar
-            estEstado={busqueda}
-            estCambiarEstado={cambiarBusqueda}
-            cadPlaceholder="Filtrar"
-            cadNombre="busqueda"
-            filtro={filtradoMovimientoSelectorFecha}
-          /> */}
-
-          {/* <CmpFecha
-            estEstado={busqueda}
-            estCambiarEstado={cambiarBusqueda}
-            cadEtiqueta="Filtrar por fecha"
-            cadNombre="busqueda"
-            bolObligatorio={false}
-            tipoFormato="2"
-          /> */}
 
           <div className="tabla">
             <CmpTablas

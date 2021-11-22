@@ -139,17 +139,18 @@ const VstPvds = () => {
     8: irRegistro,
   };
 
+  //Porceso detras de la renderizacion de React
   useEffect(() => {
 
     var mensaje = "";
-
+    //Verificacion de la sesion
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
-
+        //Verificacion del tipo de usuario - bloqueo componentes
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
             const usuarioObtenido = user.data()
@@ -171,6 +172,7 @@ const VstPvds = () => {
       }
     });
 
+    //Consulta de tabla proveedores
     firebase.db.collection("proveedor").onSnapshot((querySnapshot) => {
       const documentos = [];
       querySnapshot.forEach((doc) => {
@@ -181,6 +183,7 @@ const VstPvds = () => {
     
   }, []);
 
+  //Cerrar sesion
   const cerrarSesion = async () => {
     await firebase
       .auth()
@@ -196,6 +199,7 @@ const VstPvds = () => {
       });
   };
 
+  //Filtro de proveedores
   const filtradoProvedores = () => {
     cambiarTablaFiltrada(
       tablaProveedor.filter(function (item) {
@@ -207,6 +211,7 @@ const VstPvds = () => {
     );
   };
 
+  //limpiar campos del proveedor
   const cancelEdicion = () => {
     camprovEdit([
       { nombre_empresa: "", direccion: "", telefono: "", correo: "" },
@@ -217,6 +222,8 @@ const VstPvds = () => {
     cambiarCorreo({ campo: "", valido: "" });
     camBotonControl(true);
   };
+
+  //Guardar proveedor
   const guardarProveedor = () => {
     if (
       nombre.campo !== "" &&
@@ -262,6 +269,8 @@ const VstPvds = () => {
       );
     }
   };
+
+  //Actualizar proveedor
   const actualizarProveedor = () => {
     if (
       nombre.campo !== "" &&
@@ -306,6 +315,8 @@ const VstPvds = () => {
       );
     }
   };
+
+  //Filtro por id para proveedores
   const filtrogeneralbyId = (cambiar, tab, id) => {
     cambiar(
       tab.filter(function (item) {

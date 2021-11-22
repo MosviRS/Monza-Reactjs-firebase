@@ -36,9 +36,7 @@ const VstReg = () => {
     "@media (max-width: 1000px) {background-size: auto; }";
 
   //Variables estado
-
   const [btnControl, definirbtnControl] = useState(null);
-  
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [apPaterno, cambiarApPaterno] = useState({ campo: "", valido: null });
   const [apMaterno, cambiarApMaterno] = useState({ campo: "", valido: null });
@@ -57,8 +55,8 @@ const VstReg = () => {
     correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
     telefono: /^\d{7,14}$/, // 7 a 14 numeros.
   };
-
   const history = useHistory();
+
   //Funciones
   const validarcontraseña2 = () => {
     if (contrasenia.campo.length > 0) {
@@ -89,9 +87,10 @@ const VstReg = () => {
     2: irNotas,
   };
 
+  //procesos detras del renderizado de react
   useEffect(() => {
     var mensaje = "";
-
+    //Verifica sesion
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email
@@ -122,6 +121,7 @@ const VstReg = () => {
 
   }, []);
 
+  //Validacion de campos de registro
   const ValidaCampos = () => {
     let resp;
     if (
@@ -141,12 +141,6 @@ const VstReg = () => {
         contrasenia.campo
       );
       console.log(resp);
-      // cambiarNombre({campo: "", valido: null});
-      // cambiarApPaterno({campo: "", valido: null});
-      // cambiarApMaterno({campo: "", valido: null});
-      // cambiarCorreo({campo: "", valido: null});
-      // cambiarContrasenia({campo: "", valido: null});
-      // cambiarRepContra({campo: "", valido: null});
     } else {
       if ((repContra.valido === "false") | (contrasenia.valido === "false")) {
         MostrarAlerta1(

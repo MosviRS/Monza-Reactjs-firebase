@@ -1,10 +1,25 @@
+/*
+SlimeDev
+enrutador - Controlador
+Fecha de creación: 16/10/2021 
+  - Responsable: 
+      César Pedraza Hernández,
+      Alan Alexis Vélazquez Romero,
+      Carlos López Palma, 
+      Uriel Garcia Martinez,
+Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
+Modificaciones:
+-16/10/2021  Creacion del enrutador
+-23/10/2021  Correcciones en comentarios 
+Archivos relacionados: VstIns.js, Vstreg.js, VstNt.js, VstPdts.js, VstAbns.js
+VstEtgs.js, VstPvds.js, VstBit.js
+*/
 // Dependencias de React
 import React from "react";
 // Dependecias de React Router
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 //import Paginas
 import VstIns from "./vistas/VstIns";
-import Panel from "./vistas/panel";
 import VstReg from "./vistas/Vstreg";
 import VstNt from "./vistas/VstNt";
 import VstPdts from "./vistas/VstPdts";
@@ -19,9 +34,6 @@ const Rutas = () => {
       <Switch>
         <Route path="/" exact>
           <VstIns />
-        </Route>
-        <Route path="/public">
-          <Panel />
         </Route>
         <Route path="/1">
           <VstReg />

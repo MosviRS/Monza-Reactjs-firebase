@@ -1,3 +1,20 @@
+/*
+SlimeDev
+servicios - Controlador
+Fecha de creación: 07/11/2021 
+  - Responsable: 
+      César Pedraza Hernández,
+      Alan Alexis Vélazquez Romero,
+      Carlos López Palma, 
+      Uriel Garcia Martinez,
+Autorizó: David Vélazquez Ramirez / Diego Cruz Barajas
+Modificaciones:
+-07/11/2021  Creacion de funcion de guardarProveedor
+-13/11/2021  Correcciones en tipo de usuario
+Archivos relacionados: VstIns.js, Vstreg.js, VstNt.js, VstPdts.js, VstAbns.js
+VstEtgs.js, VstPvds.js, VstBit.js
+*/
+
 import firebase from "./conexion";
 import { MostrarAlerta1 } from "../components/CmpAlertas";
 

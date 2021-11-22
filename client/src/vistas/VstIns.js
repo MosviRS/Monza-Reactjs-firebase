@@ -62,7 +62,7 @@ const VstIns = () => {
   };
 
   useEffect(() => {
-
+    //Verifica sesion activa
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         setTimeout(() => {
@@ -73,6 +73,7 @@ const VstIns = () => {
 
   }, []);
 
+  //Inicio de sesion
   const inicia = () => {
     if (
       correo.campo == null ||
@@ -89,11 +90,6 @@ const VstIns = () => {
         .auth()
         .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
         .then(() => {
-          // Existing and future Auth states are now persisted in the current
-          // session only. Closing the window would clear any existing state even
-          // if a user forgets to sign out.
-          // ...
-          // New sign-in will be persisted with session persistence.
           return firebase
             .auth()
             .signInWithEmailAndPassword(correo.campo, contrasenia.campo)
@@ -119,7 +115,6 @@ const VstIns = () => {
             });
         })
         .catch((error) => {
-          // Handle Errors here.
         });
     }
   };
@@ -167,7 +162,6 @@ const VstIns = () => {
             bolVisibilidad={true}
             cadTipofuncion={"8"}
             cadMensaje={"Mensaje de prueba"}
-            //funcion={() => inicia()}
             cadTipo={"5"}
             cadTexto={"Olvide mi Contraseña"}
           />

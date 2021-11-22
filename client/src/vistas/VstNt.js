@@ -163,14 +163,14 @@ const VstNt = () => {
   useEffect(() => {
 
     var mensaje = "";
-
+    //Verificar la sesion
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
-
+      //Verificar el tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
             const usuarioObtenido = user.data()
@@ -193,6 +193,7 @@ const VstNt = () => {
       }
     });
 
+    //consulta de productos
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
       const docs = [];
       querySnapshot.forEach((doc) => {
@@ -290,8 +291,6 @@ const VstNt = () => {
       );
     }
   };
-  // console.log(control);
-  // console.log(tablaProducto);
 
   //rederizacion
   return (

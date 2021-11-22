@@ -138,14 +138,14 @@ const VstEtgs = () => {
   useEffect(() => {
 
     var mensaje = "";
-
+    //Verifica sesion del usuario
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
-
+        //verifica tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
             const usuarioObtenido = user.data()
@@ -210,7 +210,7 @@ const VstEtgs = () => {
   console.log('Tabla Entregas');
   console.log(datosEntregas);
 
-
+  //Cerrar la sesion 
   const cerrarSesion = async () => {
     await firebase
       .auth()
@@ -314,7 +314,7 @@ const VstEtgs = () => {
               <CmpTablas
                 columnas="7"
                 titulos={titulosTab}
-                datos={busqueda.campo== "" ? datosEntregas: tablaFiltrada}
+                datos={busqueda.campo=== "" ? datosEntregas: tablaFiltrada}
                 tipodatos="9"
               />
             </div>

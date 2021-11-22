@@ -200,7 +200,10 @@ const VstPdts = () => {
       });
   };
 
+  //proceso antes de la renderizacion de react
   useEffect(() => {
+
+    //Consulta de productos
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
       const DatosProductos = [];
       querySnapshot.forEach((doc) => {
@@ -219,6 +222,7 @@ const VstPdts = () => {
     });
   }, []);
 
+  //Filtro de productos
   const filtradoProductos = () => {
     cambiarTablaFiltrada(
       tablaProducto.filter(function (item) {

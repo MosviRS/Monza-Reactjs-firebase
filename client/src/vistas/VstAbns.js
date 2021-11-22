@@ -126,14 +126,14 @@ const VstAbns = () => {
   useEffect(() => {
 
     var mensaje = "";
-
+    //verifica la sesion del usuiario
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
-
+        //verifica el tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
             const usuarioObtenido = user.data()
@@ -156,7 +156,7 @@ const VstAbns = () => {
     });
 
   }, []);
-
+  //Cerrar sesion del usuario
   const cerrarSesion = async () => {
     await firebase
       .auth()
