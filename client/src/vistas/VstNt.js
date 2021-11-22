@@ -47,9 +47,13 @@ import CmpTablas from "../components/CmpTablas";
 import CmpTextoArea from "../components/CmpTextoArea";
 import CmpRevisionCaja from "../components/CmpRevisionCaja";
 import CmpCajaCombo from "../components/CmpCajaCombo";
-import { MostrarAlerta1, MostrarAlerta3 } from "../components/CmpAlertas";
+import {
+  MostrarAlerta1,
+  MostrarAlerta2,
+  MostrarAlerta3,
+} from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
-import {guardarMovimientos} from "../bd/servicios";
+import { guardarMovimientos } from "../bd/servicios";
 
 const VstNt = () => {
   //Estilo del Fondo
@@ -60,46 +64,42 @@ const VstNt = () => {
   const [fechaEnt, setFechaEnt] = useState(new Date());
 
   const [btnControl, definirbtnControl] = useState(null);
-  
+
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [busquedaCliente, cambiarBusquedaCliente] = useState({
     campo: "",
     valido: null,
   });
-  const [tipousuario, camtipousuario] = useState(true);
+  const [botonControl, camBotonControl] = useState(true);
   const [listaProd, cambiarlistaProd] = useState([]);
+  const [tablaClientes, cambiartablaClientes] = useState([]);
   const [tablaProducto, cambiartablaProducto] = useState([]);
+  const [filtroClient, cambiarFiltroClient] = useState([]);
   const [filtroProd, cambiarFiltroProd] = useState([]);
-  const [cliente, cambiarCliente] = useState({ campo: "", valido: null });
-  const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
-  const [apellidoP, cambiarApellidoP] = useState({ campo: "", valido: null });
-  const [apellidoM, cambiarApellidoM] = useState({ campo: "", valido: null });
-  const [direccion, cambiarDireccion] = useState({ campo: "", valido: null });
-  const [telefono, cambiarTelefono] = useState({ campo: "", valido: null });
-  const [pago, cambiarPago] = useState({ campo: "", valido: null });
-  const [total, cambiarTotal] = useState({ campo: 0, valido: null });
-  const [totalRec, cambiarTotalRec] = useState({ campo: "", valido: null });
-  const [cant, cambiarCant] = useState({ campo: 0, valido: null });
+  const [cliente, cambiarCliente] = useState({ campo: "", valido: "", id: "" });
+  const [nombre, cambiarNombre] = useState({ campo: "", valido: "" });
+  const [apellidoP, cambiarApellidoP] = useState({ campo: "", valido: "" });
+  const [apellidoM, cambiarApellidoM] = useState({ campo: "", valido: "" });
+  const [direccion, cambiarDireccion] = useState({ campo: "", valido: "" });
+  const [telefono, cambiarTelefono] = useState({ campo: "", valido: "" });
+  const [pago, cambiarPago] = useState({ campo: "", valido: "" });
+  const [total, cambiarTotal] = useState({ campo: 0, valido: "" });
+  const [totalRec, cambiarTotalRec] = useState({ campo: "", valido: "" });
+  const [cant, cambiarCant] = useState({ campo: 0, valido: "" });
   const [productoU, cambiarProductoU] = useState({ campo: "", id: "" });
-  const [Referencias, cambiarReferencias] = useState({
-    campo: "",
-    valido: null,
-  });
-  const [usuario,setDataUsuario]=useState({campo:"",id:""});
+  const [Referencias, cambiarReferencias] = useState({ campo: "", valido: "" });
+  const [usuario, {}] = useState({ campo: "", id: "" });
   //Variables Complementarias
   const expresiones = {
+    usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
+    nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
+    direccion: /(.+?)(?:(?:first)|(?:second)|(?:third)|(?:fourth)|$)/gim, // Letras, numeros, guion, guion_bajo, punto, mas y menos, espacios
+    password: /^.{4,12}$/, // 4 a 12 digitos.
+    correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    telefono:
+      /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
     cantidad: /^\d+/, // 7 a 14 numeros. Letras y espacios, pueden llevar acentos.
   };
-  const preguntas = [
-    { id: "1", nombre: "A" },
-    { id: "2", nombre: "B" },
-    { id: "3", nombre: "C" },
-    { id: "4", nombre: "D" },
-    { id: "5", nombre: "F" },
-    { id: "6", nombre: "G" },
-    { id: "7", nombre: "H" },
-    { id: "8", nombre: "I" },
-  ];
   const titulosTab = [
     { id: "Modelo" },
     { id: "Nombre del Producto" },
@@ -162,29 +162,27 @@ const VstNt = () => {
   };
 
   useEffect(() => {
-
     var mensaje = "";
     //Verificar la sesion
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email
+        const email = user.email;
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
-      //Verificar el tipo de usuario
+        //Verificar el tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data()
-            if(email === usuarioObtenido['correo']){
-              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
-                definirbtnControl(false)     
-              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
-                definirbtnControl(true)
+            const usuarioObtenido = user.data();
+            if (email === usuarioObtenido["correo"]) {
+              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
+                definirbtnControl(false);
+              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
+                definirbtnControl(true);
               }
             }
           });
         });
-        
       } else {
         mensaje = "La sesion caduco";
         console.log(mensaje);
@@ -201,7 +199,14 @@ const VstNt = () => {
         docs.push({ ...doc.data(), id: doc.id });
       });
       cambiartablaProducto(docs);
-      // console.log(docs);
+    });
+    //consulta de clientes
+    firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
+      const docs = [];
+      querySnapshot.forEach((doc) => {
+        docs.push({ ...doc.data(), id: doc.id });
+      });
+      cambiartablaClientes(docs);
     });
   }, []);
 
@@ -229,6 +234,16 @@ const VstNt = () => {
           .toString()
           .toLowerCase()
           .includes(busqueda.campo.toLowerCase());
+      })
+    );
+  };
+  const filtradoCli = () => {
+    cambiarFiltroClient(
+      tablaClientes.filter(function (item) {
+        return item.nombre_cliente
+          .toString()
+          .toLowerCase()
+          .includes(busquedaCliente.campo.toLowerCase());
       })
     );
   };
@@ -292,17 +307,65 @@ const VstNt = () => {
       );
     }
   };
+  const insertarCliente = () => {
+    const aux = tablaClientes.filter((item) => {
+      return item.id
+        .toString()
+        .toLowerCase()
+        .includes(cliente.id.toLowerCase());
+    });
+    console.log(aux);
+    cambiarNombre({ campo: aux[0].nombre_cliente, valido: "true" });
+    cambiarApellidoP({ campo: aux[0].apaterno, valido: "true" });
+    cambiarApellidoM({ campo: aux[0].amaterno, valido: "true" });
+    cambiarDireccion({ campo: aux[0].direccion, valido: "true" });
+    cambiarTelefono({ campo: aux[0].telefono, valido: "true" });
+    camBotonControl(false);
+  };
+  const cancelEdicion = () => {
+    cambiarCliente({ campo: "", valido: "", id: "" });
+    cambiarNombre({ campo: "", valido: "" });
+    cambiarApellidoP({ campo: "", valido: "" });
+    cambiarApellidoM({ campo: "", valido: "" });
+    cambiarDireccion({ campo: "", valido: "" });
+    cambiarTelefono({ campo: "", valido: "" });
+    camBotonControl(true);
+  };
 
+  const guardarCliente = () => {
+    MostrarAlerta2(
+      () =>
+        MostrarAlerta3("Se a guardado correctamente", () => {
+          console.log("Guardar Cliente");
+        }),
+      "¿Desea guardar nuevo Cliente?",
+      "Atencion!",
+      "1"
+    );
+  };
+  const actualizarCliente = () => {
+    MostrarAlerta2(
+      () =>
+        MostrarAlerta3("Se a actualizar correctamente", () => {
+          console.log("Actualizar cliente");
+        }),
+      "¿Desea actualizar nuevo Cliente?",
+      "Atencion!",
+      "1"
+    );
+  };
+  // console.log(cliente);
   //rederizacion
   return (
     <ElmVstNt subCont1="20px">
       <div className="contenedor1">
         <div className="titulo">{Cadenas.vstNt}</div>
-        <CmpBotonMenu 
+        <CmpBotonMenu
           bolVisibilidad={true}
-          cadicono="1" 
-          cadTipo="2" 
-          cadTexto={Cadenas.vstNt} />
+          cadicono="1"
+          cadTipo="2"
+          cadTexto={Cadenas.vstNt}
+        />
 
         <CmpBotonMenu
           bolVisibilidad={true}
@@ -392,8 +455,11 @@ const VstNt = () => {
             />
             <div className="busqueda">
               <CmpCajaCombo
+                funcion={() => {
+                  console.log("hola");
+                }}
                 tipoDatos="2"
-                arrLista={filtroProd}
+                arrLista={busqueda.campo === "" ? tablaProducto : filtroProd}
                 cadEtiqueta="Resultado productos:"
                 cadNombre={"productoU"}
                 estEstado={productoU}
@@ -446,6 +512,7 @@ const VstNt = () => {
           <ElmFormNt>
             <div className="titulo">Datos del cliente</div>
             <CmpTextoBuscar
+              filtro={filtradoCli}
               estEstado={busquedaCliente}
               estCambiarEstado={cambiarBusquedaCliente}
               cadPlaceholder="Buscar cliente"
@@ -453,8 +520,11 @@ const VstNt = () => {
             />
 
             <CmpCajaCombo
-              tipodatos="1"
-              arrLista={preguntas}
+              funcion={insertarCliente}
+              tipoDatos="4"
+              arrLista={
+                busquedaCliente.campo === "" ? tablaClientes : filtroClient
+              }
               cadEtiqueta="Resultado clientes:"
               cadNombre={"Cliente"}
               estEstado={cliente}
@@ -470,6 +540,7 @@ const VstNt = () => {
               cadLeyenda="Nombre del cliente"
               bolObligatorio={true}
               cadNombre="nombre"
+              exprExpresionR={expresiones.nombre}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -481,6 +552,7 @@ const VstNt = () => {
               cadLeyenda="Apellidos del cliente"
               bolObligatorio={true}
               cadNombre="apellidoM"
+              exprExpresionR={expresiones.nombre}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -492,6 +564,7 @@ const VstNt = () => {
               cadLeyenda="Apellidos del cliente"
               bolObligatorio={true}
               cadNombre="apellidoP"
+              exprExpresionR={expresiones.nombre}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -503,6 +576,7 @@ const VstNt = () => {
               cadLeyenda="Direccion del cliente"
               bolObligatorio={true}
               cadNombre="Direccion"
+              exprExpresionR={expresiones.direccion}
             />
             <CmpTextoForm
               cadTipoprincipal="1"
@@ -514,6 +588,7 @@ const VstNt = () => {
               cadLeyenda="Telefono del cliente"
               bolObligatorio={true}
               cadNombre="Telefono"
+              exprExpresionR={expresiones.telefono}
             />
             <CmpTextoArea
               estEstado={Referencias}
@@ -521,6 +596,30 @@ const VstNt = () => {
               bolTipo={true}
               cadEtiqueta="Referencias:"
               cadPlaceholder="Entre que calles, color de casa"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={botonControl}
+              cadTipofuncion="0"
+              cadTipo="3"
+              funcion={guardarCliente}
+              cadTexto="Guardar cliente"
+              cadMensaje="¿Desea guardar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
+              cadTipofuncion="0"
+              cadTipo="3"
+              funcion={actualizarCliente}
+              cadTexto="Actualizar cliente"
+              cadMensaje="¿Desea actualizar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
+              cadTipofuncion="0"
+              cadTipo="4"
+              funcion={cancelEdicion}
+              cadTexto="Cancelar"
+              cadMensaje="¿Desea actualizar los datos?"
             />
             <div className="titulo">Conclusión de pago</div>
             <div className="conjunto1">
@@ -557,9 +656,7 @@ const VstNt = () => {
               bolVisibilidad={true}
               cadTipofuncion="6"
               cadTipo="3"
-              funcion={() => 
-                guardarMovimientos(fechaEnt,usuario,pago)
-              }
+              funcion={() => guardarMovimientos(fechaEnt, usuario, pago)}
               cadTexto="Pagar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
             />

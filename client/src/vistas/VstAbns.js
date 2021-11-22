@@ -61,14 +61,14 @@ const VstAbns = () => {
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [fechaAbn, setFechaAbn] = useState(new Date());
   const [btnControl, definirbtnControl] = useState(null);
-  const [datosVentas,cambiarVentas]= useState([]);
-  const [datosClientes,cambiarClientes]= useState([]);
+  const [datosVentas, cambiarVentas] = useState([]);
+  const [datosClientes, cambiarClientes] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "Laura", valido: null });
   const [nota, cambiarNota] = useState({ campo: "12360", valido: null });
   const [abono, cambiarAbono] = useState({ campo: "", valido: null });
-  const [usuario,setDataUsuario]=useState({campo:"",id:""});
-  const [pago,cambiarPago]=useState({campo:"Abono"});
+  const [usuario, setDataUsuario] = useState({ campo: "", id: "" });
+  const [pago, cambiarPago] = useState({ campo: "Abono" });
   //Variables Complementarias
 
   const titulosTab = [
@@ -145,24 +145,23 @@ const VstAbns = () => {
   };
 
   useEffect(() => {
-
     var mensaje = "";
     //verifica la sesion del usuiario
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email
+        const email = user.email;
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
         //verifica el tipo de usuario
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
-          querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data()
-            if(email === usuarioObtenido['correo']){
-              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
-                definirbtnControl(false)     
-              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
-                definirbtnControl(true)
+          querySnapshot.forEach((user2) => {
+            const usuarioObtenido = user2.data();
+            if (email === usuarioObtenido["correo"]) {
+              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
+                definirbtnControl(false);
+              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
+                definirbtnControl(true);
               }
             }
           });
@@ -174,7 +173,7 @@ const VstAbns = () => {
           irInicio();
         }, 0);
       }
-    });    
+    });
     //Consulta la tabla venta
     firebase.db.collection("venta").onSnapshot((querySnapshot) => {
       const ventas = [];
@@ -189,11 +188,15 @@ const VstAbns = () => {
         firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
           const clientes = [];
           querySnapshot.forEach((doc) => {
-            var clienteTemp = doc.data()
-            if(doc.id===idAsociado){              
-              var nombreCompleto = clienteTemp['nombre_cliente'] + ' ' +
-                    clienteTemp['apaterno'] + ' ' + clienteTemp['amaterno'];
-              var direccion=  clienteTemp['direccion'];                                                         
+            var clienteTemp = doc.data();
+            if (doc.id === idAsociado) {
+              var nombreCompleto =
+                clienteTemp["nombre_cliente"] +
+                " " +
+                clienteTemp["apaterno"] +
+                " " +
+                clienteTemp["amaterno"];
+              var direccion = clienteTemp["direccion"];
               //Consulta la tabla abonos
               firebase.db.collection("abono").onSnapshot((querySnapshot) => {                
                 const abonos = [];                
@@ -226,15 +229,15 @@ const VstAbns = () => {
               cambiarTablaAbonos(abonos);
               });                            
             }
-          });        
+          });
           cambiarClientes(clientes);
-        });      
+        });
       });
-      cambiarVentas(ventas);              
-    });              
+      cambiarVentas(ventas);
+    });
   }, []);
 
-  console.log('Tabla Abonos');
+  console.log("Tabla Abonos");
   console.log(datosAbonos);
 
   const cerrarSesion = async () => {
@@ -404,7 +407,7 @@ const VstAbns = () => {
                 funcion={obtAbns}
                 columnas="7"
                 titulos={titulosTab}
-                datos={busqueda.campo== "" ? datosAbonos: tablaFiltrada}
+                datos={busqueda.campo == "" ? datosAbonos : tablaFiltrada}
                 tipodatos="10"
               />
             </div>

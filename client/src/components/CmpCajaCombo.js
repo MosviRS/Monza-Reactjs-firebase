@@ -22,6 +22,7 @@ const CompSeleccion = ({
   estEstado,
   estCambiarEstado,
   tipoDatos,
+  funcion,
 }) => {
   // console.log(estado);
   const onChange = (e) => {
@@ -29,6 +30,9 @@ const CompSeleccion = ({
   };
   const onClick = (value) => {
     estCambiarEstado({ ...estEstado, id: value });
+    // funcion(value);
+    // console.log(value);
+    funcion();
   };
   const datos1 = () => {
     return (
@@ -97,10 +101,35 @@ const CompSeleccion = ({
       </div>
     );
   };
+  const datos4 = () => {
+    return (
+      <div>
+        <ElmEtiquetaGbl htmlFor={cadNombre}>{cadEtiqueta}</ElmEtiquetaGbl>
+        <ElmGrupoTextoIns>
+          <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
+            {arrLista.map((value) => {
+              return (
+                <option
+                  key={value.id}
+                  onClick={() => onClick(value.id)}
+                  value={value.nombre_cliente}
+                >
+                  {value.nombre_cliente}
+                </option>
+              );
+            })}
+            <option value={"Ninguno"}>Selecciona un Elemento</option>
+          </ElmSeleccionGbl>
+          <ElmIconoComboCaja icon={faChevronDown} />
+        </ElmGrupoTextoIns>
+      </div>
+    );
+  };
   const select = {
     1: datos1(),
     2: datos2(),
     3: datos3(),
+    4: datos4(),
   };
   return <div>{select[tipoDatos || 1]}</div>;
 };

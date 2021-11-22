@@ -141,23 +141,22 @@ const VstPvds = () => {
 
   //Porceso detras de la renderizacion de React
   useEffect(() => {
-
     var mensaje = "";
     //Verificacion de la sesion
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email
+        const email = user.email;
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
         //Verificacion del tipo de usuario - bloqueo componentes
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data()
-            if(email === usuarioObtenido['correo']){
-              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
-                definirbtnControl(false)     
-              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
+            const usuarioObtenido = user.data();
+            if (email === usuarioObtenido["correo"]) {
+              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
+                definirbtnControl(false);
+              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
                 irNotas();
               }
             }
@@ -180,7 +179,6 @@ const VstPvds = () => {
       });
       cambiarTablaProveedor(documentos);
     });
-    
   }, []);
 
   //Cerrar sesion
@@ -342,47 +340,48 @@ const VstPvds = () => {
       <div className="contenedor1">
         <div className="titulo">{Cadenas.vstPvds}</div>
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[2]}
           cadicono="1"
           cadTipo="1"
           cadTexto={Cadenas.vstNt}
         />
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[3]}
           cadicono="2"
           cadTipo="1"
           cadTexto={Cadenas.vstPdts}
         />
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[4]}
           cadicono="3"
           cadTipo="1"
           cadTexto={Cadenas.vstAbns}
         />
         <CmpBotonMenu
-        bolVisibilidad={true}
+          bolVisibilidad={true}
           funcion={Rutas[5]}
           cadicono="4"
           cadTipo="1"
           cadTexto={Cadenas.vstEtgs}
         />
-        <CmpBotonMenu 
-        bolVisibilidad={btnControl ? false : true}
-        cadicono="5" 
-        cadTipo="2" 
-        cadTexto={Cadenas.vstPvds} />
         <CmpBotonMenu
-        bolVisibilidad={btnControl ? false : true}
+          bolVisibilidad={btnControl ? false : true}
+          cadicono="5"
+          cadTipo="2"
+          cadTexto={Cadenas.vstPvds}
+        />
+        <CmpBotonMenu
+          bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[7]}
           cadicono="6"
           cadTipo="1"
           cadTexto={Cadenas.vstBit}
         />
         <CmpBotonMenu
-        bolVisibilidad={btnControl ? false : true}
+          bolVisibilidad={btnControl ? false : true}
           funcion={Rutas[8]}
           cadicono="8"
           cadTipo="1"

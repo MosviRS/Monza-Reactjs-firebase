@@ -46,7 +46,7 @@ const VstPdts = () => {
 
   //Variables estado
   const [btnControl, definirbtnControl] = useState(null);
-  
+
   const [tablaProveedor, cambiarTablaProveedor] = useState([]);
   const [tablaProducto, cambiarTablaProducto] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
@@ -153,24 +153,23 @@ const VstPdts = () => {
     8: irRegistro,
   };
   useEffect(() => {
-
     var mensaje = "";
 
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email
+        const email = user.email;
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
 
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data()
-            if(email === usuarioObtenido['correo']){
-              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
-                definirbtnControl(false)     
-              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
-                definirbtnControl(true)
+            const usuarioObtenido = user.data();
+            if (email === usuarioObtenido["correo"]) {
+              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
+                definirbtnControl(false);
+              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
+                definirbtnControl(true);
               }
             }
           });
@@ -202,7 +201,6 @@ const VstPdts = () => {
 
   //proceso antes de la renderizacion de react
   useEffect(() => {
-
     //Consulta de productos
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
       const DatosProductos = [];
@@ -226,9 +224,12 @@ const VstPdts = () => {
   const filtradoProductos = () => {
     cambiarTablaFiltrada(
       tablaProducto.filter(function (item) {
-        if(item.nombre_producto.toLowerCase().includes(busqueda.campo.toLowerCase())){
-        return item.nombre_producto
-          .toString();
+        if (
+          item.nombre_producto
+            .toLowerCase()
+            .includes(busqueda.campo.toLowerCase())
+        ) {
+          return item.nombre_producto.toString();
         }
       })
     );
@@ -305,7 +306,7 @@ const VstPdts = () => {
             <div className="tabla">
               <CmpTablas
                 titulos={titulosTab}
-                datos={busqueda.campo ? tablaFiltrada:tablaProducto}
+                datos={busqueda.campo ? tablaFiltrada : tablaProducto}
                 tipodatos="6"
                 columnas="6"
               />
@@ -365,6 +366,9 @@ const VstPdts = () => {
             />
 
             <CmpCajaCombo
+              funcion={() => {
+                console.log("hola");
+              }}
               tipoDatos="3"
               arrLista={tablaProveedor}
               cadEtiqueta="Proveedor:"
@@ -389,7 +393,14 @@ const VstPdts = () => {
               cadTipofuncion="6"
               cadTipo="3"
               funcion={() =>
-                guardarProductos(cantidad, marca, modelo, nombre, precio, proveedor)
+                guardarProductos(
+                  cantidad,
+                  marca,
+                  modelo,
+                  nombre,
+                  precio,
+                  proveedor
+                )
               }
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar o actualizar los datos?"
