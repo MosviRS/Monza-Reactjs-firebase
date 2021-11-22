@@ -15,11 +15,12 @@ Archivos relacionados: VstIns.js, Vstreg.js, VstNt.js, VstPdts.js, VstAbns.js
 VstEtgs.js, VstPvds.js, VstBit.js
 */
 
-import firebase from "./conexion";
+import fb from "./conexion";
+import firebase from "firebase";
 import { MostrarAlerta1 } from "../components/CmpAlertas";
 
 const tomarTabla = async (estCambiarEstado, cadTabla) => {
-  await firebase.db.collection(cadTabla).onSnapshot((querySnapshot) => {
+  await fb.db.collection(cadTabla).onSnapshot((querySnapshot) => {
     const docs = [];
     querySnapshot.forEach((doc) => {
       docs.push({ ...doc.data(), id: doc.id });
@@ -29,7 +30,7 @@ const tomarTabla = async (estCambiarEstado, cadTabla) => {
   });
 };
 const actualizar = async (col, id, data) => {
-  await firebase.db.collection(col).doc(id).update(data);
+  await fb.db.collection(col).doc(id).update(data);
 };
 
 const guardarProveedores = async (
@@ -38,7 +39,7 @@ const guardarProveedores = async (
   nombre_empresa,
   telefono
 ) => {
-  await firebase.db.collection("proveedor").doc().set({
+  await fb.db.collection("proveedor").doc().set({
     correo: correo,
     direccion: direccion,
     nombre_empresa: nombre_empresa,
@@ -54,7 +55,7 @@ const guardarProductos = async (
   precio,
   proveedor
 ) => {
-  await firebase.db
+  await fb.db
     .collection("producto")
     .doc()
     .set({
@@ -71,7 +72,7 @@ const guardarMovimientos = async (
   idcuenta,
   mov
 ) => {
-  await firebase.db
+  await fb.db
     .collection("movimiento")
     .doc()
     .set({
@@ -82,15 +83,26 @@ const guardarMovimientos = async (
 };
 
 const RegistraUsuario = async (nombre, apaterno, amaterno, correo, contra) => {
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeS-ZZOWn1Z5oxVzjX42TsDfbFvONs5qw",
+    authDomain: "monza-daa09.firebaseapp.com",
+    projectId: "monza-daa09",
+    storageBucket: "monza-daa09.appspot.com",
+    messagingSenderId: "928034518483",
+    appId: "1:928034518483:web:3aa6a85e3c27146b5beb26",
+    measurementId: "G-TNKYMQ8PLM",
+  };
+  var cuentaSecundaria = firebase.initializeApp(firebaseConfig, 'Secondary')
+
   console.log("Registrando");
-  await firebase
-    .auth()
-    .createUserWithEmailAndPassword(correo, contra)
-    .then((resp) => {
-      firebase.db.collection("usuario").doc(resp.user.uid).set({
+  await cuentaSecundaria.auth().createUserWithEmailAndPassword(correo, contra).then((resp) => {
+
+      cuentaSecundaria.auth().signOut()
+
+      fb.db.collection("usuario").doc(resp.user.uid).set({
         amaterno: amaterno,
         apaterno: apaterno,
-        contra: contra,
         correo: correo,
         nombre_usuario: nombre,
         tipo_usuario: "Vendedor",

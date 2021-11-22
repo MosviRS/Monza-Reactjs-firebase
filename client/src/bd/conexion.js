@@ -41,6 +41,7 @@ const variables = {
   db,
   auth,
   persistance,
+  firebaseConfig,
 };
 
 export default variables;

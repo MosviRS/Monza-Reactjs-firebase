@@ -79,12 +79,18 @@ const VstReg = () => {
   const irNotas = () => {
     var length = history.length;
     history.go(-length);
-    history.replace("/2");
+    window.location.replace("/2");
+  };
+  const irRegistro = () => {
+    var length = history.length;
+    history.go(-length);
+    window.location.replace("/1");
   };
 
   const Rutas = {
     1: irInicio,
     2: irNotas,
+    3: irRegistro, 
   };
 
   //procesos detras del renderizado de react
@@ -141,6 +147,12 @@ const VstReg = () => {
         contrasenia.campo
       );
       console.log(resp);
+      cambiarCorreo({campo: '', valido: ''})
+      cambiarNombre({campo: '', valido: ''})
+      cambiarApPaterno({campo: '', valido: ''})
+      cambiarApMaterno({campo: '', valido: ''})
+      cambiarContrasenia({campo: '', valido: ''})
+      cambiarRepContra({campo: '', valido: ''})
     } else {
       if ((repContra.valido === "false") | (contrasenia.valido === "false")) {
         MostrarAlerta1(
