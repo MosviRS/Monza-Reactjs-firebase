@@ -25,8 +25,8 @@ const CmpRevisionCaja = ({ tipo, estEstado, estCambiarEstado, funcion }) => {
           <ElmOpcion>
             <input
               type="checkbox"
-              value="Contado"
-              checked={estEstado.campo === "Contado"}
+              value="contado"
+              checked={estEstado.campo === "contado"}
               onChange={onClick}
             />
             <label>Contado</label>
@@ -37,8 +37,8 @@ const CmpRevisionCaja = ({ tipo, estEstado, estCambiarEstado, funcion }) => {
             <input
               type="checkbox"
               visibility="hidden"
-              value="Crédito"
-              checked={estEstado.campo === "Crédito"}
+              value="credito"
+              checked={estEstado.campo === "credito"}
               onChange={onClick}
             />
             <label>Crédito</label>

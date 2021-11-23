@@ -69,17 +69,17 @@ const guardarProductos = async (
     });
 };
 const guardarMovimientos = async (
-  fecha_movimiento,
   idcuenta,
+  fecha_movimiento,
   mov
 ) => {
   await fb.db
     .collection("movimiento")
     .doc()
     .set({
+      idcuenta: idcuenta,
       fecha_movimiento: fecha_movimiento,
-      idcuenta: idcuenta.id,
-      mov: mov.campo
+      mov: mov
     });
 };
 
@@ -112,6 +112,93 @@ const ActualizarVenta= async (
     });
 };
 
+const guardarClientes = async (
+  nombre_cliente,
+  apaterno,
+  amaterno,
+  direccion,
+  telefono
+) => {
+  await fb.db
+    .collection("cliente")
+    .doc()
+    .set({
+      nombre_cliente: nombre_cliente,
+      apaterno: apaterno,
+      amaterno: amaterno,
+      direccion: direccion,
+      telefono: telefono
+    });
+};
+
+const guardarVentas = async (
+  estatus,
+  fecha_venta,
+  idcliente,
+  total,
+  uuid
+) => {
+   const docRef = await fb.db
+    .collection("venta")
+    .doc(uuid)
+    .set({
+      estatus: estatus,
+      fecha_venta: fecha_venta,
+      idcliente: idcliente,
+      total: total
+    });
+};
+
+const crearAbonos = async (
+  fecha_abono,
+  cant_abonada,
+  idventa,
+  idabono
+  ) => { await fb.db
+    .collection("abono")
+    .doc(idabono)
+    .set({
+      cant_abonada: cant_abonada,
+      fecha_abono: fecha_abono,
+      idventa: idventa
+    });
+};
+
+const agregarProdxVenta = async (
+  cantidad,
+  idproducto,
+  idventa,
+  subtotal,
+  ) => { await fb.db
+    .collection("prod_venta")
+    .doc()
+    .set({
+      cantidad: cantidad,
+      idproducto: idproducto,
+      idventa: idventa,
+      subtotal: subtotal
+    });
+};
+
+const agregarEntrega = async (
+  fecha_ent,
+  hora_ent,
+  idventa,
+  referencia,
+  ) => { await fb.db
+    .collection("entrega")
+    .doc()
+    .set({
+      estado: "pendiente",
+      fecha_ent: fecha_ent,
+      hora_ent: hora_ent,
+      idventa: idventa,
+      referencia: referencia
+
+    });
+};
+
+
 
 export {
   tomarTabla,
@@ -121,4 +208,9 @@ export {
   guardarMovimientos,
   guardarAbonos,
   ActualizarVenta,
+  guardarClientes,
+  guardarVentas,
+  crearAbonos,
+  agregarProdxVenta,
+  agregarEntrega,
 };

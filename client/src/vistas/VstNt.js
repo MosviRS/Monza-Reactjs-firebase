@@ -53,7 +53,11 @@ import {
   MostrarAlerta3,
 } from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
-import { guardarMovimientos } from "../bd/servicios";
+import { guardarMovimientos, guardarClientes, guardarVentas, crearAbonos, agregarProdxVenta, actualizar, agregarEntrega } from "../bd/servicios";
+const { 
+  v1: uuidv1,
+  v4: uuidv4,
+} = require('uuid');
 
 const VstNt = () => {
   //Estilo del Fondo
@@ -88,7 +92,7 @@ const VstNt = () => {
   const [cant, cambiarCant] = useState({ campo: 0, valido: "" });
   const [productoU, cambiarProductoU] = useState({ campo: "", id: "" });
   const [Referencias, cambiarReferencias] = useState({ campo: "", valido: "" });
-  const [usuario, {}] = useState({ campo: "", id: "" });
+  const [uid, cambiarUid] = useState( "" );
   //Variables Complementarias
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
@@ -99,6 +103,7 @@ const VstNt = () => {
     telefono:
       /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
     cantidad: /^\d+/, // 7 a 14 numeros. Letras y espacios, pueden llevar acentos.
+    decimales: /^(([1-9]\d*(.\d{2}){0,1})|(0.(([1-9]\d)|([0][1-9]))))$/gm
   };
   const titulosTab = [
     { id: "Modelo" },
@@ -167,7 +172,7 @@ const VstNt = () => {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email;
-
+        cambiarUid(user.uid);
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
         //Verificar el tipo de usuario
@@ -333,15 +338,20 @@ const VstNt = () => {
   };
 
   const guardarCliente = () => {
-    MostrarAlerta2(
-      () =>
-        MostrarAlerta3("Se a guardado correctamente", () => {
-          console.log("Guardar Cliente");
-        }),
-      "¿Desea guardar nuevo Cliente?",
-      "Atencion!",
-      "1"
-    );
+    if(nombre.valido !== "false" && apellidoP.valido !== "false" && apellidoP.valido !== "false" && apellidoM.valido !== "false"
+    && direccion.valido !== "false" && telefono.valido !== "false" && Referencias.valido !== "false" ){
+      MostrarAlerta2(
+        () =>
+          MostrarAlerta3("Se a guardado correctamente", () => {
+            guardarClientes(nombre.campo, apellidoP.campo, apellidoM.campo, direccion.campo, telefono.campo);
+          }),
+        "¿Desea guardar nuevo Cliente?",
+        "Atencion!",
+        "1"
+      );
+    }else{
+      MostrarAlerta1("Llene todos los campos","Error","2", ()=>{});
+    }
   };
   const actualizarCliente = () => {
     MostrarAlerta2(
@@ -353,6 +363,82 @@ const VstNt = () => {
       "Atencion!",
       "1"
     );
+  };
+
+  const revisarPago = () => {
+    var bandera = 0;
+    if(total.campo !== 0){
+      if(pago.campo==="contado"){
+        if(totalRec.campo === total.campo){
+          console.log("GUARDANDO VENTA CONTADO");
+          bandera = 1;
+        }else{
+          MostrarAlerta1("El pago al contado es incorrecto","Error","2", ()=>{});
+        }
+      }else if(pago.campo==="credito"){
+        if(parseFloat(totalRec.campo) <= total.campo){
+          console.log("GUARDANDO VENTA CRÉDITO");
+          bandera = 1;
+        }else{
+          MostrarAlerta1("El pago a crédito es incorrecto","Error","2", ()=>{});
+        }
+      }else{
+        MostrarAlerta1("Seleccione un metodo de pago","Error","2", ()=>{});
+      }
+    }else{
+      MostrarAlerta1("Agregue un producto a la lista de compra","Sin compras","2", ()=>{});
+    }
+    if(bandera===1){
+      if(cliente.id!==""){
+        var uuidVenta = uuidv1();
+        console.log("uuid: "+uuidVenta);
+        var uuidAbono = uuidv1();
+        console.log("uuid2: "+uuidAbono);
+        console.log(pago.campo);
+        guardarVentas(pago.campo, fechaComp, cliente.id, total.campo, uuidVenta);
+        crearAbonos(fechaComp, totalRec.campo, uuidVenta, uuidAbono );
+        listaProd.map((productoLista)=>{
+          agregarProdxVenta(productoLista.cantidad, productoLista.id, uuidVenta, productoLista.sub_total );
+          const prod = filtroCantidad(productoLista.id, tablaProducto);
+          const diferencia = prod[0].existencia - productoLista.cantidad;
+          actualizar("producto", productoLista.id, {existencia: diferencia});
+        });
+        const mensaje = "Venta de $"+ total.campo + " con abono de $"+totalRec.campo+", de tipo " + pago.campo;
+        console.log(mensaje)
+        console.log(uid.campo);
+        guardarMovimientos(uid, fechaComp, mensaje );
+        if(Referencias.campo!==""){
+          const fecha = fechaEnt.getDay()+"/"+(fechaEnt.getMonth()+1)+"/"+fechaEnt.getFullYear();
+          console.log(fecha);
+          const tiempo = fechaEnt.getHours()+":"+fechaEnt.getMinutes()+":"+fechaEnt.getSeconds();
+          console.log(tiempo);
+          agregarEntrega(fecha, tiempo, uuidVenta, Referencias.campo);
+        }
+        MostrarAlerta1("La venta ha sido registrada","Venta registrada","1", ()=>{});
+        cambiarBusquedaCliente({campo: "", valido:""});
+        cambiarCliente({campo: "", valido:"", id:""});
+        cambiarNombre({campo: "", valido:""});
+        cambiarApellidoP({campo: "", valido:""});
+        cambiarApellidoM({campo: "", valido:""});
+        cambiarDireccion({campo: "", valido:""});
+        cambiarTelefono({campo: "", valido:""});
+        cambiarReferencias({campo: "", valido:""});
+        cambiarlistaProd([]);
+        cambiarTotal({campo: 0, valido:""});
+        cambiarPago({campo: "", valido:""});
+        cambiarTotalRec({campo: "", valido:""});
+        setFechaEnt(new Date());
+      }else{
+        MostrarAlerta1("Seleccione o ingrese un cliente","Cliente vacio","2", ()=>{});
+      }
+    }
+    
+  };
+
+  const filtroCantidad = (id, tab) => {
+    return tab.filter(function (item) {
+      return item.id === id;
+    })
   };
   // console.log(cliente);
   //rederizacion
@@ -637,6 +723,7 @@ const VstNt = () => {
               <CmpRevisionCaja
                 estEstado={pago}
                 estCambiarEstado={cambiarPago}
+                exprExpresionR={expresiones.decimales}
               />
             </div>
             <div className="conjunto1">
@@ -654,9 +741,9 @@ const VstNt = () => {
             </div>
             <CmpBotonPrincipal
               bolVisibilidad={true}
-              cadTipofuncion="6"
+              cadTipofuncion="0"
               cadTipo="3"
-              funcion={() => guardarMovimientos(fechaEnt, usuario, pago)}
+              funcion={revisarPago}
               cadTexto="Pagar"
               cadMensaje="¿Todos los datos son correcto en la venta?"
             />
