@@ -258,45 +258,88 @@ const VstNt = () => {
   if (parseInt(cant.campo) < 0) {
     cambiarCant({ campo: "" });
   }
+  
 
   // console.log(index);
   const validacion = () => {
-    if (
-      expresiones.cantidad.test(cant.campo) &&
-      parseInt(cant.campo) > 0 &&
-      productoU.campo !== ""
-    ) {
-      const aux = tablaProducto.filter((item) => {
-        return item.id
-          .toString()
-          .toLowerCase()
-          .includes(productoU.id.toLowerCase());
-      });
-      // console.log(aux[0].id);
-      const subt =
-        parseFloat(cant.campo) * parseFloat(aux[0].precio).toFixed(2);
-      const lista = listaProd;
-      // lista.splice(index, 1);
-      lista.push({
-        id: aux[0].id,
-        nombre_producto: aux[0].nombre_producto,
-        modelo: aux[0].modelo,
-        precio: parseFloat(aux[0].precio),
-        cantidad: cant.campo,
-        sub_total: subt,
-      });
-      // setcontrol([]);
-      cambiarTotal({
-        campo: (parseFloat(total.campo) + subt).toFixed(2),
-      });
-      cambiarBusqueda({ campo: "" });
-      cambiarlistaProd(lista);
-      cambiarFiltroProd([]);
-      cambiarCant({ campo: 0 });
-      cambiarProductoU({ campo: "", id: "" });
-      MostrarAlerta3("objeto añadido corectamente", () => {
-        console.log("funciona");
-      });
+    if ( expresiones.cantidad.test(cant.campo) && parseInt(cant.campo) > 0 &&
+      productoU.campo !== "" ) {
+        tablaProducto.map(elem=>{
+          if(elem.id === productoU.id){
+            if(parseInt(elem.existencia)>=parseInt(cant.campo)){
+              elem.existencia = parseInt(elem.existencia) - parseInt(cant.campo);///restando a lsita del combobox
+              var bandera = false;
+              listaProd.map(prodVend =>{
+                if(prodVend.id === elem.id){
+                  bandera = true;
+                  const nuevaCant = parseInt(prodVend.cantidad) + parseInt(cant.campo);
+                  const valAnt = prodVend.sub_total;
+                  console.log("nuevaCant: "+nuevaCant);
+                  const subtotal = parseFloat(prodVend.precio) * nuevaCant;
+                  console.log("subtotal: "+ subtotal);
+                  // nuevaCant = nuevaCant + ""
+                  // subtotal = subtotal+""
+                  
+                  prodVend.cantidad = nuevaCant;
+                  prodVend.sub_total = subtotal;
+                  cambiarTotal({
+                    campo: (parseFloat(total.campo)- valAnt + subtotal).toFixed(2),
+                  });
+                  // setcontrol([]);
+                  cambiarBusqueda({ campo: "" });
+                  cambiarFiltroProd([]);
+                  cambiarCant({ campo: 0 });
+                  cambiarProductoU({ campo: "", id: "" });
+                  MostrarAlerta3("objeto sumado corectamente", () => {
+                    console.log("funciona");
+                  });
+                }
+              });
+              if(!bandera){
+                const aux = tablaProducto.filter((item) => {
+                  return item.id
+                    .toString()
+                    .toLowerCase()
+                    .includes(productoU.id.toLowerCase());
+                });
+          
+                // console.log(aux[0].id);
+                const subt =
+                  parseFloat(cant.campo) * parseFloat(aux[0].precio).toFixed(2);
+          
+                const lista = listaProd;
+                // lista.splice(index, 1);
+                lista.push({
+                  id: aux[0].id,
+                  nombre_producto: aux[0].nombre_producto,
+                  modelo: aux[0].modelo,
+                  precio: parseFloat(aux[0].precio),
+                  cantidad: cant.campo,
+                  sub_total: subt,
+                });
+                // setcontrol([]);
+                cambiarTotal({
+                  campo: (parseFloat(total.campo) + subt).toFixed(2),
+                });
+                cambiarBusqueda({ campo: "" });
+                cambiarlistaProd(lista);
+                cambiarFiltroProd([]);
+                cambiarCant({ campo: 0 });
+                cambiarProductoU({ campo: "", id: "" });
+                MostrarAlerta3("objeto añadido corectamente", () => {
+                  console.log("funciona");
+                });
+              }
+              // lista.splice(index, 1);
+              
+            }else{
+              const mensajeAlerta = elem.nombre_producto+": "+elem.existencia;
+              MostrarAlerta1(mensajeAlerta, "Cantidad insuficiente", "2", ()=>{});
+            }
+            
+          }
+        })
+      
     } else {
       cambiarBusqueda({ campo: "" });
       cambiarFiltroProd([]);
