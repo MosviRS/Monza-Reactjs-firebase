@@ -24,13 +24,13 @@ const CompSeleccion = ({
   tipoDatos,
   funcion,
 }) => {
-  // console.log(estado);
   const onChange = (e) => {
     estCambiarEstado({ ...estEstado, campo: e.target.value });
+
+    funcion();
   };
   const onClick = (value) => {
     estCambiarEstado({ ...estEstado, id: value });
-
     funcion();
   };
   const datos1 = () => {
@@ -66,16 +66,18 @@ const CompSeleccion = ({
                   value={value.nombre_producto}
                 >
                   {value.nombre_producto}
+                  {}
                 </option>
               );
             })}
-            <option value={"Ninguno"}>Selecciona un Elemento</option>
+            {/* <option value={""}>Selecciona un Elemento</option> */}
           </ElmSeleccionGbl>
           <ElmIconoComboCaja icon={faChevronDown} />
         </ElmGrupoTextoIns>
       </div>
     );
   };
+
   const datos3 = () => {
     return (
       <div>
@@ -83,17 +85,21 @@ const CompSeleccion = ({
         <ElmGrupoTextoIns>
           <ElmSeleccionGbl name={cadNombre} onChange={onChange}>
             {arrLista.map((value) => {
+              // console.log();
               return (
                 <option
                   key={value.id}
                   onClick={() => onClick(value.id)}
                   value={value.nombre_empresa}
+                  selected={
+                    value.nombre_empresa === estEstado.campo ? true : false
+                  }
                 >
                   {value.nombre_empresa}
                 </option>
               );
             })}
-            <option value={"Ninguno"}>Selecciona un Elemento</option>
+            {/* <option value={"Ninguno"}>Selecciona un Elemento</option> */}
           </ElmSeleccionGbl>
           <ElmIconoComboCaja icon={faChevronDown} />
         </ElmGrupoTextoIns>
@@ -111,13 +117,13 @@ const CompSeleccion = ({
                 <option
                   key={value.id}
                   onClick={() => onClick(value.id)}
-                  value={value.nombre_cliente}
+                  value={value.id}
                 >
                   {value.nombre_cliente}
                 </option>
               );
             })}
-            <option value={"Ninguno"}>Selecciona un Elemento</option>
+            {/* <option value={""}>Selecciona un Elemento</option> */}
           </ElmSeleccionGbl>
           <ElmIconoComboCaja icon={faChevronDown} />
         </ElmGrupoTextoIns>

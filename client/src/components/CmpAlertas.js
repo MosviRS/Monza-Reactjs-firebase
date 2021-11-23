@@ -68,7 +68,7 @@ const MostrarAlerta3 = (cadTitulo, funcion) => {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 2000,
+    timer: 1000,
     timerProgressBar: true,
     height: 20,
     width: 600,
@@ -87,23 +87,39 @@ const MostrarAlerta3 = (cadTitulo, funcion) => {
 };
 
 const MostrarAlerta4 = (funcion) => {
-  
   const { value: email } = MySwal.fire({
-    title: 'Recuperar contraseña',
-    input: 'email',
-    inputLabel: 'Ingresa tu correo electronico',
-    inputPlaceholder: 'Tu email: '
+    title: <ElmTituloAlerta>Recuperar contraseña</ElmTituloAlerta>,
+    input: "email",
+    background: Colores.ColHueso,
+    backdrop: `
+              rgba(255,159,28,0.2)
+            `,
+    confirmButtonColor: Colores.ColNaranja,
+    confirmButtonText: "Aceptar",
+    inputLabel: "Ingresa tu correo electronico",
+    inputPlaceholder: "Tu email: ",
   }).then((email) => {
-    funcion(email.value)
+    funcion(email.value);
   });
-
 };
 
 const MostrarAlerta5 = (email, icon, title, text) => {
   MySwal.fire({
     icon: icon,
-    title: title,
-    text: text
-  })
+    title: <ElmTituloAlerta>{title}</ElmTituloAlerta>,
+    text: text,
+    background: Colores.ColHueso,
+    backdrop: `
+              rgba(255,159,28,0.2)
+            `,
+    confirmButtonColor: Colores.ColNaranja,
+    confirmButtonText: "Aceptar",
+  });
 };
-export { MostrarAlerta1, MostrarAlerta2, MostrarAlerta3, MostrarAlerta4, MostrarAlerta5 };
+export {
+  MostrarAlerta1,
+  MostrarAlerta2,
+  MostrarAlerta3,
+  MostrarAlerta4,
+  MostrarAlerta5,
+};

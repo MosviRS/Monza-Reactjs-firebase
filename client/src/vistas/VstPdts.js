@@ -53,7 +53,14 @@ const VstPdts = () => {
   const [btnControl, definirbtnControl] = useState(null);
   const [index, camIndex] = useState("");
   const [prodEdit, camprodEdit] = useState([
-    { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+    {
+      modelo: "",
+      nombre: "",
+      precio: "",
+      cantidad: "",
+      marca: "",
+      proveedor: "",
+    },
   ]);
   const [botonControl, camBotonControl] = useState(true);
   const [tablaProducto, cambiarTablaProducto] = useState([]);
@@ -64,7 +71,7 @@ const VstPdts = () => {
   const [precio, cambiarPrecio] = useState({ campo: "", valido: null });
   const [cantidad, cambiarCantidad] = useState({ campo: "", valido: null });
   const [marca, cambiarMarca] = useState({ campo: "", valido: null });
-  const [proveedor, cambiarProveedor] = useState({ campo: "", id:"" });
+  const [proveedor, cambiarProveedor] = useState({ campo: "", id: "" });
   const [modelo, cambiarModelo] = useState({ campo: "", valido: null });
   const expresiones = {
     nombre: /^[A-Za-z ]{4,50}$/, // Letras
@@ -82,7 +89,7 @@ const VstPdts = () => {
     { id: "Marca" },
     { id: "Proveedor" },
   ];
-  
+
   const history = useHistory();
   //Funciones
   const irInicio = () => {
@@ -136,24 +143,23 @@ const VstPdts = () => {
     8: irRegistro,
   };
   useEffect(() => {
-
     var mensaje = "";
 
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
-        const email = user.email
+        const email = user.email;
 
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
 
         firebase.db.collection("usuario").onSnapshot((querySnapshot) => {
           querySnapshot.forEach((user) => {
-            const usuarioObtenido = user.data()
-            if(email === usuarioObtenido['correo']){
-              if(usuarioObtenido['tipo_usuario'] === 'Gerente'){
-                definirbtnControl(false)     
-              } else if(usuarioObtenido['tipo_usuario'] === 'Vendedor'){
-                definirbtnControl(true)
+            const usuarioObtenido = user.data();
+            if (email === usuarioObtenido["correo"]) {
+              if (usuarioObtenido["tipo_usuario"] === "Gerente") {
+                definirbtnControl(false);
+              } else if (usuarioObtenido["tipo_usuario"] === "Vendedor") {
+                definirbtnControl(true);
               }
             }
           });
@@ -185,7 +191,6 @@ const VstPdts = () => {
 
   //proceso antes de la renderizacion de react
   useEffect(() => {
-
     //Consulta de productos
     firebase.db.collection("producto").onSnapshot((querySnapshot) => {
       const DatosProductos = [];
@@ -209,9 +214,12 @@ const VstPdts = () => {
   const filtradoProductos = () => {
     cambiarTablaFiltrada(
       tablaProducto.filter(function (item) {
-        if(item.nombre_producto.toLowerCase().includes(busqueda.campo.toLowerCase())){
-        return item.nombre_producto
-          .toString();
+        if (
+          item.nombre_producto
+            .toLowerCase()
+            .includes(busqueda.campo.toLowerCase())
+        ) {
+          return item.nombre_producto.toString();
         }
       })
     );
@@ -225,7 +233,7 @@ const VstPdts = () => {
       precio.valido === "true" &&
       cantidad.valido === "true" &&
       marca.valido === "true" &&
-      proveedor.campo !== "" 
+      proveedor.campo !== ""
     ) {
       MostrarAlerta2(
         () =>
@@ -245,7 +253,14 @@ const VstPdts = () => {
       );
 
       camprodEdit([
-        { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+        {
+          modelo: "",
+          nombre: "",
+          precio: "",
+          cantidad: "",
+          marca: "",
+          proveedor: "",
+        },
       ]);
       cambiarModelo({ campo: "", valido: "" });
       cambiarNombre({ campo: "", valido: "" });
@@ -255,21 +270,23 @@ const VstPdts = () => {
       cambiarProveedor({ campo: "", id: "" });
       camBotonControl(true);
     } else {
-      MostrarAlerta1(
-        "Favor revice todos los campos",
-        "Error!",
-        "2",
-        () => {
-          console.log("error");
-        }
-      );
+      MostrarAlerta1("Favor revice todos los campos", "Error!", "2", () => {
+        console.log("error");
+      });
     }
   };
 
   //limpiar campos del proveedor
   const cancelEdicion = () => {
     camprodEdit([
-      { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+      {
+        modelo: "",
+        nombre: "",
+        precio: "",
+        cantidad: "",
+        marca: "",
+        proveedor: "",
+      },
     ]);
     cambiarModelo({ campo: "", valido: "" });
     cambiarNombre({ campo: "", valido: "" });
@@ -298,7 +315,7 @@ const VstPdts = () => {
               precio: precio.campo,
               existencia: cantidad.campo,
               marca: marca.campo,
-              proveedor: proveedor.campo
+              proveedor: proveedor.campo,
             });
           }),
         "¿Desaea Actualizar datos?",
@@ -306,7 +323,14 @@ const VstPdts = () => {
         "4"
       );
       camprodEdit([
-        { modelo: "", nombre: "", precio: "", cantidad: "", marca: "", proveedor: "" },
+        {
+          modelo: "",
+          nombre: "",
+          precio: "",
+          cantidad: "",
+          marca: "",
+          proveedor: "",
+        },
       ]);
       cambiarModelo({ campo: "", valido: "" });
       cambiarNombre({ campo: "", valido: "" });
@@ -340,11 +364,11 @@ const VstPdts = () => {
     camIndex(id);
     camBotonControl(false);
     filtrogeneralbyId(camprodEdit, tablaProducto, id);
-    cambiarModelo({ campo: prodEdit[0].modelo, valido: "true" });//
+    cambiarModelo({ campo: prodEdit[0].modelo, valido: "true" }); //
     cambiarNombre({ campo: prodEdit[0].nombre_producto, valido: "true" });
-    cambiarPrecio({ campo: prodEdit[0].precio, valido: "true" });//
+    cambiarPrecio({ campo: prodEdit[0].precio, valido: "true" }); //
     cambiarCantidad({ campo: prodEdit[0].existencia, valido: "true" });
-    cambiarMarca({ campo: prodEdit[0].marca, valido: "true" });//
+    cambiarMarca({ campo: prodEdit[0].marca, valido: "true" }); //
     cambiarProveedor({ campo: prodEdit[0].proveedor, id: "true" });
   };
 
@@ -420,7 +444,7 @@ const VstPdts = () => {
               <CmpTablas
                 funcion={obtProvId}
                 titulos={titulosTab}
-                datos={busqueda.campo ? tablaFiltrada:tablaProducto}
+                datos={busqueda.campo ? tablaFiltrada : tablaProducto}
                 tipodatos="6"
                 columnas="6"
               />
@@ -480,6 +504,7 @@ const VstPdts = () => {
             />
 
             <CmpCajaCombo
+              funcion={() => console.log("")}
               tipoDatos="3"
               arrLista={tablaProveedor}
               cadEtiqueta="Proveedor:"
@@ -503,9 +528,7 @@ const VstPdts = () => {
               bolVisibilidad={botonControl}
               cadTipofuncion="0"
               cadTipo="3"
-              funcion={() =>
-                guardarProducto()
-              }
+              funcion={() => guardarProducto()}
               cadTexto="Guardar"
               cadMensaje="¿Desea guardar los datos?"
             />

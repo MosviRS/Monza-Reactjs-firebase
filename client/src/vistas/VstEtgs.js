@@ -63,7 +63,7 @@ const VstEtgs = () => {
     },
   ]);
   const [btnControl, definirbtnControl] = useState(null);
-
+  const [botonControl, camBotonControl] = useState(true);
   const [datosEntregas, cambiarEntregas] = useState([]);
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [datosVentas, cambiarVentas] = useState([]);
@@ -268,10 +268,17 @@ const VstEtgs = () => {
       referencia: entregasEdit[0].referencia,
     });
   };
+  const cancelar = () => {
+    cambiarNombre({ campo: "", valido: "" });
+    cambiarNota({ campo: "", valido: "" });
+    cambiarEstadoEntrega({ campo: "", valido: "" });
+    camBotonControl(true);
+  };
 
   const obtEtgs = (id) => {
     // console.log(id);
     camIndex(id);
+    camBotonControl(false);
     filtrogeneralbyId(camEntregasEdit, datosEntregas, index);
     cambiarNombre({ campo: entregasEdit[0].nombre, valido: "true" });
     cambiarNota({ campo: entregasEdit[0].idventa, valido: "true" });
@@ -399,6 +406,14 @@ const VstEtgs = () => {
               cadTipo="3"
               funcion={actualizarEntrega}
               cadTexto="Actualizar"
+              cadMensaje="¿Desea actualizar los datos?"
+            />
+            <CmpBotonPrincipal
+              bolVisibilidad={!botonControl}
+              cadTipofuncion="0"
+              cadTipo="4"
+              funcion={cancelar}
+              cadTexto="Cancelar"
               cadMensaje="¿Desea actualizar los datos?"
             />
           </ElmFormNt>

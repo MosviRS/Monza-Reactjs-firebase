@@ -53,11 +53,16 @@ import {
   MostrarAlerta3,
 } from "../components/CmpAlertas";
 import firebase from "./../bd/conexion";
-import { guardarMovimientos, guardarClientes, guardarVentas, crearAbonos, agregarProdxVenta, actualizar, agregarEntrega } from "../bd/servicios";
-const { 
-  v1: uuidv1,
-  v4: uuidv4,
-} = require('uuid');
+import {
+  guardarMovimientos,
+  guardarClientes,
+  guardarVentas,
+  crearAbonos,
+  agregarProdxVenta,
+  actualizar,
+  agregarEntrega,
+} from "../bd/servicios";
+const { v1: uuidv1, v4: uuidv4 } = require("uuid");
 
 const VstNt = () => {
   //Estilo del Fondo
@@ -92,7 +97,7 @@ const VstNt = () => {
   const [cant, cambiarCant] = useState({ campo: 0, valido: "" });
   const [productoU, cambiarProductoU] = useState({ campo: "", id: "" });
   const [Referencias, cambiarReferencias] = useState({ campo: "", valido: "" });
-  const [uid, cambiarUid] = useState( "" );
+  const [uid, cambiarUid] = useState("");
   //Variables Complementarias
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
@@ -103,7 +108,7 @@ const VstNt = () => {
     telefono:
       /^(\(\+?\d{2,3}\)[\*|\s|\-|\.]?(([\d][\*|\s|\-|\.]?){6})(([\d][\s|\-|\.]?){2})?|(\+?[\d][\s|\-|\.]?){8}(([\d][\s|\-|\.]?){2}(([\d][\s|\-|\.]?){2})?)?)$/, // 7 a 14 numeros.
     cantidad: /^\d+/, // 7 a 14 numeros. Letras y espacios, pueden llevar acentos.
-    decimales: /^(([1-9]\d*(.\d{2}){0,1})|(0.(([1-9]\d)|([0][1-9]))))$/gm
+    decimales: /^(([1-9]\d*(.\d{2}){0,1})|(0.(([1-9]\d)|([0][1-9]))))$/gm,
   };
   const titulosTab = [
     { id: "Modelo" },
@@ -258,88 +263,95 @@ const VstNt = () => {
   if (parseInt(cant.campo) < 0) {
     cambiarCant({ campo: "" });
   }
-  
 
   // console.log(index);
   const validacion = () => {
-    if ( expresiones.cantidad.test(cant.campo) && parseInt(cant.campo) > 0 &&
-      productoU.campo !== "" ) {
-        tablaProducto.map(elem=>{
-          if(elem.id === productoU.id){
-            if(parseInt(elem.existencia)>=parseInt(cant.campo)){
-              elem.existencia = parseInt(elem.existencia) - parseInt(cant.campo);///restando a lsita del combobox
-              var bandera = false;
-              listaProd.map(prodVend =>{
-                if(prodVend.id === elem.id){
-                  bandera = true;
-                  const nuevaCant = parseInt(prodVend.cantidad) + parseInt(cant.campo);
-                  const valAnt = prodVend.sub_total;
-                  console.log("nuevaCant: "+nuevaCant);
-                  const subtotal = parseFloat(prodVend.precio) * nuevaCant;
-                  console.log("subtotal: "+ subtotal);
-                  // nuevaCant = nuevaCant + ""
-                  // subtotal = subtotal+""
-                  
-                  prodVend.cantidad = nuevaCant;
-                  prodVend.sub_total = subtotal;
-                  cambiarTotal({
-                    campo: (parseFloat(total.campo)- valAnt + subtotal).toFixed(2),
-                  });
-                  // setcontrol([]);
-                  cambiarBusqueda({ campo: "" });
-                  cambiarFiltroProd([]);
-                  cambiarCant({ campo: 0 });
-                  cambiarProductoU({ campo: "", id: "" });
-                  MostrarAlerta3("objeto sumado corectamente", () => {
-                    console.log("funciona");
-                  });
-                }
-              });
-              if(!bandera){
-                const aux = tablaProducto.filter((item) => {
-                  return item.id
-                    .toString()
-                    .toLowerCase()
-                    .includes(productoU.id.toLowerCase());
-                });
-          
-                // console.log(aux[0].id);
-                const subt =
-                  parseFloat(cant.campo) * parseFloat(aux[0].precio).toFixed(2);
-          
-                const lista = listaProd;
-                // lista.splice(index, 1);
-                lista.push({
-                  id: aux[0].id,
-                  nombre_producto: aux[0].nombre_producto,
-                  modelo: aux[0].modelo,
-                  precio: parseFloat(aux[0].precio),
-                  cantidad: cant.campo,
-                  sub_total: subt,
+    if (
+      expresiones.cantidad.test(cant.campo) &&
+      parseInt(cant.campo) > 0 &&
+      productoU.campo !== ""
+    ) {
+      tablaProducto.map((elem) => {
+        if (elem.id === productoU.id) {
+          if (parseInt(elem.existencia) >= parseInt(cant.campo)) {
+            elem.existencia = parseInt(elem.existencia) - parseInt(cant.campo); ///restando a lsita del combobox
+            var bandera = false;
+            listaProd.map((prodVend) => {
+              if (prodVend.id === elem.id) {
+                bandera = true;
+                const nuevaCant =
+                  parseInt(prodVend.cantidad) + parseInt(cant.campo);
+                const valAnt = prodVend.sub_total;
+                console.log("nuevaCant: " + nuevaCant);
+                const subtotal = parseFloat(prodVend.precio) * nuevaCant;
+                console.log("subtotal: " + subtotal);
+                // nuevaCant = nuevaCant + ""
+                // subtotal = subtotal+""
+
+                prodVend.cantidad = nuevaCant;
+                prodVend.sub_total = subtotal;
+                cambiarTotal({
+                  campo: (parseFloat(total.campo) - valAnt + subtotal).toFixed(
+                    2
+                  ),
                 });
                 // setcontrol([]);
-                cambiarTotal({
-                  campo: (parseFloat(total.campo) + subt).toFixed(2),
-                });
                 cambiarBusqueda({ campo: "" });
-                cambiarlistaProd(lista);
                 cambiarFiltroProd([]);
                 cambiarCant({ campo: 0 });
                 cambiarProductoU({ campo: "", id: "" });
-                MostrarAlerta3("objeto añadido corectamente", () => {
+                MostrarAlerta3("objeto sumado corectamente", () => {
                   console.log("funciona");
                 });
               }
+            });
+            if (!bandera) {
+              const aux = tablaProducto.filter((item) => {
+                return item.id
+                  .toString()
+                  .toLowerCase()
+                  .includes(productoU.id.toLowerCase());
+              });
+
+              // console.log(aux[0].id);
+              const subt =
+                parseFloat(cant.campo) * parseFloat(aux[0].precio).toFixed(2);
+
+              const lista = listaProd;
               // lista.splice(index, 1);
-              
-            }else{
-              const mensajeAlerta = elem.nombre_producto+": "+elem.existencia;
-              MostrarAlerta1(mensajeAlerta, "Cantidad insuficiente", "2", ()=>{});
+              lista.push({
+                id: aux[0].id,
+                nombre_producto: aux[0].nombre_producto,
+                modelo: aux[0].modelo,
+                precio: parseFloat(aux[0].precio),
+                cantidad: cant.campo,
+                sub_total: subt,
+              });
+              // setcontrol([]);
+              cambiarTotal({
+                campo: (parseFloat(total.campo) + subt).toFixed(2),
+              });
+              cambiarBusqueda({ campo: "" });
+              cambiarlistaProd(lista);
+              cambiarFiltroProd([]);
+              cambiarCant({ campo: 0 });
+              cambiarProductoU({ campo: "", id: "" });
+              MostrarAlerta3("objeto añadido corectamente", () => {
+                console.log("funciona");
+              });
             }
-            
+            // lista.splice(index, 1);
+          } else {
+            const mensajeAlerta = elem.nombre_producto + ": " + elem.existencia;
+            MostrarAlerta1(
+              mensajeAlerta,
+              "Cantidad insuficiente",
+              "2",
+              () => {}
+            );
           }
-        })
-      
+        }
+      });
     } else {
       cambiarBusqueda({ campo: "" });
       cambiarFiltroProd([]);
@@ -360,9 +372,10 @@ const VstNt = () => {
       return item.id
         .toString()
         .toLowerCase()
-        .includes(cliente.id.toLowerCase());
+        .includes(cliente.campo.toLowerCase());
     });
     console.log(aux);
+
     cambiarNombre({ campo: aux[0].nombre_cliente, valido: "true" });
     cambiarApellidoP({ campo: aux[0].apaterno, valido: "true" });
     cambiarApellidoM({ campo: aux[0].amaterno, valido: "true" });
@@ -381,19 +394,32 @@ const VstNt = () => {
   };
 
   const guardarCliente = () => {
-    if(nombre.valido !== "false" && apellidoP.valido !== "false" && apellidoP.valido !== "false" && apellidoM.valido !== "false"
-    && direccion.valido !== "false" && telefono.valido !== "false" && Referencias.valido !== "false" ){
+    if (
+      nombre.valido !== "false" &&
+      apellidoP.valido !== "false" &&
+      apellidoP.valido !== "false" &&
+      apellidoM.valido !== "false" &&
+      direccion.valido !== "false" &&
+      telefono.valido !== "false" &&
+      Referencias.valido !== "false"
+    ) {
       MostrarAlerta2(
         () =>
           MostrarAlerta3("Se a guardado correctamente", () => {
-            guardarClientes(nombre.campo, apellidoP.campo, apellidoM.campo, direccion.campo, telefono.campo);
+            guardarClientes(
+              nombre.campo,
+              apellidoP.campo,
+              apellidoM.campo,
+              direccion.campo,
+              telefono.campo
+            );
           }),
         "¿Desea guardar nuevo Cliente?",
         "Atencion!",
         "1"
       );
-    }else{
-      MostrarAlerta1("Llene todos los campos","Error","2", ()=>{});
+    } else {
+      MostrarAlerta1("Llene todos los campos", "Error", "2", () => {});
     }
   };
   const actualizarCliente = () => {
@@ -404,86 +430,137 @@ const VstNt = () => {
         }),
       "¿Desea actualizar nuevo Cliente?",
       "Atencion!",
-      "1"
+      "5"
     );
   };
 
   const revisarPago = () => {
     var bandera = 0;
-    if(total.campo !== 0){
-      if(pago.campo==="contado"){
-        if(totalRec.campo === total.campo){
+    if (total.campo !== 0) {
+      if (pago.campo === "contado") {
+        if (totalRec.campo === total.campo) {
           console.log("GUARDANDO VENTA CONTADO");
           bandera = 1;
-        }else{
-          MostrarAlerta1("El pago al contado es incorrecto","Error","2", ()=>{});
+        } else {
+          MostrarAlerta1(
+            "El pago al contado es incorrecto",
+            "Error",
+            "2",
+            () => {}
+          );
         }
-      }else if(pago.campo==="credito"){
-        if(parseFloat(totalRec.campo) <= total.campo){
+      } else if (pago.campo === "credito") {
+        if (parseFloat(totalRec.campo) <= total.campo) {
           console.log("GUARDANDO VENTA CRÉDITO");
           bandera = 1;
-        }else{
-          MostrarAlerta1("El pago a crédito es incorrecto","Error","2", ()=>{});
+        } else {
+          MostrarAlerta1(
+            "El pago a crédito es incorrecto",
+            "Error",
+            "2",
+            () => {}
+          );
         }
-      }else{
-        MostrarAlerta1("Seleccione un metodo de pago","Error","2", ()=>{});
+      } else {
+        MostrarAlerta1("Seleccione un metodo de pago", "Error", "2", () => {});
       }
-    }else{
-      MostrarAlerta1("Agregue un producto a la lista de compra","Sin compras","2", ()=>{});
+    } else {
+      MostrarAlerta1(
+        "Agregue un producto a la lista de compra",
+        "Sin compras",
+        "2",
+        () => {}
+      );
     }
-    if(bandera===1){
-      if(cliente.id!==""){
+    if (bandera === 1) {
+      if (cliente.campo !== "") {
         var uuidVenta = uuidv1();
-        console.log("uuid: "+uuidVenta);
+        console.log("uuid: " + uuidVenta);
         var uuidAbono = uuidv1();
-        console.log("uuid2: "+uuidAbono);
+        console.log("uuid2: " + uuidAbono);
         console.log(pago.campo);
-        guardarVentas(pago.campo, fechaComp, cliente.id, total.campo, uuidVenta);
-        crearAbonos(fechaComp, totalRec.campo, uuidVenta, uuidAbono );
-        listaProd.map((productoLista)=>{
-          agregarProdxVenta(productoLista.cantidad, productoLista.id, uuidVenta, productoLista.sub_total );
+        guardarVentas(
+          pago.campo,
+          fechaComp,
+          cliente.campo,
+          total.campo,
+          uuidVenta
+        );
+        crearAbonos(fechaComp, totalRec.campo, uuidVenta, uuidAbono);
+        listaProd.map((productoLista) => {
+          agregarProdxVenta(
+            productoLista.cantidad,
+            productoLista.id,
+            uuidVenta,
+            productoLista.sub_total
+          );
           const prod = filtroCantidad(productoLista.id, tablaProducto);
           const diferencia = prod[0].existencia - productoLista.cantidad;
-          actualizar("producto", productoLista.id, {existencia: diferencia});
+          actualizar("producto", productoLista.id, { existencia: diferencia });
         });
-        const mensaje = "Venta de $"+ total.campo + " con abono de $"+totalRec.campo+", de tipo " + pago.campo;
-        console.log(mensaje)
+        const mensaje =
+          "Venta de $" +
+          total.campo +
+          " con abono de $" +
+          totalRec.campo +
+          ", de tipo " +
+          pago.campo;
+        console.log(mensaje);
         console.log(uid.campo);
-        guardarMovimientos(uid, fechaComp, mensaje );
-        if(Referencias.campo!==""){
-          const fecha = fechaEnt.getDay()+"/"+(fechaEnt.getMonth()+1)+"/"+fechaEnt.getFullYear();
+        guardarMovimientos(uid, fechaComp, mensaje);
+        if (Referencias.campo !== "") {
+          const fecha =
+            fechaEnt.getDay() +
+            "/" +
+            (fechaEnt.getMonth() + 1) +
+            "/" +
+            fechaEnt.getFullYear();
           console.log(fecha);
-          const tiempo = fechaEnt.getHours()+":"+fechaEnt.getMinutes()+":"+fechaEnt.getSeconds();
+          const tiempo =
+            fechaEnt.getHours() +
+            ":" +
+            fechaEnt.getMinutes() +
+            ":" +
+            fechaEnt.getSeconds();
           console.log(tiempo);
           agregarEntrega(fecha, tiempo, uuidVenta, Referencias.campo);
         }
-        MostrarAlerta1("La venta ha sido registrada","Venta registrada","1", ()=>{});
-        cambiarBusquedaCliente({campo: "", valido:""});
-        cambiarCliente({campo: "", valido:"", id:""});
-        cambiarNombre({campo: "", valido:""});
-        cambiarApellidoP({campo: "", valido:""});
-        cambiarApellidoM({campo: "", valido:""});
-        cambiarDireccion({campo: "", valido:""});
-        cambiarTelefono({campo: "", valido:""});
-        cambiarReferencias({campo: "", valido:""});
+        MostrarAlerta1(
+          "La venta ha sido registrada",
+          "Venta registrada",
+          "1",
+          () => {}
+        );
+        cambiarBusquedaCliente({ campo: "", valido: "" });
+        cambiarCliente({ campo: "", valido: "", id: "" });
+        cambiarNombre({ campo: "", valido: "" });
+        cambiarApellidoP({ campo: "", valido: "" });
+        cambiarApellidoM({ campo: "", valido: "" });
+        cambiarDireccion({ campo: "", valido: "" });
+        cambiarTelefono({ campo: "", valido: "" });
+        cambiarReferencias({ campo: "", valido: "" });
         cambiarlistaProd([]);
-        cambiarTotal({campo: 0, valido:""});
-        cambiarPago({campo: "", valido:""});
-        cambiarTotalRec({campo: "", valido:""});
+        cambiarTotal({ campo: 0, valido: "" });
+        cambiarPago({ campo: "", valido: "" });
+        cambiarTotalRec({ campo: "", valido: "" });
         setFechaEnt(new Date());
-      }else{
-        MostrarAlerta1("Seleccione o ingrese un cliente","Cliente vacio","2", ()=>{});
+      } else {
+        MostrarAlerta1(
+          "Seleccione o ingrese un cliente",
+          "Cliente vacio",
+          "2",
+          () => {}
+        );
       }
     }
-    
   };
 
   const filtroCantidad = (id, tab) => {
     return tab.filter(function (item) {
       return item.id === id;
-    })
+    });
   };
-  // console.log(cliente);
+  console.log(cliente);
   //rederizacion
   return (
     <ElmVstNt subCont1="20px">
