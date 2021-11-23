@@ -64,9 +64,9 @@ const CompSeleccion = ({
                   key={value.id}
                   onClick={() => onClick(value.id)}
                   value={value.nombre_producto}
+                  selected={value.id === estEstado.id ? true : false}
                 >
                   {value.nombre_producto}
-                  {}
                 </option>
               );
             })}

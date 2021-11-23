@@ -299,7 +299,9 @@ const VstNt = () => {
                 cambiarBusqueda({ campo: "" });
                 cambiarFiltroProd([]);
                 cambiarCant({ campo: 0 });
-                cambiarProductoU({ campo: "", id: "" });
+                cambiarProductoU({
+                  id: "323ktYlsfkPR2wNalfgY",
+                });
                 MostrarAlerta3("objeto sumado corectamente", () => {
                   console.log("funciona");
                 });
@@ -335,7 +337,9 @@ const VstNt = () => {
               cambiarlistaProd(lista);
               cambiarFiltroProd([]);
               cambiarCant({ campo: 0 });
-              cambiarProductoU({ campo: "", id: "" });
+              cambiarProductoU({
+                id: "323ktYlsfkPR2wNalfgY",
+              });
               MostrarAlerta3("objeto añadido corectamente", () => {
                 console.log("funciona");
               });
@@ -356,7 +360,9 @@ const VstNt = () => {
       cambiarBusqueda({ campo: "" });
       cambiarFiltroProd([]);
       cambiarCant({ campo: 0 });
-      cambiarProductoU({ campo: "", id: "" });
+      cambiarProductoU({
+        id: "323ktYlsfkPR2wNalfgY",
+      });
       MostrarAlerta1(
         "Error datos no validos, intente de nuevo",
         "Error",
@@ -560,7 +566,14 @@ const VstNt = () => {
       return item.id === id;
     });
   };
-  console.log(cliente);
+  const elementoFantasma = (lista) => {
+    lista.push({
+      id: "",
+      nombre_producto: "Seleciona un Elemento",
+    });
+    return lista;
+  };
+  console.log(productoU);
   //rederizacion
   return (
     <ElmVstNt subCont1="20px">
