@@ -34,7 +34,7 @@ import CmpTablas from "../components/CmpTablas";
 import firebase from "./../bd/conexion";
 import {
   guardarMovimientos,
-  guardarAbonos,
+  actualizar,
   ActualizarVenta,
 } from "../bd/servicios";
 import { MostrarAlerta1 } from "../components/CmpAlertas";
@@ -63,14 +63,13 @@ const VstAbns = () => {
   const [tablaFiltrada, cambiarTablaFiltrada] = useState([]);
   const [fechaAbn, setFechaAbn] = useState(new Date());
   const [btnControl, definirbtnControl] = useState(null);
-  const [datosVentas, cambiarVentas] = useState([]);
-  const [datosClientes, cambiarClientes] = useState([]);
   const [busqueda, cambiarBusqueda] = useState({ campo: "", valido: null });
   const [nombre, cambiarNombre] = useState({ campo: "", valido: null });
   const [nota, cambiarNota] = useState({ campo: "", valido: null });
   const [abono, cambiarAbono] = useState({ campo: "", valido: null });
   const [usuario, setDataUsuario] = useState({ campo: "", id: "" });
   const [pago, cambiarPago] = useState({ campo: "" });
+  const [uid, cambiarUid] = useState("");
   //Variables Complementarias
 
   //Variables Complementarias
@@ -141,7 +140,7 @@ const VstAbns = () => {
     firebase.auth().onAuthStateChanged(function (user) {
       if (user != null) {
         const email = user.email;
-
+        cambiarUid(user.uid);
         mensaje = "Se restablecio la sesion para: " + email;
         console.log(mensaje);
         //verifica el tipo de usuario
@@ -166,8 +165,8 @@ const VstAbns = () => {
       }
     });
     //Consulta la tabla venta
+    const abonos = [];
     firebase.db.collection("venta").onSnapshot((querySnapshot) => {
-      const ventas = [];
       querySnapshot.forEach((doc) => {
         var ventaTemp = doc.data();
         var idventa = doc.id;
@@ -177,7 +176,6 @@ const VstAbns = () => {
         var total = ventaTemp["total"];
         //Consulta la tabla clientes
         firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
-          const clientes = [];
           querySnapshot.forEach((doc) => {
             var clienteTemp = doc.data();
             if (doc.id === idAsociado) {
@@ -190,21 +188,17 @@ const VstAbns = () => {
               var direccion = clienteTemp["direccion"];
               //Consulta la tabla abonos
               firebase.db.collection("abono").onSnapshot((querySnapshot) => {
-                const abonos = [];
                 querySnapshot.forEach((doc) => {
                   var abonoTemp = doc.data();
-
                   if (idventa === abonoTemp["idventa"]) {
                     var idabono = doc.id;
-                    var fecha_abono = abonoTemp["fecha_abono"];
                     var cant_abonada = abonoTemp["cant_abonada"]; //((cant_abonada) + parseFloat(abonoTemp['cant_abonada']));
                     var adeudo = parseFloat(total) - parseFloat(cant_abonada);
-
+                    adeudo.toFixed(2);
                     if (adeudo === 0) {
                       ActualizarVenta("pagado", idventa);
                     }
-
-                    console.log("Adeudo", adeudo);
+                    //console.log("Adeudo", adeudo);
                     abonos.push({
                       id: idventa,
                       nombre: nombreCompleto,
@@ -212,24 +206,37 @@ const VstAbns = () => {
                       fecha_venta: fecha_venta,
                       total: total,
                       cant_abonada: cant_abonada,
-                      adeudo: adeudo,
-                      idabono,
+                      adeudo: adeudo.toFixed(2),
+                      idabono: idabono,
                     });
                   }
+                  console.log("abono: "+abonoTemp["id"]);
+                  console.log("Cantidad elementos: "+abonos.length);
                 });
                 cambiarTablaAbonos(abonos);
+                
               });
             }
           });
-          cambiarClientes(clientes);
         });
-      });
-      cambiarVentas(ventas);
+      }); 
     });
+    // console.log("Tabla Abonos");
+    // console.log(datosAbonos);
   }, []);
 
-  console.log("Tabla Abonos");
-  console.log(datosAbonos);
+  const filtradoVentas = (ventas,idAbonoVenta) => {
+    return (
+      ventas.filter(function (item) {
+        if (item.id.toLowerCase() === idAbonoVenta) {
+          return item;
+        }
+      })
+    );
+  };
+
+  // console.log("Tabla Abonos");
+  // console.log(datosAbonos);
 
   const cerrarSesion = async () => {
     await firebase
@@ -247,12 +254,16 @@ const VstAbns = () => {
   };
 
   const filtradoClientes = () => {
-    cambiarTablaFiltrada(
+    cambiarTablaAbonos(
       datosAbonos.filter(function (item) {
-        return item.nombre
-          .toString()
-          .toLowerCase()
-          .includes(busqueda.campo.toLowerCase());
+        if(
+          item.nombre
+            .toLowerCase()
+            .includes(busqueda.campo.toLowerCase())
+        ){
+          //console.log(item.nombre);
+          return item.nombre.toString();
+        }
       })
     );
   };
@@ -286,11 +297,14 @@ const VstAbns = () => {
   const actualizarAbonos = () => {
     var cantidad =
       parseFloat(abono.campo) + parseFloat(abonosEdit[0].cant_abonada);
-    console.log(cantidad);
+    //console.log("-"+index)
     if (nombre.campo != "") {
       if (parseFloat(abonosEdit[0].adeudo) >= parseFloat(abono.campo)) {
-        guardarAbonos(fechaAbn, cantidad, nota.campo, abonosEdit[0].idabono);
-        guardarMovimientos(fechaAbn, usuario, pago);
+        //console.log(cantidad)
+        const fecha = new Date();
+        actualizar("abono", abonosEdit[0].idabono, {idventa: index, fecha_abono: fecha, cant_abonada: cantidad } );
+        const mensaje = "Abono realizado por "+abonosEdit[0].nombre+" de "+ abono.campo+" para la venta "+ index;
+        guardarMovimientos(fecha, uid, mensaje);
 
         limpiarCampos();
       } else {
@@ -324,7 +338,7 @@ const VstAbns = () => {
     camBotonControl(false);
   };
 
-  console.log(abonosEdit[0].idabono);
+  //console.log(abonosEdit[0].idabono);
   //rederizacion
   return (
     <ElmVstNt>
@@ -399,7 +413,7 @@ const VstAbns = () => {
                 funcion={obtAbns}
                 columnas="6"
                 titulos={titulosTab}
-                datos={busqueda.campo == "" ? datosAbonos : tablaFiltrada}
+                datos={busqueda.campo ? tablaFiltrada : datosAbonos}
                 tipodatos="10"
               />
             </div>
