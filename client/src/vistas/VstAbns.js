@@ -37,7 +37,7 @@ import {
   actualizar,
   ActualizarVenta,
 } from "../bd/servicios";
-import { MostrarAlerta1 } from "../components/CmpAlertas";
+import { MostrarAlerta1, MostrarAlerta3 } from "../components/CmpAlertas";
 
 const VstAbns = () => {
   //Estilo del Fondo
@@ -102,7 +102,7 @@ const VstAbns = () => {
   const irClientes = () => {
     var length = history.length;
     history.go(-length);
-    history.replace("/4");
+    window.location.replace("/4");
   };
   const irEntregas = () => {
     var length = history.length;
@@ -330,6 +330,13 @@ const VstAbns = () => {
 
         const mensaje = "Abono realizado por "+abonosEdit[0].nombre+" de $"+ abono.campo+" para la venta con fecha " + fechaVentaAbono;
         guardarMovimientos(fecha, uid, mensaje);
+        MostrarAlerta3(
+          "Abono realizado",
+          () => {}
+        );
+        setTimeout(() => {
+          irClientes();
+        }, 2000);
         limpiarCampos();
       } else {
         if (parseFloat(abonosEdit[0].adeudo) === 0) {
@@ -339,6 +346,9 @@ const VstAbns = () => {
             2,
             () => {}
           );
+          setTimeout(() => {
+            irClientes();
+          }, 2000);
         } else {
           MostrarAlerta1(
             "Verifica la cantidad ingresada",
