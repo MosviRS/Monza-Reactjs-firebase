@@ -16,13 +16,17 @@ import {
 
 //Componentes para seleccionar Fecha con Hora
 import "react-datepicker/dist/react-datepicker.css";
+import es from 'date-fns/locale/es'
+
 const CmpFecha = ({
   estEstado,
   estCambiarEstado,
   cadEtiqueta,
   cadNombre,
   bolObligatorio,
+  fechaFinal,
 }) => {
+  const fechaHoy = new Date()
   return (
     <div>
       <ElmEtiquetaGbl htmlFor={cadNombre}>
@@ -37,6 +41,9 @@ const CmpFecha = ({
         timeIntervals={15}
         timeCaption="Time"
         dateFormat="dd/M/yyyy h:mm aa"
+        locale='es'
+        minDate={fechaHoy}
+        maxDate={fechaFinal}
       />
     </div>
   );

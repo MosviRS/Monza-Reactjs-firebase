@@ -427,20 +427,68 @@ const VstNt = () => {
         "Atencion!",
         "1"
       );
+
+      cambiarBusquedaCliente({ campo: "", valido: "" });
+      cambiarCliente({ campo: "", valido: "", id: "" });
+      cambiarNombre({ campo: "", valido: "" });
+      cambiarApellidoP({ campo: "", valido: "" });
+      cambiarApellidoM({ campo: "", valido: "" });
+      cambiarDireccion({ campo: "", valido: "" });
+      cambiarTelefono({ campo: "", valido: "" });
+      cambiarReferencias({ campo: "", valido: "" });
+      cambiarlistaProd([]);
+      cambiarTotal({ campo: 0, valido: "" });
+      cambiarPago({ campo: "", valido: "" });
+      cambiarTotalRec({ campo: "", valido: "" });
+      cambiarReferencias({ campo: "", valido: "" });
+      setFechaEnt(new Date());
+
     } else {
       MostrarAlerta1("Llene todos los campos", "Error", "2", () => {});
     }
   };
+
+  const resetearValores = (funcion) =>{
+    funcion()
+    cambiarBusquedaCliente({ campo: "", valido: "" });
+    cambiarCliente({ campo: "", valido: "", id: "" });
+    cambiarNombre({ campo: "", valido: "" });
+    cambiarApellidoP({ campo: "", valido: "" });
+    cambiarApellidoM({ campo: "", valido: "" });
+    cambiarDireccion({ campo: "", valido: "" });
+    cambiarTelefono({ campo: "", valido: "" });
+    cambiarReferencias({ campo: "", valido: "" });
+    cambiarlistaProd([]);
+    cambiarTotal({ campo: 0, valido: "" });
+    cambiarPago({ campo: "", valido: "" });
+    cambiarTotalRec({ campo: "", valido: "" });
+    cambiarReferencias({ campo: "", valido: "" });
+    setFechaEnt(new Date());
+  }
+
   const actualizarCliente = () => {
     MostrarAlerta2(
       () =>
-        MostrarAlerta3("Se a actualizar correctamente", () => {
+        MostrarAlerta3("Se a actualizaron correctamente", () => {
+          actualizar(
+            'cliente',
+            cliente.id,
+            {
+              nombre_cliente: nombre.campo,
+              apaterno: apellidoP.campo,
+              amaterno: apellidoM.campo,
+              direccion: direccion.campo,
+              telefono: telefono.campo
+            }
+          );
+          
           console.log("Actualizar cliente");
         }),
       "¿Desea actualizar nuevo Cliente?",
       "Atencion!",
       "5"
     );
+
   };
 
   const revisarPago = () => {
@@ -574,6 +622,7 @@ const VstNt = () => {
         cambiarTotal({ campo: 0, valido: "" });
         cambiarPago({ campo: "", valido: "" });
         cambiarTotalRec({ campo: "", valido: "" });
+        cambiarReferencias({ campo: "", valido: "" });
         setFechaEnt(new Date());
       } else {
         MostrarAlerta1(
@@ -672,8 +721,8 @@ const VstNt = () => {
                 estCambiarEstado={setFechaComp}
                 cadNombre="fechaCompra"
                 cadEtiqueta="Fecha de Compra:"
-                bolObligatorio={true}
-                
+                bolObligatorio={false}
+                fechaFinal={fechaComp}
               />
             </div>
             <div className="cont2">
@@ -683,6 +732,7 @@ const VstNt = () => {
                 cadNombre="fechaEntrega"
                 cadEtiqueta="Fecha de Entrega:"
                 bolObligatorio={true}
+                
               />
             </div>
           </ElmEncabezadoNt>
