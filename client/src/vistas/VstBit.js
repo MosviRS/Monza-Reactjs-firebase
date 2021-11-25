@@ -47,7 +47,7 @@ const VstBit = () => {
   //Variables Complementarias//Variables Complementarias
 
   const titulosTab = [
-    { id: "Nombre empleado" },
+    { id: "Cuenta del empleado" },
     { id: "Movimiento" },
     { id: "Fecha de movimiento" },
   ];

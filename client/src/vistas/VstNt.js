@@ -98,6 +98,8 @@ const VstNt = () => {
   const [productoU, cambiarProductoU] = useState({ campo: "", id: "" });
   const [Referencias, cambiarReferencias] = useState({ campo: "", valido: "" });
   const [uid, cambiarUid] = useState("");
+  const [nombreCliente, cambiarNombreCliente] = useState();
+  const [idCliente, cambiaridCliente] = useState("");
   //Variables Complementarias
   const expresiones = {
     usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
@@ -373,6 +375,7 @@ const VstNt = () => {
       );
     }
   };
+
   const insertarCliente = () => {
     const aux = tablaClientes.filter((item) => {
       return item.id
@@ -504,16 +507,38 @@ const VstNt = () => {
           const diferencia = prod[0].existencia - productoLista.cantidad;
           actualizar("producto", productoLista.id, { existencia: diferencia });
         });
+
+        const aux = tablaClientes.filter((item) => {
+          console.log(idCliente + ' - ' + item.id)
+          if(item.id === cliente.campo){
+            
+            const nombre =  item.nombre_cliente + " " +  
+            item.apaterno + " " +  
+            item.amaterno;
+            console.log(nombre)
+            return nombre
+
+          }
+          
+        });
+        
+        const nombre = aux[0]['nombre_cliente'] + ' ' +
+          aux[0]['apaterno'] + ' ' +
+          aux[0]['amaterno']
+
         const mensaje =
           "Venta de $" +
           total.campo +
           " con abono de $" +
           totalRec.campo +
           ", de tipo " +
-          pago.campo;
-        console.log(mensaje);
-        console.log(uid.campo);
-        guardarMovimientos(uid, fechaComp, mensaje);
+          pago.campo +
+          " para el cliente " + nombre;
+
+
+
+        guardarMovimientos(fechaComp, uid, mensaje);
+
         if (Referencias.campo !== "") {
           const fecha =
             fechaEnt.getDay() +
@@ -648,6 +673,7 @@ const VstNt = () => {
                 cadNombre="fechaCompra"
                 cadEtiqueta="Fecha de Compra:"
                 bolObligatorio={true}
+                
               />
             </div>
             <div className="cont2">

@@ -77,9 +77,9 @@ const guardarMovimientos = async (
     .collection("movimiento")
     .doc()
     .set({
-      idcuenta: idcuenta,
-      fecha_movimiento: fecha_movimiento,
-      mov: mov
+      fecha_movimiento: idcuenta,
+      idcuenta: fecha_movimiento,
+      mov: mov,
     });
 };
 

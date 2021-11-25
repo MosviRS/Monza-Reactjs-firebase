@@ -70,6 +70,7 @@ const VstAbns = () => {
   const [usuario, setDataUsuario] = useState({ campo: "", id: "" });
   const [pago, cambiarPago] = useState({ campo: "" });
   const [uid, cambiarUid] = useState("");
+  const [tablaVentas, cambiarTablaVentas] = useState([]);
   //Variables Complementarias
 
   //Variables Complementarias
@@ -167,6 +168,9 @@ const VstAbns = () => {
     //Consulta la tabla venta
     const abonos = [];
     firebase.db.collection("venta").onSnapshot((querySnapshot) => {
+
+      const dataVenta = []
+
       querySnapshot.forEach((doc) => {
         var ventaTemp = doc.data();
         var idventa = doc.id;
@@ -176,6 +180,7 @@ const VstAbns = () => {
         var total = ventaTemp["total"];
         //Consulta la tabla clientes
         firebase.db.collection("cliente").onSnapshot((querySnapshot) => {
+          const dataCliente = []
           querySnapshot.forEach((doc) => {
             var clienteTemp = doc.data();
             if (doc.id === idAsociado) {
@@ -219,7 +224,12 @@ const VstAbns = () => {
             }
           });
         });
+
+        dataVenta.push({ ...doc.data(), id: doc.id });
+
       }); 
+
+      cambiarTablaVentas(dataVenta);
     });
     // console.log("Tabla Abonos");
     // console.log(datosAbonos);
@@ -303,9 +313,23 @@ const VstAbns = () => {
         //console.log(cantidad)
         const fecha = new Date();
         actualizar("abono", abonosEdit[0].idabono, {idventa: index, fecha_abono: fecha, cant_abonada: cantidad } );
-        const mensaje = "Abono realizado por "+abonosEdit[0].nombre+" de "+ abono.campo+" para la venta "+ index;
-        guardarMovimientos(fecha, uid, mensaje);
 
+        const data = tablaVentas.filter((item) => {
+          console.log(index + ' - ' + item.id)
+          if(item.id === index){
+
+            console.log(item.fecha_venta)
+            return item.fecha_venta
+
+          }
+          
+        });
+
+        console.log(data)
+        const fechaVentaAbono = data[0]['fecha_venta'].toDate().toDateString() + ""
+
+        const mensaje = "Abono realizado por "+abonosEdit[0].nombre+" de $"+ abono.campo+" para la venta con fecha " + fechaVentaAbono;
+        guardarMovimientos(fecha, uid, mensaje);
         limpiarCampos();
       } else {
         if (parseFloat(abonosEdit[0].adeudo) === 0) {
